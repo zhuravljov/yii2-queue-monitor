@@ -1,1 +1,2 @@
-# yii2-queue-monitor
+Yii2 Queue Analytics Module
+===========================

@@ -1,0 +1,33 @@
+{
+    "name": "zhuravljov/yii2-queue-monitor",
+    "description": "Yii2 Queue Analytics Module",
+    "type": "yii2-extension",
+    "keywords": ["yii", "queue", "analytics", "module"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Roman Zhuravlev",
+            "email": "zhuravljov@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/zhuravljov/yii2-queue-monitor/issues",
+        "source": "https://github.com/zhuravljov/yii2-queue-monitor"
+    },
+    "require": {
+        "php": ">=5.5.0",
+        "yiisoft/yii2": "~2.0.10",
+        "zhuravljov/yii2-queue": "1.1.x-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "zhuravljov\\yii\\queue\\monitor\\": "src"
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
+}
