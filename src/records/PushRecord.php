@@ -25,10 +25,21 @@ use zhuravljov\yii\queue\monitor\Config;
  * @property integer $first_exec_id
  * @property integer $last_exec_id
  *
+ * @property ExecRecord[] $execs
+ * @property ExecRecord|null $firstExec
+ * @property ExecRecord|null $lastExec
+ *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
 class PushRecord extends ActiveRecord
 {
+    const STATUS_WAITING = 'waiting';
+    const STATUS_STARTED = 'started';
+    const STATUS_DONE = 'done';
+    const STATUS_FAILED = 'failed';
+    const STATUS_RESTARTED = 'restarted';
+    const STATUS_BURIED = 'buried';
+
     /**
      * @inheritdoc
      * @return PushQuery the active query used by this AR class.
@@ -52,5 +63,55 @@ class PushRecord extends ActiveRecord
     public static function tableName()
     {
         return Yii::$container->get(Config::class)->pushTableName;
+    }
+
+    /**
+     * @return ExecQuery
+     */
+    public function getExecs()
+    {
+        return $this->hasMany(ExecRecord::class, ['push_id' => 'id']);
+    }
+
+    /**
+     * @return ExecQuery
+     */
+    public function getFirstExec()
+    {
+        return $this->hasOne(ExecRecord::class, ['id' => 'first_exec_id']);
+    }
+
+    /**
+     * @return ExecQuery
+     */
+    public function getLastExec()
+    {
+        return $this->hasOne(ExecRecord::class, ['id' => 'last_exec_id']);
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        if (!$this->lastExec) {
+            return self::STATUS_WAITING;
+        }
+        if (!$this->lastExec->done_at && $this->lastExec->attempt == 1) {
+            return self::STATUS_STARTED;
+        }
+        if ($this->lastExec->done_at && $this->lastExec->error === null) {
+            return self::STATUS_DONE;
+        }
+        if ($this->lastExec->done_at && $this->lastExec->retry) {
+            return self::STATUS_FAILED;
+        }
+        if (!$this->lastExec->done_at) {
+            return self::STATUS_RESTARTED;
+        }
+        if ($this->lastExec->done_at && !$this->lastExec->retry) {
+            return self::STATUS_BURIED;
+        }
+        return null;
     }
 }

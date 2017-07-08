@@ -22,6 +22,8 @@ use zhuravljov\yii\queue\monitor\Config;
  * @property string $error
  * @property integer $retry
  *
+ * @property PushRecord $push
+ *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
 class ExecRecord extends ActiveRecord
@@ -49,5 +51,13 @@ class ExecRecord extends ActiveRecord
     public static function tableName()
     {
         return Yii::$container->get(Config::class)->execTableName;
+    }
+
+    /**
+     * @return PushQuery
+     */
+    public function getPush()
+    {
+        return $this->hasOne(PushRecord::class, ['id' => 'push_id']);
     }
 }
