@@ -17,6 +17,20 @@ use yii\db\ActiveQuery;
 class PushQuery extends ActiveQuery
 {
     /**
+     * @param string $sender
+     * @param string $uid
+     * @return $this
+     */
+    public function byJob($sender, $uid)
+    {
+        return $this
+            ->andWhere(['sender' => $sender])
+            ->andWhere(['job_uid' => $uid])
+            ->orderBy(['id' => SORT_DESC])
+            ->limit(1);
+    }
+
+    /**
      * @inheritdoc
      * @return PushRecord[]|array
      */

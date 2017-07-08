@@ -8,10 +8,12 @@
 namespace zhuravljov\yii\queue\monitor\controllers;
 
 use Yii;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
+use zhuravljov\yii\queue\Queue;
 
 /**
  * Class JobController
@@ -20,6 +22,21 @@ use zhuravljov\yii\queue\monitor\records\PushRecord;
  */
 class JobController extends Controller
 {
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        return [
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'push' => ['post'],
+                ],
+            ],
+        ];
+    }
+
     /**
      * Pushed jobs
      *
@@ -46,6 +63,23 @@ class JobController extends Controller
         return $this->render('view', [
             'record' => $this->findRecord($id),
         ]);
+    }
+
+    /**
+     * Pushes job
+     *
+     * @param int $id
+     * @return \yii\web\Response
+     */
+    public function actionPush($id)
+    {
+        $push = $this->findRecord($id);
+        /** @var Queue $queue */
+        $queue = Yii::$app->get($push->sender);
+        $uid = $queue->push(unserialize($push->job_object));
+        $newPush = PushRecord::find()->byJob($push->sender, $uid)->one();
+
+        return $this->redirect(['view', 'id' => $newPush->id]);
     }
 
     /**

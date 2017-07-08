@@ -115,10 +115,7 @@ class Bootstrap extends Object implements BootstrapInterface
     protected function getPushRecord(JobEvent $event)
     {
         return PushRecord::find()
-            ->andWhere(['sender' => $this->getSenderName($event)])
-            ->andWhere(['job_uid' => $event->id])
-            ->orderBy(['id' => SORT_DESC])
-            ->limit(1)
+            ->byJob($this->getSenderName($event), $event->id)
             ->one();
     }
 }
