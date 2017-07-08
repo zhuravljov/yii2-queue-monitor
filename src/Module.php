@@ -7,12 +7,16 @@
 
 namespace zhuravljov\yii\queue\monitor;
 
+use yii\base\BootstrapInterface;
+use yii\base\InvalidConfigException;
+use yii\web\Application as WebApplication;
+
 /**
  * Class Config
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
-class Module extends \yii\base\Module
+class Module extends \yii\base\Module implements BootstrapInterface
 {
     /**
      * @inheritdoc
@@ -26,10 +30,16 @@ class Module extends \yii\base\Module
     /**
      * @inheritdoc
      */
-    public function init()
+    public function bootstrap($app)
     {
-        parent::init();
-
-        // custom initialization code goes here
+        if ($app instanceof WebApplication) {
+            $app->urlManager->addRules([
+                $this->id . '/<controller:\w+>/<id:\d+>' => $this->id . '/<controller>/view',
+                $this->id . '/<controller:\w+>/<action\w+>/<id:\d+>' => $this->id . '/<controller>/<action>',
+                $this->id . '/<controller:\w+>/<action\w+>' => $this->id . '/<controller>/<action>',
+            ], false);
+        } else {
+            throw new InvalidConfigException('The module must be used for web application only.');
+        }
     }
 }
