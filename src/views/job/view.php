@@ -17,7 +17,25 @@ $this->params['breadcrumbs'][]  = '#' . $record->id;
             'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
         ]) ?>
     </p>
-    <?= DetailView::widget([
-        'model' => $record,
-    ]) ?>
+    <div class="row">
+        <div class="col-lg-5">
+            <?= DetailView::widget([
+                'model' => $record,
+                'attributes' => [
+                    'sender',
+                    'job_uid',
+                    'job_class',
+                    'ttr',
+                    'delay',
+                    'pushed_at:relativeTime',
+                    'status',
+                ],
+            ]) ?>
+        </div>
+        <div class="col-lg-7">
+            <div class="well">
+                <?= \yii\helpers\VarDumper::dumpAsString(unserialize($record->job_object), 10, true) ?>
+            </div>
+        </div>
+    </div>
 </div>
