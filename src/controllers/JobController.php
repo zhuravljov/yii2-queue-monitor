@@ -13,7 +13,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
-use zhuravljov\yii\queue\Queue;
+use yii\queue\Queue;
 
 /**
  * Class JobController

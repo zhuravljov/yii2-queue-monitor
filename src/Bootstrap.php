@@ -13,13 +13,13 @@ use yii\base\Event;
 use yii\base\InvalidConfigException;
 use yii\base\Object;
 use yii\db\Connection;
-use zhuravljov\yii\queue\ErrorEvent;
-use zhuravljov\yii\queue\ExecEvent;
-use zhuravljov\yii\queue\JobEvent;
+use yii\queue\ErrorEvent;
+use yii\queue\ExecEvent;
+use yii\queue\JobEvent;
 use zhuravljov\yii\queue\monitor\records\ExecRecord;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
-use zhuravljov\yii\queue\PushEvent;
-use zhuravljov\yii\queue\Queue;
+use yii\queue\PushEvent;
+use yii\queue\Queue;
 
 /**
  * Class Bootstrap

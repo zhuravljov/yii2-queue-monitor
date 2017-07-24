@@ -17,12 +17,7 @@
     "require": {
         "php": ">=5.5.0",
         "yiisoft/yii2": "~2.0.10",
-        "zhuravljov/yii2-queue": "1.1.x-dev"
-    },
-    "autoload": {
-        "psr-4": {
-            "zhuravljov\\yii\\queue\\monitor\\": "src"
-        }
+        "yiisoft/yii2-queue": "~2.0.0"
     },
     "repositories": [
         {
@@ -30,6 +25,11 @@
             "url": "https://asset-packagist.org"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "zhuravljov\\yii\\queue\\monitor\\": "src"
+        }
+    },
     "extra": {
         "bootstrap": "zhuravljov\\yii\\queue\\monitor\\Bootstrap"
     }
