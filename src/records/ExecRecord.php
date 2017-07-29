@@ -9,7 +9,7 @@ namespace zhuravljov\yii\queue\monitor\records;
 
 use Yii;
 use yii\db\ActiveRecord;
-use zhuravljov\yii\queue\monitor\Config;
+use zhuravljov\yii\queue\monitor\Env;
 
 /**
  * Class ExecRecord
@@ -42,7 +42,7 @@ class ExecRecord extends ActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$container->get(Config::class)->db;
+        return Yii::$container->get(Env::class)->db;
     }
 
     /**
@@ -50,7 +50,7 @@ class ExecRecord extends ActiveRecord
      */
     public static function tableName()
     {
-        return Yii::$container->get(Config::class)->execTableName;
+        return Yii::$container->get(Env::class)->execTableName;
     }
 
     /**

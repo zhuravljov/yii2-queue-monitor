@@ -8,37 +8,48 @@
 namespace zhuravljov\yii\queue\monitor;
 
 use Yii;
-use yii\base\BootstrapInterface;
-use yii\base\Event;
 use yii\base\InvalidConfigException;
-use yii\base\Object;
-use yii\db\Connection;
 use yii\queue\ErrorEvent;
 use yii\queue\ExecEvent;
 use yii\queue\JobEvent;
-use zhuravljov\yii\queue\monitor\records\ExecRecord;
-use zhuravljov\yii\queue\monitor\records\PushRecord;
 use yii\queue\PushEvent;
 use yii\queue\Queue;
+use zhuravljov\yii\queue\monitor\records\ExecRecord;
+use zhuravljov\yii\queue\monitor\records\PushRecord;
 
 /**
- * Class Bootstrap
+ * Queue Monitor Behavior
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
-class Bootstrap extends Object implements BootstrapInterface
+class Behavior extends \yii\base\Behavior
 {
+    /**
+     * @var Env
+     */
+    protected $env;
+
+    /**
+     * @param Env $env
+     * @param array $config
+     */
+    public function __construct(Env $env, $config = [])
+    {
+        $this->env = $env;
+        parent::__construct($config);
+    }
+
     /**
      * @inheritdoc
      */
-    public function bootstrap($app)
+    public function events()
     {
-        Yii::$container->setSingleton(Config::class);
-
-        Event::on(Queue::class, Queue::EVENT_AFTER_PUSH, [$this, 'afterPush']);
-        Event::on(Queue::class, Queue::EVENT_BEFORE_EXEC, [$this, 'beforeExec']);
-        Event::on(Queue::class, Queue::EVENT_AFTER_EXEC, [$this, 'afterExec']);
-        Event::on(Queue::class, Queue::EVENT_AFTER_ERROR, [$this, 'afterError']);
+        return [
+            Queue::EVENT_AFTER_PUSH => 'afterPush',
+            Queue::EVENT_BEFORE_EXEC => 'beforeExec',
+            Queue::EVENT_AFTER_EXEC => 'afterExec',
+            Queue::EVENT_AFTER_ERROR => 'afterError',
+        ];
     }
 
     public function afterPush(PushEvent $event)
@@ -58,9 +69,7 @@ class Bootstrap extends Object implements BootstrapInterface
 
     public function beforeExec(ExecEvent $event)
     {
-        /** @var Connection $db */
-        $db = Yii::$container->get(Config::class)->db;
-        $db->transaction(function () use ($event) {
+        $this->env->db->transaction(function () use ($event) {
             if ($push = $this->getPushRecord($event)) {
                 $exec = new ExecRecord();
                 $exec->push_id = $push->id;

@@ -12,11 +12,11 @@ use yii\db\Connection;
 use yii\di\Instance;
 
 /**
- * Class Config
+ * Class Env
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
-class Config extends Object
+class Env extends Object
 {
     /**
      * @var Connection|array|string

@@ -29,8 +29,5 @@
         "psr-4": {
             "zhuravljov\\yii\\queue\\monitor\\": "src"
         }
-    },
-    "extra": {
-        "bootstrap": "zhuravljov\\yii\\queue\\monitor\\Bootstrap"
     }
 }

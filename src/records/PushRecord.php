@@ -9,7 +9,7 @@ namespace zhuravljov\yii\queue\monitor\records;
 
 use Yii;
 use yii\db\ActiveRecord;
-use zhuravljov\yii\queue\monitor\Config;
+use zhuravljov\yii\queue\monitor\Env;
 
 /**
  * Class PushRecord
@@ -54,7 +54,7 @@ class PushRecord extends ActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$container->get(Config::class)->db;
+        return Yii::$container->get(Env::class)->db;
     }
 
     /**
@@ -62,7 +62,7 @@ class PushRecord extends ActiveRecord
      */
     public static function tableName()
     {
-        return Yii::$container->get(Config::class)->pushTableName;
+        return Yii::$container->get(Env::class)->pushTableName;
     }
 
     /**
