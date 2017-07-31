@@ -17,7 +17,8 @@
     "require": {
         "php": ">=5.5.0",
         "yiisoft/yii2": "~2.0.10",
-        "yiisoft/yii2-queue": "~2.0.0"
+        "yiisoft/yii2-queue": "~2.0.0",
+        "yiisoft/yii2-bootstrap": "~2.0.0"
     },
     "repositories": [
         {

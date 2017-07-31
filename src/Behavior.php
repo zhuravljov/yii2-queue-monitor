@@ -89,6 +89,8 @@ class Behavior extends \yii\base\Behavior
         if ($push = $this->getPushRecord($event)) {
             ExecRecord::updateAll([
                 'done_at' => time(),
+                'error' => null,
+                'retry' => false,
             ], [
                 'id' => $push->last_exec_id
             ]);

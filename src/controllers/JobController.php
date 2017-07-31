@@ -89,7 +89,7 @@ class JobController extends Controller
      */
     protected function findRecord($id)
     {
-        if ($record = PushRecord::findOne($id)) {
+        if ($record = PushRecord::find()->byId($id)->one()) {
             return $record;
         } else {
             throw new NotFoundHttpException('Record not found.');
