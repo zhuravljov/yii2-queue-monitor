@@ -9,7 +9,9 @@ namespace zhuravljov\yii\queue\monitor\controllers;
 
 use Yii;
 use yii\filters\VerbFilter;
+use yii\queue\Job;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
@@ -72,13 +74,24 @@ class JobController extends Controller
      *
      * @param int $id
      * @return \yii\web\Response
+     * @throws ForbiddenHttpException
      */
     public function actionPush($id)
     {
         $push = $this->findRecord($id);
+
         /** @var Queue $queue */
         $queue = Yii::$app->get($push->sender);
-        $uid = $queue->push(unserialize($push->job_object));
+        if (!($queue instanceof Queue)) {
+            throw new ForbiddenHttpException("$push->sender component not found.");
+        }
+
+        $job = unserialize($push->job_object);
+        if (is_object($job) && !($job instanceof Job)) {
+            throw new ForbiddenHttpException('Job object must be ' . Job::class);
+        }
+
+        $uid = $queue->push($job);
         $newPush = PushRecord::find()->byJob($push->sender, $uid)->one();
 
         return $this->redirect(['view', 'id' => $newPush->id]);
