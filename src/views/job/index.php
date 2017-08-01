@@ -30,6 +30,7 @@ $this->params['breadcrumbs'][]  = 'Jobs';
                         'template' => '{view}'
                     ],
                 ],
+                'tableOptions' => ['class' => 'table'],
             ]) ?>
         </div>
     </div>
