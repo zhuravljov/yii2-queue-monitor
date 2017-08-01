@@ -4,8 +4,10 @@
  * @var JobFilter $filter
  */
 
+use yii\bootstrap\Html;
 use yii\grid\GridView;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
+use zhuravljov\yii\queue\monitor\records\PushRecord;
 
 $this->params['breadcrumbs'][]  = ['label' => 'Jobs', 'url' => ['index']];
 if ($filtered = JobFilter::restoreParams()) {
@@ -35,6 +37,21 @@ if ($filtered = JobFilter::restoreParams()) {
                     ],
                 ],
                 'tableOptions' => ['class' => 'table'],
+                'rowOptions' => function (PushRecord $push) {
+                    $options = [];
+                    switch ($push->getStatus()) {
+                        case PushRecord::STATUS_WAITING:
+                        case PushRecord::STATUS_STARTED:
+                        case PushRecord::STATUS_RESTARTED:
+                            Html::addCssClass($options, 'active');
+                            break;
+                        case PushRecord::STATUS_FAILED:
+                        case PushRecord::STATUS_BURIED:
+                            Html::addCssClass($options, 'warning text-warning');
+                            break;
+                    }
+                    return $options;
+                }
             ]) ?>
         </div>
     </div>
