@@ -1,12 +1,16 @@
 <?php
 /**
  * @var \yii\web\View $this
- * @var \zhuravljov\yii\queue\monitor\filters\JobFilter $filter
+ * @var JobFilter $filter
  */
 
 use yii\grid\GridView;
+use zhuravljov\yii\queue\monitor\filters\JobFilter;
 
-$this->params['breadcrumbs'][]  = 'Jobs';
+$this->params['breadcrumbs'][]  = ['label' => 'Jobs', 'url' => ['index']];
+if ($filtered = JobFilter::restoreParams()) {
+    $this->params['breadcrumbs'][]  = ['label' => 'Filtered', 'url' => ['index'] + $filtered];
+}
 ?>
 <div class="monitor-job-index">
     <div class="row">

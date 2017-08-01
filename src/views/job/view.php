@@ -4,8 +4,13 @@
  * @var \zhuravljov\yii\queue\monitor\records\PushRecord $record
  */
 
+use zhuravljov\yii\queue\monitor\filters\JobFilter;
+
 $this->params['breadcrumbs'][] = ['label' => 'Jobs', 'url' => ['index']];
-$this->params['breadcrumbs'][]  = '#' . $record->id;
+if ($filtered = JobFilter::restoreParams()) {
+    $this->params['breadcrumbs'][] = ['label' => 'Filtered', 'url' => ['index'] + $filtered];
+}
+$this->params['breadcrumbs'][]  = $record->job_uid . ' job pushed by ' . $record->sender;
 ?>
 <div class="monitor-job-view">
     <p>

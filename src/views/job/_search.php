@@ -5,7 +5,6 @@
  */
 
 use yii\bootstrap\ActiveForm;
-use yii\bootstrap\Html;
 ?>
 <div class="monitor-job-search">
     <?php $form = ActiveForm::begin([
@@ -18,13 +17,15 @@ use yii\bootstrap\Html;
             <?= $form->field($filter, 'status')->dropDownList($filter->statusList(), ['prompt' => '']) ?>
         </div>
         <div class="col-lg-12 col-md-4 col-sm-6">
-            <?= $form->field($filter, 'sender') ?>
+            <?= $form->field($filter, 'sender')->textInput(['list' => 'job-sender']) ?>
+            <?= $this->render('_data-list', ['id' => 'job-sender', 'values' => $filter->senderList()]) ?>
         </div>
         <div class="col-lg-12 col-md-4 col-sm-6">
             <?= $form->field($filter, 'uid') ?>
         </div>
         <div class="col-lg-12 col-md-4 col-sm-6">
-            <?= $form->field($filter, 'class') ?>
+            <?= $form->field($filter, 'class')->textInput(['list' => 'job-class']) ?>
+            <?= $this->render('_data-list', ['id' => 'job-class', 'values' => $filter->classList()]) ?>
         </div>
         <div class="col-lg-12 col-md-4 col-sm-6">
             <?= $form->field($filter, 'delay') ?>
@@ -33,6 +34,9 @@ use yii\bootstrap\Html;
             <?= $form->field($filter, 'pushed') ?>
         </div>
     </div>
-    <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+    <button type="submit" class="btn btn-primary">
+        <span class="glyphicon glyphicon-search"></span>
+        Search
+    </button>
     <?php ActiveForm::end() ?>
 </div>

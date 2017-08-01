@@ -46,6 +46,7 @@ class JobController extends Controller
     {
         $filter = new JobFilter();
         $filter->load(Yii::$app->request->queryParams) && $filter->validate();
+        JobFilter::storeParams($filter);
 
         return $this->render('index', [
             'filter' => $filter,

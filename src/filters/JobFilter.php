@@ -7,6 +7,7 @@
 
 namespace zhuravljov\yii\queue\monitor\filters;
 
+use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use zhuravljov\yii\queue\monitor\records\PushQuery;
@@ -94,5 +95,51 @@ class JobFilter extends Model
             self::STATUS_BURIED => 'Buried',
             self::STATUS_HAS_FAILS => 'Has failed attempts',
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function senderList()
+    {
+        return PushRecord::find()
+            ->select('p.sender')
+            ->groupBy('p.sender')
+            ->orderBy('p.sender')
+            ->column();
+    }
+
+    /**
+     * @return array
+     */
+    public function classList()
+    {
+        return PushRecord::find()
+            ->select('p.job_class')
+            ->groupBy('p.job_class')
+            ->orderBy('p.job_class')
+            ->column();
+    }
+
+    /**
+     * @param JobFilter $filter
+     */
+    public static function storeParams(JobFilter $filter)
+    {
+        $params = [];
+        foreach ($filter->attributes as $attribute => $value) {
+            if ($value !== null && $value !== '') {
+                $params[$attribute] = $value;
+            }
+        }
+        Yii::$app->session->set(JobFilter::class, $params);
+    }
+
+    /**
+     * @return array
+     */
+    public static function restoreParams()
+    {
+        return Yii::$app->session->get(JobFilter::class, []);
     }
 }
