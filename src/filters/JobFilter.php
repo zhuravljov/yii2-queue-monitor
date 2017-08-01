@@ -10,6 +10,7 @@ namespace zhuravljov\yii\queue\monitor\filters;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use zhuravljov\yii\queue\monitor\Env;
 use zhuravljov\yii\queue\monitor\records\PushQuery;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
 
@@ -33,6 +34,21 @@ class JobFilter extends Model
     public $delay;
     public $pushed;
     public $status;
+
+    /**
+     * @var Env
+     */
+    private $env;
+
+    /**
+     * @param Env $env
+     * @param array $config
+     */
+    public function __construct(Env $env, $config = [])
+    {
+        $this->env = $env;
+        parent::__construct($config);
+    }
 
     public function formName()
     {
@@ -102,11 +118,13 @@ class JobFilter extends Model
      */
     public function senderList()
     {
-        return PushRecord::find()
-            ->select('p.sender')
-            ->groupBy('p.sender')
-            ->orderBy('p.sender')
-            ->column();
+        return $this->env->cache->getOrSet(__METHOD__, function () {
+            return PushRecord::find()
+                ->select('p.sender')
+                ->groupBy('p.sender')
+                ->orderBy('p.sender')
+                ->column();
+        }, 3600);
     }
 
     /**
@@ -114,11 +132,13 @@ class JobFilter extends Model
      */
     public function classList()
     {
-        return PushRecord::find()
-            ->select('p.job_class')
-            ->groupBy('p.job_class')
-            ->orderBy('p.job_class')
-            ->column();
+        return $this->env->cache->getOrSet(__METHOD__, function () {
+            return PushRecord::find()
+                ->select('p.job_class')
+                ->groupBy('p.job_class')
+                ->orderBy('p.job_class')
+                ->column();
+        }, 3600);
     }
 
     /**

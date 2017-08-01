@@ -8,6 +8,7 @@
 namespace zhuravljov\yii\queue\monitor;
 
 use yii\base\Object;
+use yii\caching\Cache;
 use yii\db\Connection;
 use yii\di\Instance;
 
@@ -18,6 +19,10 @@ use yii\di\Instance;
  */
 class Env extends Object
 {
+    /**
+     * @var Cache|array|string
+     */
+    public $cache = 'cache';
     /**
      * @var Connection|array|string
      */
@@ -37,6 +42,7 @@ class Env extends Object
     public function init()
     {
         parent::init();
+        $this->cache = Instance::ensure($this->cache, Cache::class);
         $this->db = Instance::ensure($this->db, Connection::class);
     }
 

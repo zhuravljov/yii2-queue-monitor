@@ -44,7 +44,8 @@ class JobController extends Controller
      */
     public function actionIndex()
     {
-        $filter = new JobFilter();
+        /** @var JobFilter $filter */
+        $filter = Yii::createObject(JobFilter::class);
         $filter->load(Yii::$app->request->queryParams) && $filter->validate();
         JobFilter::storeParams($filter);
 
