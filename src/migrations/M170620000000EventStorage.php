@@ -24,8 +24,8 @@ class M170620000000EventStorage extends Migration
     {
         $this->createTable($this->pushTableName, [
             'id' => $this->primaryKey(),
-            'sender' => $this->string(64)->notNull(),
-            'job_uid' => $this->string(16)->notNull(),
+            'sender' => $this->string(32)->notNull(),
+            'job_uid' => $this->string(32)->notNull(),
             'job_class' => $this->string()->notNull(),
             'job_object' => $this->binary()->notNull(),
             'ttr' => $this->integer()->notNull(),
