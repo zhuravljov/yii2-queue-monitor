@@ -30,7 +30,7 @@ $format = Yii::$app->formatter;
             </tr>
             <?php if ($exec->error !== null): ?>
                 <tr class="warning text-warning">
-                    <td colspan="4">
+                    <td colspan="4" style="word-break: break-all">
                         <?= nl2br(Html::encode($exec->error)) ?>
                     </td>
                 </tr>
