@@ -54,21 +54,23 @@ class Behavior extends \yii\base\Behavior
 
     public function afterPush(PushEvent $event)
     {
-        if ($event->id !== null) {
-            $push = new PushRecord();
-            $push->sender = $this->getSenderName($event);
-            $push->job_uid = $event->id;
-            $push->job_class = get_class($event->job);
-            $push->job_object = serialize($event->job);
-            $push->ttr = $event->ttr;
-            $push->delay = $event->delay;
-            $push->pushed_at = time();
-            $push->save(false);
-        }
+        $this->checkEvent($event);
+
+        $push = new PushRecord();
+        $push->sender = $this->getSenderName($event);
+        $push->job_uid = $event->id;
+        $push->job_class = get_class($event->job);
+        $push->job_object = serialize($event->job);
+        $push->ttr = $event->ttr;
+        $push->delay = $event->delay;
+        $push->pushed_at = time();
+        $push->save(false);
     }
 
     public function beforeExec(ExecEvent $event)
     {
+        $this->checkEvent($event);
+
         $this->env->db->transaction(function () use ($event) {
             if ($push = $this->getPushRecord($event)) {
                 $exec = new ExecRecord();
@@ -86,6 +88,8 @@ class Behavior extends \yii\base\Behavior
 
     public function afterExec(ExecEvent $event)
     {
+        $this->checkEvent($event);
+
         if ($push = $this->getPushRecord($event)) {
             ExecRecord::updateAll([
                 'done_at' => time(),
@@ -99,6 +103,8 @@ class Behavior extends \yii\base\Behavior
 
     public function afterError(ErrorEvent $event)
     {
+        $this->checkEvent($event);
+
         if ($push = $this->getPushRecord($event)) {
             ExecRecord::updateAll([
                 'done_at' => time(),
@@ -137,6 +143,19 @@ class Behavior extends \yii\base\Behavior
                 ->one();
         } else {
             return null;
+        }
+    }
+
+    /**
+     * @param JobEvent $event
+     * @throws InvalidConfigException
+     */
+    private function checkEvent(JobEvent $event)
+    {
+        if ($event->id === null) {
+            throw new InvalidConfigException(strtr('Queue monitor does not support {class}.', [
+                '{class}' => get_class($event->sender),
+            ]));
         }
     }
 }
