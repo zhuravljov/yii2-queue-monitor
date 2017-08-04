@@ -9,6 +9,7 @@ namespace zhuravljov\yii\queue\monitor;
 
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\base\NotSupportedException;
 use yii\queue\ErrorEvent;
 use yii\queue\ExecEvent;
 use yii\queue\JobEvent;
@@ -150,12 +151,12 @@ class Behavior extends \yii\base\Behavior
 
     /**
      * @param JobEvent $event
-     * @throws InvalidConfigException
+     * @throws
      */
     private function checkEvent(JobEvent $event)
     {
         if ($event->id === null) {
-            throw new InvalidConfigException(strtr('Queue monitor does not support {class}.', [
+            throw new  NotSupportedException(strtr('Queue monitor does not support {class}.', [
                 '{class}' => get_class($event->sender),
             ]));
         }
