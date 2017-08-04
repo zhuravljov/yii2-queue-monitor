@@ -9,9 +9,11 @@ use yii\grid\GridView;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
 
-$this->params['breadcrumbs'][]  = ['label' => 'Jobs', 'url' => ['index']];
-if ($filtered = JobFilter::restoreParams()) {
-    $this->params['breadcrumbs'][]  = ['label' => 'Filtered', 'url' => ['index'] + $filtered];
+if (!JobFilter::restoreParams()) {
+    $this->params['breadcrumbs'][] = 'Jobs';
+} else {
+    $this->params['breadcrumbs'][] = ['label' => 'Jobs', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = 'Filtered';
 }
 ?>
 <div class="monitor-job-index">

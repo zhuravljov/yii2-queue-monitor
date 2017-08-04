@@ -10,6 +10,8 @@ use yii\grid\GridView;
 use zhuravljov\yii\queue\monitor\records\ExecRecord;
 
 echo $this->render('_view-nav', ['record' => $record]);
+
+$this->params['breadcrumbs'][] = 'Attempts';
 ?>
 <div class="monitor-job-attempts">
     <?= GridView::widget([
@@ -41,7 +43,7 @@ echo $this->render('_view-nav', ['record' => $record]);
                     }
                 },
             ],
-            'retry:boolean:Must Retry',
+            'retry:boolean',
         ],
         'rowOptions' => function (ExecRecord $record) {
             $options = [];

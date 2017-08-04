@@ -7,6 +7,8 @@
 use yii\widgets\DetailView;
 
 echo $this->render('_view-nav', ['record' => $record]);
+
+$this->params['breadcrumbs'][] = 'Details';
 ?>
 <div class="monitor-job-details">
     <?= DetailView::widget([

@@ -18,7 +18,7 @@ if ($filtered = JobFilter::restoreParams()) {
     ];
 }
 $this->params['breadcrumbs'][]  = [
-    'label' => $record->job_uid . ' job pushed by ' . $record->sender,
+    'label' => 'Job ' . $record->job_uid . ' by ' . $record->sender,
     'url' => ['view', 'id' => $record->id],
 ];
 ?>
