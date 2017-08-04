@@ -11,7 +11,6 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\queue\Job;
 use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
@@ -98,23 +97,26 @@ class JobController extends Controller
      */
     public function actionPush($id)
     {
-        $push = $this->findRecord($id);
+        $record = $this->findRecord($id);
 
         /** @var Queue $queue */
-        $queue = Yii::$app->get($push->sender);
+        $queue = Yii::$app->get($record->sender, false);
         if (!($queue instanceof Queue)) {
-            throw new ForbiddenHttpException("$push->sender component not found.");
+            Yii::$app->session->setFlash('error', "The job isn't pushed because $record->sender component isn't found.");
+            return $this->redirect(['view-details', 'id' => $record->id]);
         }
 
-        $job = unserialize($push->job_object);
-        if (is_object($job) && !($job instanceof Job)) {
-            throw new ForbiddenHttpException('Job object must be ' . Job::class);
+        $job = unserialize($record->job_object);
+        if (gettype($job) === 'object' && !($job instanceof Job)) {
+            Yii::$app->session->setFlash('error', 'The job isn\'t pushed because object must be ' . Job::class . '.');
+            return $this->redirect(['view-data', 'id' => $record->id]);
         }
 
         $uid = $queue->push($job);
-        $newPush = PushRecord::find()->byJob($push->sender, $uid)->one();
+        $newRecord = PushRecord::find()->byJob($record->sender, $uid)->one();
+        Yii::$app->session->setFlash('success', 'The job is pushed again.');
 
-        return $this->redirect(['view', 'id' => $newPush->id]);
+        return $this->redirect(['view', 'id' => $newRecord->id]);
     }
 
     /**
