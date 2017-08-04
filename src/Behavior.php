@@ -90,7 +90,8 @@ class Behavior extends \yii\base\Behavior
     {
         $this->checkEvent($event);
 
-        if ($push = $this->getPushRecord($event)) {
+        $push = $this->getPushRecord($event);
+        if ($push && $push->last_exec_id) {
             ExecRecord::updateAll([
                 'done_at' => time(),
                 'error' => null,
@@ -105,7 +106,8 @@ class Behavior extends \yii\base\Behavior
     {
         $this->checkEvent($event);
 
-        if ($push = $this->getPushRecord($event)) {
+        $push = $this->getPushRecord($event);
+        if ($push && $push->last_exec_id) {
             ExecRecord::updateAll([
                 'done_at' => time(),
                 'error' => $event->error,
