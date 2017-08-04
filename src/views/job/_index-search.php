@@ -14,7 +14,7 @@ use yii\bootstrap\ActiveForm;
     ]) ?>
     <div class="row">
         <div class="col-lg-12 col-md-4 col-sm-6">
-            <?= $form->field($filter, 'status')->dropDownList($filter->statusList(), ['prompt' => '']) ?>
+            <?= $form->field($filter, 'is')->dropDownList($filter->statusList(), ['prompt' => '']) ?>
         </div>
         <div class="col-lg-12 col-md-4 col-sm-6">
             <?= $form->field($filter, 'sender')->textInput(['list' => 'job-sender']) ?>

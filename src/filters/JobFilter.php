@@ -21,19 +21,19 @@ use zhuravljov\yii\queue\monitor\records\PushRecord;
  */
 class JobFilter extends Model
 {
-    const STATUS_WAITING = 1;
-    const STATUS_IN_PROGRESS = 2;
-    const STATUS_DONE = 3;
-    const STATUS_SUCCESS = 4;
-    const STATUS_BURIED  = 5;
-    const STATUS_HAS_FAILS = 6;
+    const IS_WAITING = 'waiting';
+    const IS_IN_PROGRESS = 'in-progress';
+    const IS_DONE = 'done';
+    const IS_SUCCESS = 'success';
+    const IS_BURIED  = 'buried';
+    const IS_HAVE_FAILS = 'have-fails';
 
+    public $is;
     public $sender;
     public $uid;
     public $class;
     public $delay;
     public $pushed;
-    public $status;
 
     /**
      * @var Env
@@ -58,7 +58,7 @@ class JobFilter extends Model
     public function rules()
     {
         return [
-            [['sender', 'uid', 'class', 'delay', 'pushed', 'status'], 'safe'],
+            [['is', 'sender', 'uid', 'class', 'delay', 'pushed'], 'safe'],
         ];
     }
 
@@ -74,17 +74,17 @@ class JobFilter extends Model
         $query->andFilterWhere(['like', 'p.job_class', $this->class]);
         $query->andFilterCompare('p.delay', $this->delay);
 
-        if ($this->status == self::STATUS_WAITING) {
+        if ($this->is == self::IS_WAITING) {
             $query->waiting();
-        } elseif ($this->status == self::STATUS_IN_PROGRESS) {
+        } elseif ($this->is == self::IS_IN_PROGRESS) {
             $query->inProgress();
-        } elseif ($this->status == self::STATUS_DONE) {
+        } elseif ($this->is == self::IS_DONE) {
             $query->done();
-        } elseif ($this->status == self::STATUS_SUCCESS) {
+        } elseif ($this->is == self::IS_SUCCESS) {
             $query->success();
-        } elseif ($this->status == self::STATUS_BURIED) {
+        } elseif ($this->is == self::IS_BURIED) {
             $query->buried();
-        } elseif ($this->status == self::STATUS_HAS_FAILS) {
+        } elseif ($this->is == self::IS_HAVE_FAILS) {
             $query->hasFails();
         }
 
@@ -98,18 +98,23 @@ class JobFilter extends Model
         ]);
     }
 
+    public function attributeLabels()
+    {
+        return ['is' => 'Status'];
+    }
+
     /**
      * @return array
      */
     public function statusList()
     {
         return [
-            self::STATUS_WAITING => 'Waiting',
-            self::STATUS_IN_PROGRESS => 'In progress',
-            self::STATUS_DONE => 'Done',
-            self::STATUS_SUCCESS => 'Done successfully',
-            self::STATUS_BURIED => 'Buried',
-            self::STATUS_HAS_FAILS => 'Has failed attempts',
+            self::IS_WAITING => 'Waiting',
+            self::IS_IN_PROGRESS => 'In progress',
+            self::IS_DONE => 'Done',
+            self::IS_SUCCESS => 'Done successfully',
+            self::IS_BURIED => 'Buried',
+            self::IS_HAVE_FAILS => 'Have failed attempts',
         ];
     }
 
