@@ -18,6 +18,7 @@ use yii\web\Application as WebApplication;
  */
 class Module extends \yii\base\Module implements BootstrapInterface
 {
+    public $layout = 'main';
     /**
      * @inheritdoc
      */
