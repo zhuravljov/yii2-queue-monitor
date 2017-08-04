@@ -5,8 +5,10 @@
  */
 
 use yii\widgets\DetailView;
+
+echo $this->render('_view-nav', ['record' => $record]);
 ?>
-<div class="monitor-job-push-details">
+<div class="monitor-job-details">
     <?= DetailView::widget([
         'model' => $record,
         'attributes' => [
@@ -18,11 +20,10 @@ use yii\widgets\DetailView;
             'pushed_at:relativeTime',
             [
                 'label' => 'Wait Time',
-                'format' => 'raw',
-                'value' => Yii::$app->formatter->asRelativeTime(
-                    $record->firstExec ? $record->firstExec->reserved_at : null,
-                    $record->pushed_at + $record->delay
-                ),
+                'format' => 'duration',
+                'value' => $record->firstExec
+                    ? $record->firstExec->reserved_at - $record->pushed_at - $record->delay
+                    : null,
             ],
             'status',
         ],

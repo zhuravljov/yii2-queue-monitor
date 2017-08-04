@@ -34,6 +34,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
     {
         if ($app instanceof WebApplication) {
             $app->urlManager->addRules([
+                $this->id . '/job/<id:\d+>/<action\w+>' => $this->id . '/job/view-<action>',
                 $this->id . '/<controller:\w+>/<id:\d+>' => $this->id . '/<controller>/view',
                 $this->id . '/<controller:\w+>/<action\w+>/<id:\d+>' => $this->id . '/<controller>/<action>',
                 $this->id . '/<controller:\w+>/<action\w+>' => $this->id . '/<controller>/<action>',

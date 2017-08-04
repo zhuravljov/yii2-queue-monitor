@@ -41,8 +41,6 @@ class JobController extends Controller
 
     /**
      * Pushed jobs
-     *
-     * @return string
      */
     public function actionIndex()
     {
@@ -57,24 +55,46 @@ class JobController extends Controller
     }
 
     /**
-     * Details of a job
-     *
-     * @param int $id
-     * @return string
+     * Job view
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+        return $this->redirect(['view-details', 'id' => $id]);
+    }
+
+    /**
+     * Push details
+     */
+    public function actionViewDetails($id)
+    {
+        return $this->render('view-details', [
+            'record' => $this->findRecord($id),
+        ]);
+    }
+
+    /**
+     * Job object data
+     */
+    public function actionViewData($id)
+    {
+        return $this->render('view-data', [
+            'record' => $record = $this->findRecord($id),
+            'job' => unserialize($record->job_object),
+        ]);
+    }
+
+    /**
+     * Attempts
+     */
+    public function actionViewAttempts($id)
+    {
+        return $this->render('view-attempts', [
             'record' => $this->findRecord($id),
         ]);
     }
 
     /**
      * Pushes job
-     *
-     * @param int $id
-     * @return \yii\web\Response
-     * @throws ForbiddenHttpException
      */
     public function actionPush($id)
     {
