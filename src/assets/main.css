@@ -23,7 +23,10 @@ body {
     background: url(logo.png) 15px center no-repeat;
     padding-left: 50px;
 }
-
+.not-set {
+    color: #c55;
+    font-style: italic;
+}
 form,
 .alert,
 .nav-tabs {

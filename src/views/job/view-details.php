@@ -23,9 +23,7 @@ $this->params['breadcrumbs'][] = 'Details';
             [
                 'label' => 'Wait Time',
                 'format' => 'duration',
-                'value' => $record->firstExec
-                    ? $record->firstExec->reserved_at - $record->pushed_at - $record->delay
-                    : null,
+                'value' => ($record->firstExec ? $record->firstExec->reserved_at : time()) - ($record->pushed_at + $record->delay),
             ],
             'status',
         ],
