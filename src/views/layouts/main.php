@@ -28,7 +28,7 @@ Asset::register($this);
     <?php
     NavBar::begin([
         'brandLabel' => 'Queue Monitor',
-        'brandUrl' => ['job/index'],
+        'brandUrl' => ['/' . Yii::$app->controller->module->id],
         'options' => ['class' => 'navbar-inverse navbar-fixed-top'],
     ]);
     echo Nav::widget([
