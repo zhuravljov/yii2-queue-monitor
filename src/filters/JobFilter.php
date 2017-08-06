@@ -7,6 +7,7 @@
 
 namespace zhuravljov\yii\queue\monitor\filters;
 
+use DateTime;
 use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
@@ -58,7 +59,15 @@ class JobFilter extends Model
     public function rules()
     {
         return [
-            [['is', 'sender', 'uid', 'class', 'delay', 'pushed'], 'safe'],
+            [['is', 'sender', 'uid', 'class', 'delay', 'pushed'], 'trim'],
+            ['is', 'string'],
+            ['is', 'in', 'range' => array_keys($this->statusList())],
+            ['sender', 'string'],
+            ['uid', 'string'],
+            ['class', 'string'],
+            ['delay', 'string'],
+            ['pushed', 'string'],
+            ['pushed', 'match', 'pattern' => '/^\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/'],
         ];
     }
 
@@ -69,23 +78,26 @@ class JobFilter extends Model
     {
         $query = PushRecord::find()->with('lastExec');
 
-        $query->andFilterWhere(['p.sender' => $this->sender]);
-        $query->andFilterWhere(['p.job_uid' => $this->uid]);
-        $query->andFilterWhere(['like', 'p.job_class', $this->class]);
-        $query->andFilterCompare('p.delay', $this->delay);
+        if (!$this->hasErrors()) {
+            $query->andFilterWhere(['p.sender' => $this->sender]);
+            $query->andFilterWhere(['p.job_uid' => $this->uid]);
+            $query->andFilterWhere(['like', 'p.job_class', $this->class]);
+            $query->andFilterCompare('p.delay', $this->delay);
+            $this->filterDateRange($query, 'p.pushed_at', $this->pushed);
 
-        if ($this->is == self::IS_WAITING) {
-            $query->waiting();
-        } elseif ($this->is == self::IS_IN_PROGRESS) {
-            $query->inProgress();
-        } elseif ($this->is == self::IS_DONE) {
-            $query->done();
-        } elseif ($this->is == self::IS_SUCCESS) {
-            $query->success();
-        } elseif ($this->is == self::IS_BURIED) {
-            $query->buried();
-        } elseif ($this->is == self::IS_HAVE_FAILS) {
-            $query->hasFails();
+            if ($this->is == self::IS_WAITING) {
+                $query->waiting();
+            } elseif ($this->is == self::IS_IN_PROGRESS) {
+                $query->inProgress();
+            } elseif ($this->is == self::IS_DONE) {
+                $query->done();
+            } elseif ($this->is == self::IS_SUCCESS) {
+                $query->success();
+            } elseif ($this->is == self::IS_BURIED) {
+                $query->buried();
+            } elseif ($this->is == self::IS_HAVE_FAILS) {
+                $query->hasFails();
+            }
         }
 
         return new ActiveDataProvider([
@@ -98,9 +110,45 @@ class JobFilter extends Model
         ]);
     }
 
+    /**
+     * @param PushQuery $query
+     * @param string $name
+     * @param string $value
+     */
+    private function filterDateRange(PushQuery $query, $name, $value)
+    {
+        $limits = explode(' - ', $value, 2);
+        if (count($limits) === 2) {
+            $begin = DateTime::createFromFormat('Y-m-d', $limits[0]);
+            $end = DateTime::createFromFormat('Y-m-d', $limits[1]);
+            if ($begin && $end) {
+                $begin->setTime(0, 0, 0);
+                $end->setTime(23, 59, 59);
+                $query->andWhere(['between', $name, $begin->getTimestamp(), $end->getTimestamp()]);
+            }
+        }
+    }
+
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
-        return ['is' => 'Status'];
+        return [
+            'is' => 'Status',
+            'sender' => 'Sender Name',
+            'uid' => 'Job Unique ID',
+            'class' => 'Job Class',
+            'delay' => 'Delay',
+            'pushed' => 'Pushed Between'
+        ];
+    }
+
+    public function attributeHints()
+    {
+        return [
+            'pushed' => 'Format: "YYYY-MM-DD - YYYY-MM-DD".'
+        ];
     }
 
     /**
