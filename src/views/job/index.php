@@ -25,7 +25,14 @@ if (!JobFilter::restoreParams()) {
         </div>
         <div class="col-lg-9 col-lg-pull-3">
             <?= GridView::widget([
-                'dataProvider' => $filter->search(),
+                'dataProvider' => new \yii\data\ActiveDataProvider([
+                    'query' => $filter->search(),
+                    'sort' => [
+                        'defaultOrder' => [
+                            'id' => SORT_DESC,
+                        ],
+                    ],
+                ]),
                 'columns' => [
                     'sender',
                     'job_uid',

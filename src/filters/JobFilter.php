@@ -10,7 +10,6 @@ namespace zhuravljov\yii\queue\monitor\filters;
 use DateTime;
 use Yii;
 use yii\base\Model;
-use yii\data\ActiveDataProvider;
 use zhuravljov\yii\queue\monitor\Env;
 use zhuravljov\yii\queue\monitor\records\PushQuery;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
@@ -77,37 +76,31 @@ class JobFilter extends Model
     public function search()
     {
         $query = PushRecord::find()->with('lastExec');
-
-        if (!$this->hasErrors()) {
-            $query->andFilterWhere(['p.sender' => $this->sender]);
-            $query->andFilterWhere(['p.job_uid' => $this->uid]);
-            $query->andFilterWhere(['like', 'p.job_class', $this->class]);
-            $query->andFilterCompare('p.delay', $this->delay);
-            $this->filterDateRange($query, 'p.pushed_at', $this->pushed);
-
-            if ($this->is == self::IS_WAITING) {
-                $query->waiting();
-            } elseif ($this->is == self::IS_IN_PROGRESS) {
-                $query->inProgress();
-            } elseif ($this->is == self::IS_DONE) {
-                $query->done();
-            } elseif ($this->is == self::IS_SUCCESS) {
-                $query->success();
-            } elseif ($this->is == self::IS_BURIED) {
-                $query->buried();
-            } elseif ($this->is == self::IS_HAVE_FAILS) {
-                $query->hasFails();
-            }
+        if ($this->hasErrors()) {
+            return $query;
         }
 
-        return new ActiveDataProvider([
-            'query' => $query,
-            'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
-                ],
-            ],
-        ]);
+        $query->andFilterWhere(['p.sender' => $this->sender]);
+        $query->andFilterWhere(['p.job_uid' => $this->uid]);
+        $query->andFilterWhere(['like', 'p.job_class', $this->class]);
+        $query->andFilterCompare('p.delay', $this->delay);
+        $this->filterDateRange($query, 'p.pushed_at', $this->pushed);
+
+        if ($this->is == self::IS_WAITING) {
+            $query->waiting();
+        } elseif ($this->is == self::IS_IN_PROGRESS) {
+            $query->inProgress();
+        } elseif ($this->is == self::IS_DONE) {
+            $query->done();
+        } elseif ($this->is == self::IS_SUCCESS) {
+            $query->success();
+        } elseif ($this->is == self::IS_BURIED) {
+            $query->buried();
+        } elseif ($this->is == self::IS_HAVE_FAILS) {
+            $query->hasFails();
+        }
+
+        return $query;
     }
 
     /**
