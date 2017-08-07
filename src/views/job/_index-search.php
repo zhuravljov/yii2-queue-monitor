@@ -5,6 +5,9 @@
  */
 
 use yii\bootstrap\ActiveForm;
+use yii\web\JsExpression;
+use zhuravljov\yii\widgets\DateRangePicker;
+
 ?>
 <div class="monitor-job-search">
     <?php $form = ActiveForm::begin([
@@ -31,7 +34,31 @@ use yii\bootstrap\ActiveForm;
             <?= $form->field($filter, 'delay') ?>
         </div>
         <div class="col-lg-12 col-md-4 col-sm-6">
-            <?= $form->field($filter, 'pushed') ?>
+            <?= $form->field($filter, 'pushed')->widget(DateRangePicker::class, [
+                'clientOptions' => [
+                    'opens' => 'left',
+                    'autoUpdateInput' => false,
+                    'ranges' => [
+                        'Today' => [
+                            new JsExpression('moment()'),
+                            new JsExpression('moment()'),
+                        ],
+                        'Yesterday' => [
+                            new JsExpression('moment().subtract(1, "days")'),
+                            new JsExpression('moment().subtract(1, "days")'),
+                        ],
+                    ],
+                    'locale' => [
+                        'format' => 'YYYY-MM-DD',
+                        'separator' => ' - ',
+                        'cancelLabel' => 'Clear',
+                    ],
+                ],
+                'clientEvents' => [
+                    'apply.daterangepicker' => 'function (ev, picker) { $(this).val(picker.startDate.format(picker.locale.format) + picker.locale.separator + picker.endDate.format(picker.locale.format)); }',
+                    'cancel.daterangepicker' => 'function (ev, picker) { $(this).val(""); }',
+                ],
+            ]) ?>
         </div>
     </div>
     <button type="submit" class="btn btn-primary">

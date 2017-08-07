@@ -137,13 +137,6 @@ class JobFilter extends Model
         ];
     }
 
-    public function attributeHints()
-    {
-        return [
-            'pushed' => 'Format: "YYYY-MM-DD - YYYY-MM-DD".'
-        ];
-    }
-
     /**
      * @return array
      */
