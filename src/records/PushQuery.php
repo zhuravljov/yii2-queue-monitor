@@ -112,6 +112,14 @@ class PushQuery extends ActiveQuery
     /**
      * @return $this
      */
+    public function stopped()
+    {
+        return $this->andWhere(['is not', 'p.stopped_at', null]);
+    }
+
+    /**
+     * @return $this
+     */
     public function joinFirstExec()
     {
         return $this->leftJoin(

@@ -31,6 +31,7 @@ class M170620000000EventStorage extends Migration
             'ttr' => $this->integer()->notNull(),
             'delay' => $this->integer()->notNull(),
             'pushed_at' => $this->integer()->notNull(),
+            'stopped_at' => $this->integer(),
             'first_exec_id' => $this->integer(),
             'last_exec_id' => $this->integer(),
         ], $this->tableOptions);

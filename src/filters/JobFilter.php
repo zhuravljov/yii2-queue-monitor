@@ -27,6 +27,7 @@ class JobFilter extends Model
     const IS_SUCCESS = 'success';
     const IS_BURIED  = 'buried';
     const IS_HAVE_FAILS = 'have-fails';
+    const IS_STOPPED = 'stopped';
 
     public $is;
     public $sender;
@@ -98,6 +99,8 @@ class JobFilter extends Model
             $query->buried();
         } elseif ($this->is == self::IS_HAVE_FAILS) {
             $query->hasFails();
+        } elseif ($this->is == self::IS_STOPPED) {
+            $query->stopped();
         }
 
         return $query;
@@ -149,6 +152,7 @@ class JobFilter extends Model
             self::IS_SUCCESS => 'Done successfully',
             self::IS_BURIED => 'Buried',
             self::IS_HAVE_FAILS => 'Have failed attempts',
+            self::IS_STOPPED => 'Stopped',
         ];
     }
 

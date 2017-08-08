@@ -72,8 +72,13 @@ class Behavior extends \yii\base\Behavior
     {
         $this->checkEvent($event);
 
-        $this->env->db->transaction(function () use ($event) {
-            if ($push = $this->getPushRecord($event)) {
+        if ($push = $this->getPushRecord($event)) {
+            if ($push->isStopped()) {
+                // Rejects job execution in case is stopped
+                $event->handled = true;
+                return;
+            }
+            $this->env->db->transaction(function () use ($event, $push) {
                 $exec = new ExecRecord();
                 $exec->push_id = $push->id;
                 $exec->attempt = $event->attempt;
@@ -83,8 +88,8 @@ class Behavior extends \yii\base\Behavior
                 $push->first_exec_id = $push->first_exec_id ?: $exec->id;
                 $push->last_exec_id = $exec->id;
                 $push->save(false);
-            }
-        });
+            });
+        }
     }
 
     public function afterExec(ExecEvent $event)
@@ -108,6 +113,10 @@ class Behavior extends \yii\base\Behavior
         $this->checkEvent($event);
 
         $push = $this->getPushRecord($event);
+        if ($push->isStopped()) {
+            // Breaks retry in case is stopped
+            $event->retry = false;
+        }
         if ($push && $push->last_exec_id) {
             ExecRecord::updateAll([
                 'done_at' => time(),

@@ -22,6 +22,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property integer $ttr
  * @property integer $delay
  * @property integer $pushed_at
+ * @property integer $stopped_at
  * @property integer $first_exec_id
  * @property integer $last_exec_id
  *
@@ -33,6 +34,7 @@ use zhuravljov\yii\queue\monitor\Env;
  */
 class PushRecord extends ActiveRecord
 {
+    const STATUS_STOPPED = 'stopped';
     const STATUS_WAITING = 'waiting';
     const STATUS_STARTED = 'started';
     const STATUS_DONE = 'done';
@@ -94,6 +96,9 @@ class PushRecord extends ActiveRecord
      */
     public function getStatus()
     {
+        if ($this->isStopped()) {
+            return self::STATUS_STOPPED;
+        }
         if (!$this->lastExec) {
             return self::STATUS_WAITING;
         }
@@ -113,5 +118,36 @@ class PushRecord extends ActiveRecord
             return self::STATUS_BURIED;
         }
         return null;
+    }
+
+    /**
+     * @return bool marked as stopped
+     */
+    public function isStopped()
+    {
+        return !!$this->stopped_at;
+    }
+
+    /**
+     * @return bool ability to mark as stopped
+     */
+    public function canStop()
+    {
+        if ($this->isStopped()) {
+            return false;
+        }
+        if ($this->lastExec && $this->lastExec->done_at && !$this->lastExec->retry) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Marks as stopped
+     */
+    public function stop()
+    {
+        $this->stopped_at = time();
+        $this->save(false);
     }
 }

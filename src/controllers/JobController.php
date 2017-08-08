@@ -33,6 +33,7 @@ class JobController extends Controller
                 'class' => VerbFilter::class,
                 'actions' => [
                     'push' => ['post'],
+                    'stop' => ['post'],
                 ],
             ],
         ];
@@ -117,6 +118,29 @@ class JobController extends Controller
         Yii::$app->session->setFlash('success', 'The job is pushed again.');
 
         return $this->redirect(['view', 'id' => $newRecord->id]);
+    }
+
+    /**
+     * Stop
+     */
+    public function actionStop($id)
+    {
+        $record = $this->findRecord($id);
+        if ($record->isStopped()) {
+            Yii::$app->session->setFlash('error', 'The job is already stopped.');
+
+            return $this->redirect(['view-details', 'id' => $record->id]);
+        }
+        if (!$record->canStop()) {
+            Yii::$app->session->setFlash('error', 'The job is done.');
+
+            return $this->redirect(['view-attempts', 'id' => $record->id]);
+        }
+
+        $record->stop();
+        Yii::$app->session->setFlash('success', 'The job will be stopped.');
+
+        return $this->redirect(['view-details', 'id' => $record->id]);
     }
 
     /**

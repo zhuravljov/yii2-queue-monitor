@@ -4,6 +4,7 @@
  * @var \zhuravljov\yii\queue\monitor\records\PushRecord $record
  */
 
+use yii\bootstrap\Html;
 use yii\bootstrap\Nav;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 
@@ -23,13 +24,31 @@ $this->params['breadcrumbs'][]  = [
 ];
 ?>
 <div class="pull-right">
-    <a href="<?= \yii\helpers\Url::to(['push', 'id' => $record->id]) ?>"
-       class="btn btn-primary"
-       data-method="post" data-confirm="Are you sure?"
-        >
-        <span class="glyphicon glyphicon-repeat"></span>
-        Push again
-    </a>
+    <?= Html::a(
+        Html::icon('stop') . ' Stop',
+        ['stop', 'id' => $record->id],
+        [
+            'title' => 'Mark as stopped.',
+            'disabled' => !$record->canStop(),
+            'data' => [
+                'method' => 'post',
+                'confirm' => 'Are you sure?',
+            ],
+            'class' => 'btn btn-' . ($record->canStop() ? 'danger' : 'default'),
+        ]
+    ) ?>
+    <?= Html::a(
+        Html::icon('repeat') . ' Push',
+        ['push', 'id' => $record->id],
+        [
+            'title' => 'Push again.',
+            'data' => [
+                'method' => 'post',
+                'confirm' => 'Are you sure?',
+            ],
+            'class' => 'btn btn-primary',
+        ]
+    ) ?>
 </div>
 <?= Nav::widget([
     'options' => ['class' =>'nav nav-tabs'],
