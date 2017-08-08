@@ -9,16 +9,18 @@ namespace zhuravljov\yii\queue\monitor\records;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\queue\Job;
+use yii\queue\Queue;
 use zhuravljov\yii\queue\monitor\Env;
 
 /**
  * Class PushRecord
  *
  * @property integer $id
- * @property string $sender
+ * @property string $sender_name
  * @property string $job_uid
  * @property string $job_class
- * @property resource $job_object
+ * @property string|resource $job_object
  * @property integer $ttr
  * @property integer $delay
  * @property integer $pushed_at
@@ -41,6 +43,8 @@ class PushRecord extends ActiveRecord
     const STATUS_FAILED = 'failed';
     const STATUS_RESTARTED = 'restarted';
     const STATUS_BURIED = 'buried';
+
+    private $_job;
 
     /**
      * @inheritdoc
@@ -118,6 +122,59 @@ class PushRecord extends ActiveRecord
             return self::STATUS_BURIED;
         }
         return null;
+    }
+
+    /**
+     * @return Queue|object|null
+     */
+    public function getSender()
+    {
+        return Yii::$app->get($this->sender_name, false);
+    }
+
+    /**
+     * @return Job|mixed
+     */
+    public function getJob()
+    {
+        if ($this->_job === null) {
+            $this->_job = unserialize($this->job_object);
+        }
+        return $this->_job;
+    }
+
+    /**
+     * @param Job|mixed
+     */
+    public function setJob($job)
+    {
+        $this->job_class = get_class($job);
+        $this->job_object = serialize($job);
+        $this->_job = null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSenderValid()
+    {
+        return $this->getSender() instanceof Queue;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isJobValid()
+    {
+        return (gettype($this->getJob()) !== 'object') || ($this->getJob() instanceof Job);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canPushAgain()
+    {
+        return $this->isSenderValid() && $this->isJobValid();
     }
 
     /**

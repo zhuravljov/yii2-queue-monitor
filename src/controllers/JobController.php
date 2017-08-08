@@ -14,7 +14,6 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
-use yii\queue\Queue;
 
 /**
  * Class JobController
@@ -78,8 +77,7 @@ class JobController extends Controller
     public function actionViewData($id)
     {
         return $this->render('view-data', [
-            'record' => $record = $this->findRecord($id),
-            'job' => unserialize($record->job_object),
+            'record' => $this->findRecord($id),
         ]);
     }
 
@@ -94,52 +92,47 @@ class JobController extends Controller
     }
 
     /**
-     * Pushes job
+     * Pushes a job again
      */
     public function actionPush($id)
     {
         $record = $this->findRecord($id);
 
-        /** @var Queue $queue */
-        $queue = Yii::$app->get($record->sender, false);
-        if (!($queue instanceof Queue)) {
-            Yii::$app->session->setFlash('error', "The job isn't pushed because $record->sender component isn't found.");
+        if (!$record->isSenderValid()) {
+            Yii::$app->session->setFlash('error', "The job isn't pushed because $record->sender_name component isn't found.");
             return $this->redirect(['view-details', 'id' => $record->id]);
         }
 
-        $job = unserialize($record->job_object);
-        if (gettype($job) === 'object' && !($job instanceof Job)) {
+        if (!$record->isJobValid()) {
             Yii::$app->session->setFlash('error', 'The job isn\'t pushed because object must be ' . Job::class . '.');
             return $this->redirect(['view-data', 'id' => $record->id]);
         }
 
-        $uid = $queue->push($job);
-        $newRecord = PushRecord::find()->byJob($record->sender, $uid)->one();
+        $uid = $record->getSender()->push($record->getJob());
+        $newRecord = PushRecord::find()->byJob($record->sender_name, $uid)->one();
         Yii::$app->session->setFlash('success', 'The job is pushed again.');
-
         return $this->redirect(['view', 'id' => $newRecord->id]);
     }
 
     /**
-     * Stop
+     * Stop a job
      */
     public function actionStop($id)
     {
         $record = $this->findRecord($id);
+
         if ($record->isStopped()) {
             Yii::$app->session->setFlash('error', 'The job is already stopped.');
-
             return $this->redirect(['view-details', 'id' => $record->id]);
         }
+
         if (!$record->canStop()) {
             Yii::$app->session->setFlash('error', 'The job is done.');
-
             return $this->redirect(['view-attempts', 'id' => $record->id]);
         }
 
         $record->stop();
         Yii::$app->session->setFlash('success', 'The job will be stopped.');
-
         return $this->redirect(['view-details', 'id' => $record->id]);
     }
 

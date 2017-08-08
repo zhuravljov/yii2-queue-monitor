@@ -81,7 +81,7 @@ class JobFilter extends Model
             return $query;
         }
 
-        $query->andFilterWhere(['p.sender' => $this->sender]);
+        $query->andFilterWhere(['p.sender_name' => $this->sender]);
         $query->andFilterWhere(['p.job_uid' => $this->uid]);
         $query->andFilterWhere(['like', 'p.job_class', $this->class]);
         $query->andFilterCompare('p.delay', $this->delay);
@@ -163,9 +163,9 @@ class JobFilter extends Model
     {
         return $this->env->cache->getOrSet(__METHOD__, function () {
             return PushRecord::find()
-                ->select('p.sender')
-                ->groupBy('p.sender')
-                ->orderBy('p.sender')
+                ->select('p.sender_name')
+                ->groupBy('p.sender_name')
+                ->orderBy('p.sender_name')
                 ->column();
         }, 3600);
     }

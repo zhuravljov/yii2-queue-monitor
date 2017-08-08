@@ -19,7 +19,7 @@ if ($filtered = JobFilter::restoreParams()) {
     ];
 }
 $this->params['breadcrumbs'][]  = [
-    'label' => 'Job ' . $record->job_uid . ' by ' . $record->sender,
+    'label' => 'Job ' . $record->job_uid . ' by ' . $record->sender_name,
     'url' => ['view', 'id' => $record->id],
 ];
 ?>
@@ -29,16 +29,16 @@ $this->params['breadcrumbs'][]  = [
         ['stop', 'id' => $record->id],
         [
             'title' => 'Mark as stopped.',
-            'disabled' => !$record->canStop(),
             'data' => [
                 'method' => 'post',
                 'confirm' => 'Are you sure?',
             ],
+            'disabled' => !$record->canStop(),
             'class' => 'btn btn-' . ($record->canStop() ? 'danger' : 'default'),
         ]
     ) ?>
     <?= Html::a(
-        Html::icon('repeat') . ' Push',
+        Html::icon('repeat') . ' Push Again',
         ['push', 'id' => $record->id],
         [
             'title' => 'Push again.',
@@ -46,7 +46,8 @@ $this->params['breadcrumbs'][]  = [
                 'method' => 'post',
                 'confirm' => 'Are you sure?',
             ],
-            'class' => 'btn btn-primary',
+            'disabled' => !$record->canPushAgain(),
+            'class' => 'btn btn-' . ($record->canPushAgain() ? 'primary' : 'default'),
         ]
     ) ?>
 </div>

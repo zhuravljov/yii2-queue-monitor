@@ -24,7 +24,7 @@ class M170620000000EventStorage extends Migration
     {
         $this->createTable($this->pushTableName, [
             'id' => $this->primaryKey(),
-            'sender' => $this->string(32)->notNull(),
+            'sender_name' => $this->string(32)->notNull(),
             'job_uid' => $this->string(32)->notNull(),
             'job_class' => $this->string()->notNull(),
             'job_object' => $this->binary()->notNull(),
@@ -35,7 +35,7 @@ class M170620000000EventStorage extends Migration
             'first_exec_id' => $this->integer(),
             'last_exec_id' => $this->integer(),
         ], $this->tableOptions);
-        $this->createIndex('job_uid', $this->pushTableName, ['sender', 'job_uid']);
+        $this->createIndex('job_uid', $this->pushTableName, ['sender_name', 'job_uid']);
         $this->createIndex('first_exec_id', $this->pushTableName, 'first_exec_id');
         $this->createIndex('last_exec_id', $this->pushTableName, 'last_exec_id');
 

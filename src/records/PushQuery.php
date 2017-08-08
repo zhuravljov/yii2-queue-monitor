@@ -29,15 +29,15 @@ class PushQuery extends ActiveQuery
     }
 
     /**
-     * @param string $sender
-     * @param string $uid
+     * @param string $senderName
+     * @param string $jobUid
      * @return $this
      */
-    public function byJob($sender, $uid)
+    public function byJob($senderName, $jobUid)
     {
         return $this
-            ->andWhere(['p.sender' => $sender])
-            ->andWhere(['p.job_uid' => $uid])
+            ->andWhere(['p.sender_name' => $senderName])
+            ->andWhere(['p.job_uid' => $jobUid])
             ->orderBy(['p.id' => SORT_DESC])
             ->limit(1);
     }

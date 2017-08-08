@@ -14,7 +14,7 @@ $this->params['breadcrumbs'][] = 'Details';
     <?= DetailView::widget([
         'model' => $record,
         'attributes' => [
-            'sender',
+            'sender_name',
             'job_uid',
             'job_class',
             'ttr',

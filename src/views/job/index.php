@@ -34,7 +34,7 @@ if (!JobFilter::restoreParams()) {
                     ],
                 ]),
                 'columns' => [
-                    'sender',
+                    'sender_name',
                     'job_uid',
                     'job_class',
                     'delay',

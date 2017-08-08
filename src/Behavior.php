@@ -58,10 +58,9 @@ class Behavior extends \yii\base\Behavior
         $this->checkEvent($event);
 
         $push = new PushRecord();
-        $push->sender = $this->getSenderName($event);
+        $push->sender_name = $this->getSenderName($event);
         $push->job_uid = $event->id;
-        $push->job_class = get_class($event->job);
-        $push->job_object = serialize($event->job);
+        $push->setJob($event->job);
         $push->ttr = $event->ttr;
         $push->delay = $event->delay;
         $push->pushed_at = time();
