@@ -19,7 +19,7 @@ if (!JobFilter::restoreParams()) {
 <div class="monitor-job-index">
     <div class="row">
         <div class="col-lg-3 col-lg-push-9">
-            <?= $this->render('_index-search', [
+            <?= $this->render('_search', [
                 'filter' => $filter,
             ]) ?>
         </div>

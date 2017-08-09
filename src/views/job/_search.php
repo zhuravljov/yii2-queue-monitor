@@ -38,6 +38,7 @@ use zhuravljov\yii\widgets\DateRangePicker;
                 'clientOptions' => [
                     'opens' => 'left',
                     'autoUpdateInput' => false,
+                    'alwaysShowCalendars' => true,
                     'ranges' => [
                         'Today' => [
                             new JsExpression('moment()'),
@@ -47,11 +48,15 @@ use zhuravljov\yii\widgets\DateRangePicker;
                             new JsExpression('moment().subtract(1, "days")'),
                             new JsExpression('moment().subtract(1, "days")'),
                         ],
+                        'Last Week' => [
+                            new JsExpression('moment().subtract(6, "days")'),
+                            new JsExpression('moment()'),
+                        ],
                     ],
                     'locale' => [
                         'format' => 'YYYY-MM-DD',
                         'separator' => ' - ',
-                        'cancelLabel' => 'Clear',
+                        'cancelLabel' => 'For all time',
                     ],
                 ],
                 'clientEvents' => [

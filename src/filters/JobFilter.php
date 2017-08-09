@@ -136,7 +136,7 @@ class JobFilter extends Model
             'uid' => 'Job Unique ID',
             'class' => 'Job Class',
             'delay' => 'Delay',
-            'pushed' => 'Pushed Between'
+            'pushed' => 'Pushed'
         ];
     }
 
