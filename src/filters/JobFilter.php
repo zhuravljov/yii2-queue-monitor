@@ -76,7 +76,7 @@ class JobFilter extends Model
      */
     public function search()
     {
-        $query = PushRecord::find()->with('lastExec');
+        $query = PushRecord::find()->with(['lastExec', 'execCount']);
         if ($this->hasErrors()) {
             return $query;
         }

@@ -40,6 +40,7 @@ if (!JobFilter::restoreParams()) {
                     'delay',
                     'pushed_at:relativeTime',
                     'status',
+                    'execCount.attempts:integer:Attempts',
                     [
                         'class' => \yii\grid\ActionColumn::class,
                         'template' => '{view}'

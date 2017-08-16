@@ -64,7 +64,7 @@ $this->params['breadcrumbs'][]  = [
         ],
         [
             'label' => strtr('Attempts (count)', [
-                'count' => $record->last_exec_id ? $record->lastExec->attempt : 0,
+                'count' => $record->execCount['attempts'] ?: 0,
             ]),
             'url' => ['job/view-attempts', 'id' => $record->id],
         ],

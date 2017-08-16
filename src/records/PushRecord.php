@@ -31,6 +31,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property ExecRecord[] $execs
  * @property ExecRecord|null $firstExec
  * @property ExecRecord|null $lastExec
+ * @property array $execCount
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
@@ -93,6 +94,17 @@ class PushRecord extends ActiveRecord
     public function getLastExec()
     {
         return $this->hasOne(ExecRecord::class, ['id' => 'last_exec_id']);
+    }
+
+    /**
+     * @return ExecQuery
+     */
+    public function getExecCount()
+    {
+        return $this->hasOne(ExecRecord::class, ['push_id' => 'id'])
+            ->select(['push_id', 'attempts' => 'COUNT(*)', 'errors' => 'COUNT(error)'])
+            ->groupBy('push_id')
+            ->asArray();
     }
 
     /**
