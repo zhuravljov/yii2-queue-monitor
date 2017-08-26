@@ -18,9 +18,9 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property integer $push_id
  * @property integer $attempt
  * @property integer $reserved_at
- * @property integer $done_at
- * @property string $error
- * @property integer $retry
+ * @property null|integer $done_at
+ * @property null|string $error
+ * @property null|integer $retry
  *
  * @property PushRecord $push
  *
@@ -28,6 +28,7 @@ use zhuravljov\yii\queue\monitor\Env;
  */
 class ExecRecord extends ActiveRecord
 {
+    private $_errorLine;
     /**
      * @inheritdoc
      * @return ExecQuery the active query used by this AR class.
@@ -59,5 +60,19 @@ class ExecRecord extends ActiveRecord
     public function getPush()
     {
         return $this->hasOne(PushRecord::class, ['id' => 'push_id']);
+    }
+
+    /**
+     * @return false|string first error line
+     */
+    public function getErrorLine()
+    {
+        if ($this->_errorLine === null) {
+            $this->_errorLine = false;
+            if ($this->error !== null) {
+                $this->_errorLine = trim(explode("\n", $this->error, 2)[0]);
+            }
+        }
+        return $this->_errorLine;
     }
 }
