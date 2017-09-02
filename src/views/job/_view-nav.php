@@ -22,9 +22,12 @@ $this->params['breadcrumbs'][]  = [
     'label' => 'Job ' . $record->job_uid . ' by ' . $record->sender_name,
     'url' => ['view', 'id' => $record->id],
 ];
+
+/** @var \zhuravljov\yii\queue\monitor\Module $module */
+$module = Yii::$app->controller->module;
 ?>
 <div class="pull-right">
-    <?= Html::a(
+    <?= !$module->canStop ? '' : Html::a(
         Html::icon('stop') . ' Stop',
         ['stop', 'id' => $record->id],
         [
@@ -37,7 +40,7 @@ $this->params['breadcrumbs'][]  = [
             'class' => 'btn btn-' . ($record->canStop() ? 'danger' : 'default'),
         ]
     ) ?>
-    <?= Html::a(
+    <?= !$module->canPushAgain ? '' : Html::a(
         Html::icon('repeat') . ' Push Again',
         ['push', 'id' => $record->id],
         [

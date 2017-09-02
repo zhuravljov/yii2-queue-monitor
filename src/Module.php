@@ -18,6 +18,17 @@ use yii\web\Application as WebApplication;
  */
 class Module extends \yii\base\Module implements BootstrapInterface
 {
+    /**
+     * @var bool
+     */
+    public $canPushAgain = true;
+    /**
+     * @var bool
+     */
+    public $canStop = true;
+    /**
+     * @inheritdoc
+     */
     public $layout = 'main';
     /**
      * @inheritdoc
@@ -26,7 +37,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
     /**
      * @inheritdoc
      */
-    public $defaultRoute = 'job';
+    public $defaultRoute = 'job/index';
 
     /**
      * @inheritdoc

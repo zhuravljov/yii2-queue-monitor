@@ -11,9 +11,11 @@ use Yii;
 use yii\filters\VerbFilter;
 use yii\queue\Job;
 use yii\web\Controller;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use zhuravljov\yii\queue\monitor\base\FlashTrait;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
+use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
 
 /**
@@ -24,6 +26,11 @@ use zhuravljov\yii\queue\monitor\records\PushRecord;
 class JobController extends Controller
 {
     use FlashTrait;
+
+    /**
+     * @var Module
+     */
+    public $module;
 
     /**
      * @inheritdoc
@@ -99,22 +106,29 @@ class JobController extends Controller
      */
     public function actionPush($id)
     {
+        if (!$this->module->canPushAgain) {
+            throw new ForbiddenHttpException('Push is forbidden.');
+        }
+
         $record = $this->findRecord($id);
 
         if (!$record->isSenderValid()) {
-            return $this->error("The job isn't pushed because $record->sender_name component isn't found.")
+            return $this
+                ->error("The job isn't pushed because $record->sender_name component isn't found.")
                 ->redirect(['view-details', 'id' => $record->id]);
         }
 
         if (!$record->isJobValid()) {
-            return $this->error('The job isn\'t pushed because object must be ' . Job::class . '.')
+            return $this
+                ->error('The job isn\'t pushed because object must be ' . Job::class . '.')
                 ->redirect(['view-data', 'id' => $record->id]);
         }
 
         $uid = $record->getSender()->push($record->getJob());
         $newRecord = PushRecord::find()->byJob($record->sender_name, $uid)->one();
 
-        return $this->success('The job is pushed again.')
+        return $this
+            ->success('The job is pushed again.')
             ->redirect(['view', 'id' => $newRecord->id]);
     }
 
@@ -123,15 +137,21 @@ class JobController extends Controller
      */
     public function actionStop($id)
     {
+        if (!$this->module->canPushAgain) {
+            throw new ForbiddenHttpException('Stop is forbidden.');
+        }
+
         $record = $this->findRecord($id);
 
         if ($record->isStopped()) {
-            return $this->error('The job is already stopped.')
+            return $this
+                ->error('The job is already stopped.')
                 ->redirect(['view-details', 'id' => $record->id]);
         }
 
         if (!$record->canStop()) {
-            return $this->error('The job is already done.')
+            return $this
+                ->error('The job is already done.')
                 ->redirect(['view-attempts', 'id' => $record->id]);
         }
 
