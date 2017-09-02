@@ -34,7 +34,7 @@ $f = Yii::$app->formatter;
     <?php endif; ?>
     <?php if ($model->lastExec && $model->lastExec->done_at): ?>
         <div class="job-exec-time" title="Last execute time.">
-            Exec: <?= $f->asInteger($model->lastExec->done_at - $model->lastExec->done_at) ?>s
+            Exec: <?= $f->asInteger($model->lastExec->done_at - $model->lastExec->reserved_at) ?>s
         </div>
     <?php endif; ?>
 </div>
