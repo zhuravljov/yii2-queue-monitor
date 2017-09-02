@@ -49,11 +49,8 @@ class PushQuery extends ActiveQuery
     {
         return $this
             ->joinLastExec()
-            ->andWhere([
-                'or',
-                ['p.last_exec_id' => null],
-                ['le.retry' => true],
-            ]);
+            ->andWhere(['or', ['p.last_exec_id' => null], ['le.retry' => true]])
+            ->andWhere(['p.stopped_at' => null]);
     }
 
     /**
@@ -62,6 +59,7 @@ class PushQuery extends ActiveQuery
     public function inProgress()
     {
         return $this
+            ->andWhere(['is not', 'p.last_exec_id', null])
             ->joinLastExec()
             ->andWhere(['le.done_at' => null]);
     }
