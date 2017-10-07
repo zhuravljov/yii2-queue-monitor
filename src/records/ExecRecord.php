@@ -55,11 +55,11 @@ class ExecRecord extends ActiveRecord
     }
 
     /**
-     * @return PushQuery
+     * @return PushQuery|\yii\db\ActiveQuery
      */
     public function getPush()
     {
-        return $this->hasOne(PushRecord::class, ['id' => 'push_id']);
+        return $this->hasOne(Yii::$container->get(Env::class)->recordModelClass, ['id' => 'push_id']);
     }
 
     /**
