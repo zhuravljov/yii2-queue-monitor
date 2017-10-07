@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = 'Data';
             <th>class</th>
             <td><?= Html::encode(get_class($record->getJob())) ?></td>
         </tr>
-        <?php foreach (get_object_vars($record->getJob()) as $property => $value): ?>
+        <?php foreach ($record->getJobParams() as $property => $value): ?>
             <tr>
                 <th><?= Html::encode($property) ?></th>
                 <td class="param-value"><?= VarDumper::dumpAsString($value) ?></td>

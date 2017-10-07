@@ -25,16 +25,14 @@ $f = Yii::$app->formatter;
         Delay: <?= $f->asInteger($model->delay) ?>s
     </div>
     <div class="job-exec-attempts" title="Number of attempts.">
-        Attempts: <?= $f->asInteger($model->execCount['attempts'] ?: 0) ?>
+        Attempts: <?= $f->asInteger($model->getAttemptCount()) ?>
     </div>
-    <?php if ($model->firstExec): ?>
-        <div class="job-exec-wait-time" title="Waiting time from push till first execute.">
-            Wait: <?= $f->asInteger($model->firstExec->reserved_at - $model->pushed_at - $model->delay) ?>s
-        </div>
-    <?php endif; ?>
-    <?php if ($model->lastExec && $model->lastExec->done_at): ?>
+    <div class="job-exec-wait-time" title="Waiting time from push till first execute.">
+        Wait: <?= $f->asInteger($model->getWaitTime()) ?>s
+    </div>
+    <?php if ($model->lastExec): ?>
         <div class="job-exec-time" title="Last execute time.">
-            Exec: <?= $f->asInteger($model->lastExec->done_at - $model->lastExec->reserved_at) ?>s
+            Exec: <?= $f->asInteger($model->lastExec->getDuration()) ?>s
         </div>
     <?php endif; ?>
 </div>
@@ -42,17 +40,17 @@ $f = Yii::$app->formatter;
     <?= $f->asText($model->job_class) ?>
 </div>
 <div class="job-params">
-    <?php foreach (get_object_vars($model->getJob()) as $property => $value): ?>
+    <?php foreach ($model->getJobParams() as $property => $value): ?>
         <span class="job-param">
             <span class="job-param-name"><?= $f->asText($property) ?> =</span>
             <span class="job-param-value"><?= VarDumper::dumpAsString($value) ?></span>
         </span>
     <?php endforeach ?>
 </div>
-<?php if ($model->lastExec && $model->lastExec->getErrorLine() !== false): ?>
+<?php if ($model->lastExec && $model->lastExec->error !== null): ?>
     <div class="job-error text-danger">
         <strong>Error:</strong>
-        <?= $f->asText($model->lastExec->getErrorLine()) ?>
+        <?= $f->asText($model->lastExec->getErrorMessage()) ?>
     </div>
 <?php endif; ?>
 <div class="job-border"></div>

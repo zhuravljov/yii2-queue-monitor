@@ -32,17 +32,7 @@ $this->params['breadcrumbs'][] = 'Attempts';
             'attempt:integer',
             'reserved_at:datetime:Started',
             'done_at:time:Finished',
-            [
-                'header' => 'Duration',
-                'format' => 'duration',
-                'value' => function (ExecRecord $record) {
-                    if ($record->done_at) {
-                        return $record->done_at - $record->reserved_at;
-                    } else {
-                        return null;
-                    }
-                },
-            ],
+            'duration:duration',
             'retry:boolean',
         ],
         'rowOptions' => function (ExecRecord $record) {

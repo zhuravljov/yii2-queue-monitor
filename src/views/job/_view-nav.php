@@ -66,9 +66,7 @@ $module = Yii::$app->controller->module;
             'url' => ['job/view-data', 'id' => $record->id],
         ],
         [
-            'label' => strtr('Attempts (count)', [
-                'count' => $record->execCount['attempts'] ?: 0,
-            ]),
+            'label' => "Attempts ($record->attemptCount)",
             'url' => ['job/view-attempts', 'id' => $record->id],
         ],
     ],

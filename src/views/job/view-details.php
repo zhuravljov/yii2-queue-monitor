@@ -20,11 +20,7 @@ $this->params['breadcrumbs'][] = 'Details';
             'ttr',
             'delay',
             'pushed_at:relativeTime',
-            [
-                'label' => 'Wait Time',
-                'format' => 'duration',
-                'value' => ($record->firstExec ? $record->firstExec->reserved_at : time()) - ($record->pushed_at + $record->delay),
-            ],
+            'waitTime:duration',
             'status',
         ],
         'options' => ['class' => 'table'],

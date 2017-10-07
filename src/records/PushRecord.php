@@ -33,6 +33,14 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property ExecRecord|null $lastExec
  * @property array $execCount
  *
+ * @property int $attemptCount
+ * @property int $waitTime
+ * @property string $status
+ *
+ * @property Queue|null $sender
+ * @property Job $job
+ * @property array $jobParams
+ *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
 class PushRecord extends ActiveRecord
@@ -108,6 +116,26 @@ class PushRecord extends ActiveRecord
     }
 
     /**
+     * @return int number of attempts
+     */
+    public function getAttemptCount()
+    {
+        return $this->execCount['attempts'] ?: 0;
+    }
+
+    /**
+     * @return int waiting time from push till first execute
+     */
+    public function getWaitTime()
+    {
+        if ($this->firstExec) {
+            return $this->firstExec->reserved_at - $this->pushed_at - $this->delay;
+        } else {
+            return time() - $this->pushed_at - $this->delay;
+        }
+    }
+
+    /**
      * @return string
      */
     public function getStatus()
@@ -137,11 +165,19 @@ class PushRecord extends ActiveRecord
     }
 
     /**
-     * @return Queue|object|null
+     * @return Queue|null
      */
     public function getSender()
     {
         return Yii::$app->get($this->sender_name, false);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSenderValid()
+    {
+        return $this->getSender() instanceof Queue;
     }
 
     /**
@@ -172,17 +208,17 @@ class PushRecord extends ActiveRecord
     /**
      * @return bool
      */
-    public function isSenderValid()
-    {
-        return $this->getSender() instanceof Queue;
-    }
-
-    /**
-     * @return bool
-     */
     public function isJobValid()
     {
         return (gettype($this->getJob()) !== 'object') || ($this->getJob() instanceof Job);
+    }
+
+    /**
+     * @return array of job properties
+     */
+    public function getJobParams()
+    {
+        return get_object_vars($this->getJob());
     }
 
     /**

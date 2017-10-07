@@ -24,11 +24,13 @@ use zhuravljov\yii\queue\monitor\Env;
  *
  * @property PushRecord $push
  *
+ * @property int $duration
+ * @property false|string $errorMessage
+ *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
 class ExecRecord extends ActiveRecord
 {
-    private $_errorLine;
     /**
      * @inheritdoc
      * @return ExecQuery the active query used by this AR class.
@@ -63,16 +65,30 @@ class ExecRecord extends ActiveRecord
     }
 
     /**
+     * @return int
+     */
+    public function getDuration()
+    {
+        if ($this->done_at) {
+            return $this->done_at - $this->reserved_at;
+        } else {
+            return time() - $this->reserved_at;
+        }
+    }
+
+    /**
      * @return false|string first error line
      */
-    public function getErrorLine()
+    public function getErrorMessage()
     {
-        if ($this->_errorLine === null) {
-            $this->_errorLine = false;
+        if ($this->_errorMessage === null) {
+            $this->_errorMessage = false;
             if ($this->error !== null) {
-                $this->_errorLine = trim(explode("\n", $this->error, 2)[0]);
+                $this->_errorMessage = trim(explode("\n", $this->error, 2)[0]);
             }
         }
-        return $this->_errorLine;
+        return $this->_errorMessage;
     }
+
+    private $_errorMessage;
 }
