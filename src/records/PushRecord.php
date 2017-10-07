@@ -73,7 +73,7 @@ class PushRecord extends ActiveRecord
     }
 
     /**
-     * @return ExecQuery
+     * @return ExecQuery|\yii\db\ActiveQuery
      */
     public function getExecs()
     {
@@ -81,7 +81,7 @@ class PushRecord extends ActiveRecord
     }
 
     /**
-     * @return ExecQuery
+     * @return ExecQuery|\yii\db\ActiveQuery
      */
     public function getFirstExec()
     {
@@ -89,7 +89,7 @@ class PushRecord extends ActiveRecord
     }
 
     /**
-     * @return ExecQuery
+     * @return ExecQuery|\yii\db\ActiveQuery
      */
     public function getLastExec()
     {
@@ -97,7 +97,7 @@ class PushRecord extends ActiveRecord
     }
 
     /**
-     * @return ExecQuery
+     * @return ExecQuery|\yii\db\ActiveQuery
      */
     public function getExecCount()
     {
