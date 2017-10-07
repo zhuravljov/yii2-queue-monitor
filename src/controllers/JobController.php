@@ -14,6 +14,7 @@ use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use zhuravljov\yii\queue\monitor\base\FlashTrait;
+use zhuravljov\yii\queue\monitor\Env;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
@@ -31,7 +32,18 @@ class JobController extends Controller
      * @var Module
      */
     public $module;
-
+    
+    /**
+     * @var \zhuravljov\yii\queue\monitor\Env
+     */
+    private $env;
+    
+    public function __construct($id, Module $module, Env $env, array $config = [])
+    {
+        parent::__construct($id, $module, $config);
+        $this->env = $env;
+    }
+    
     /**
      * @inheritdoc
      */
@@ -125,7 +137,7 @@ class JobController extends Controller
         }
 
         $uid = $record->getSender()->push($record->getJob());
-        $newRecord = PushRecord::find()->byJob($record->sender_name, $uid)->one();
+        $newRecord = $this->env->recordModel()::find()->byJob($record->sender_name, $uid)->one();
 
         return $this
             ->success('The job is pushed again.')
@@ -163,12 +175,12 @@ class JobController extends Controller
 
     /**
      * @param int $id
-     * @return PushRecord
+     * @return PushRecord|\yii\db\ActiveRecord
      * @throws NotFoundHttpException
      */
     protected function findRecord($id)
     {
-        if ($record = PushRecord::find()->byId($id)->one()) {
+        if ($record = $this->env->recordModel()::find()->byId($id)->one()) {
             return $record;
         } else {
             throw new NotFoundHttpException('Record not found.');

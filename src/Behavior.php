@@ -15,7 +15,6 @@ use yii\queue\ExecEvent;
 use yii\queue\JobEvent;
 use yii\queue\PushEvent;
 use yii\queue\Queue;
-use zhuravljov\yii\queue\monitor\records\ExecRecord;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
 
 /**
@@ -57,7 +56,7 @@ class Behavior extends \yii\base\Behavior
     {
         $this->checkEvent($event);
 
-        $push = new PushRecord();
+        $push = $this->env->recordModel();
         $push->sender_name = $this->getSenderName($event);
         $push->job_uid = $event->id;
         $push->setJob($event->job);
@@ -78,7 +77,7 @@ class Behavior extends \yii\base\Behavior
                 return;
             }
             $this->env->db->transaction(function () use ($event, $push) {
-                $exec = new ExecRecord();
+                $exec = $this->env->execModel();
                 $exec->push_id = $push->id;
                 $exec->attempt = $event->attempt;
                 $exec->reserved_at = time();
@@ -97,7 +96,7 @@ class Behavior extends \yii\base\Behavior
 
         $push = $this->getPushRecord($event);
         if ($push && $push->last_exec_id) {
-            ExecRecord::updateAll([
+            $this->env->execModel()::updateAll([
                 'done_at' => time(),
                 'error' => null,
                 'retry' => false,
@@ -117,7 +116,7 @@ class Behavior extends \yii\base\Behavior
             $event->retry = false;
         }
         if ($push && $push->last_exec_id) {
-            ExecRecord::updateAll([
+            $this->env->execModel()::updateAll([
                 'done_at' => time(),
                 'error' => $event->error,
                 'retry' => $event->retry,
@@ -144,12 +143,12 @@ class Behavior extends \yii\base\Behavior
 
     /**
      * @param JobEvent $event
-     * @return PushRecord
+     * @return PushRecord|\yii\db\ActiveRecord
      */
     protected function getPushRecord(JobEvent $event)
     {
         if ($event->id !== null) {
-            return PushRecord::find()
+            return $this->env->recordModel()::find()
                 ->byJob($this->getSenderName($event), $event->id)
                 ->one();
         } else {
