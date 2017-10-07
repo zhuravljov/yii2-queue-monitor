@@ -12,7 +12,6 @@ use Yii;
 use yii\base\Model;
 use zhuravljov\yii\queue\monitor\Env;
 use zhuravljov\yii\queue\monitor\records\PushQuery;
-use zhuravljov\yii\queue\monitor\records\PushRecord;
 
 /**
  * Class JobFilter
@@ -76,7 +75,7 @@ class JobFilter extends Model
      */
     public function search()
     {
-        $query = PushRecord::find()->with(['firstExec', 'lastExec', 'execCount']);
+        $query = $this->env->recordModel()::find()->with(['firstExec', 'lastExec', 'execCount']);
         if ($this->hasErrors()) {
             return $query;
         }
@@ -107,11 +106,11 @@ class JobFilter extends Model
     }
 
     /**
-     * @param PushQuery $query
+     * @param PushQuery|\yii\db\ActiveQuery $query
      * @param string $name
      * @param string $value
      */
-    private function filterDateRange(PushQuery $query, $name, $value)
+    private function filterDateRange($query, $name, $value)
     {
         $limits = explode(' - ', $value, 2);
         if (count($limits) === 2) {
@@ -162,7 +161,7 @@ class JobFilter extends Model
     public function senderList()
     {
         return $this->env->cache->getOrSet(__METHOD__, function () {
-            return PushRecord::find()
+            return $this->env->recordModel()::find()
                 ->select('p.sender_name')
                 ->groupBy('p.sender_name')
                 ->orderBy('p.sender_name')
@@ -176,7 +175,7 @@ class JobFilter extends Model
     public function classList()
     {
         return $this->env->cache->getOrSet(__METHOD__, function () {
-            return PushRecord::find()
+            return $this->env->recordModel()::find()
                 ->select('p.job_class')
                 ->groupBy('p.job_class')
                 ->orderBy('p.job_class')
