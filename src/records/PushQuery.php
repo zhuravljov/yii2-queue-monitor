@@ -9,6 +9,7 @@ namespace zhuravljov\yii\queue\monitor\records;
 
 use yii\db\ActiveQuery;
 use yii\db\Query;
+use zhuravljov\yii\queue\monitor\Env;
 
 /**
  * Class PushQuery
@@ -102,7 +103,7 @@ class PushQuery extends ActiveQuery
     {
         return $this
             ->andWhere(['exists', new Query([
-                'from' => ['e' => ExecRecord::tableName()],
+                'from' => ['e' => \Yii::$container->get(Env::class)->execTableName],
                 'where' => '{{e}}.[[push_id]] = {{p}}.[[id]] AND {{e}}.[[error]] IS NOT NULL',
             ])]);
     }
@@ -121,7 +122,7 @@ class PushQuery extends ActiveQuery
     public function joinFirstExec()
     {
         return $this->leftJoin(
-            ['fe' => ExecRecord::tableName()],
+            ['fe' => \Yii::$container->get(Env::class)->execTableName],
             '{{fe}}.[[id]] = {{p}}.[[first_exec_id]]'
         );
     }
@@ -132,7 +133,7 @@ class PushQuery extends ActiveQuery
     public function joinLastExec()
     {
         return $this->leftJoin(
-            ['le' => ExecRecord::tableName()],
+            ['le' => \Yii::$container->get(Env::class)->execTableName],
             '{{le}}.[[id]] = {{p}}.[[last_exec_id]]'
         );
     }

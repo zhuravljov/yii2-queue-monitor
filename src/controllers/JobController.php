@@ -1,8 +1,8 @@
 <?php
 /**
- * @link https://github.com/zhuravljov/yii2-queue-monitor
+ * @link      https://github.com/zhuravljov/yii2-queue-monitor
  * @copyright Copyright (c) 2017 Roman Zhuravlev
- * @license http://opensource.org/licenses/BSD-3-Clause
+ * @license   http://opensource.org/licenses/BSD-3-Clause
  */
 
 namespace zhuravljov\yii\queue\monitor\controllers;
@@ -27,7 +27,7 @@ use zhuravljov\yii\queue\monitor\records\PushRecord;
 class JobController extends Controller
 {
     use FlashTrait;
-
+    
     /**
      * @var Module
      */
@@ -59,7 +59,7 @@ class JobController extends Controller
             ],
         ];
     }
-
+    
     /**
      * Pushed jobs
      */
@@ -69,12 +69,12 @@ class JobController extends Controller
         $filter = Yii::createObject(JobFilter::class);
         $filter->load(Yii::$app->request->queryParams) && $filter->validate();
         JobFilter::storeParams($filter);
-
+        
         return $this->render('index', [
             'filter' => $filter,
         ]);
     }
-
+    
     /**
      * Job view
      */
@@ -82,7 +82,7 @@ class JobController extends Controller
     {
         return $this->redirect(['view-details', 'id' => $id]);
     }
-
+    
     /**
      * Push details
      */
@@ -92,7 +92,7 @@ class JobController extends Controller
             'record' => $this->findRecord($id),
         ]);
     }
-
+    
     /**
      * Job object data
      */
@@ -102,7 +102,7 @@ class JobController extends Controller
             'record' => $this->findRecord($id),
         ]);
     }
-
+    
     /**
      * Attempts
      */
@@ -112,7 +112,7 @@ class JobController extends Controller
             'record' => $this->findRecord($id),
         ]);
     }
-
+    
     /**
      * Pushes a job again
      */
@@ -121,29 +121,29 @@ class JobController extends Controller
         if (!$this->module->canPushAgain) {
             throw new ForbiddenHttpException('Push is forbidden.');
         }
-
+        
         $record = $this->findRecord($id);
-
+        
         if (!$record->isSenderValid()) {
             return $this
                 ->error("The job isn't pushed because $record->sender_name component isn't found.")
                 ->redirect(['view-details', 'id' => $record->id]);
         }
-
+        
         if (!$record->isJobValid()) {
             return $this
                 ->error('The job isn\'t pushed because object must be ' . Job::class . '.')
                 ->redirect(['view-data', 'id' => $record->id]);
         }
-
+        
         $uid = $record->getSender()->push($record->getJob());
         $newRecord = $this->env->recordModel()::find()->byJob($record->sender_name, $uid)->one();
-
+        
         return $this
             ->success('The job is pushed again.')
             ->redirect(['view', 'id' => $newRecord->id]);
     }
-
+    
     /**
      * Stop a job
      */
@@ -152,29 +152,30 @@ class JobController extends Controller
         if (!$this->module->canPushAgain) {
             throw new ForbiddenHttpException('Stop is forbidden.');
         }
-
+        
         $record = $this->findRecord($id);
-
+        
         if ($record->isStopped()) {
             return $this
                 ->error('The job is already stopped.')
                 ->redirect(['view-details', 'id' => $record->id]);
         }
-
+        
         if (!$record->canStop()) {
             return $this
                 ->error('The job is already done.')
                 ->redirect(['view-attempts', 'id' => $record->id]);
         }
-
+        
         $record->stop();
-
-        return $this->success( 'The job will be stopped.')
+        
+        return $this->success('The job will be stopped.')
             ->redirect(['view-details', 'id' => $record->id]);
     }
-
+    
     /**
      * @param int $id
+     *
      * @return PushRecord|\yii\db\ActiveRecord
      * @throws NotFoundHttpException
      */

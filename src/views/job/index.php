@@ -1,7 +1,7 @@
 <?php
 /**
  * @var \yii\web\View $this
- * @var JobFilter $filter
+ * @var JobFilter     $filter
  */
 
 use yii\bootstrap\Html;
@@ -16,50 +16,44 @@ if (!JobFilter::restoreParams()) {
     $this->params['breadcrumbs'][] = 'Filtered';
 }
 ?>
-<div class="monitor-job-index">
-    <div class="row">
-        <div class="col-lg-3 col-lg-push-9">
-            <?= $this->render('_search', [
-                'filter' => $filter,
-            ]) ?>
-        </div>
-        <div class="col-lg-9 col-lg-pull-3">
-            <?= ListView::widget([
-                'itemView' => '_index-item',
-                'itemOptions' => function (PushRecord $push) {
-                    $options = ['class' => 'job-item'];
-                    switch ($push->getStatus()) {
-                        case PushRecord::STATUS_STOPPED:
+    <div class="monitor-job-index">
+        <div class="row">
+            <div class="col-lg-3 col-lg-push-9">
+                <?= $this->render('_search', [
+                    'filter' => $filter,
+                ]) ?>
+            </div>
+            <div class="col-lg-9 col-lg-pull-3">
+                <?= ListView::widget([
+                    'itemView' => '_index-item',
+                    'itemOptions' => function ($push) {
+                        /**@var PushRecord $push**/
+                        $options = ['class' => 'job-item'];
+                        if ($push->status()->isStopped()) {
                             Html::addCssClass($options, 'bg-info');
-                            break;
-                        case PushRecord::STATUS_WAITING:
-                        case PushRecord::STATUS_STARTED:
+                        } elseif ($push->status()->isWaiting() || $push->status()->isStarted()) {
                             Html::addCssClass($options, 'bg-success');
-                            break;
-                        case PushRecord::STATUS_FAILED:
-                        case PushRecord::STATUS_RESTARTED:
+                        } elseif ($push->status()->isFailed() || $push->status()->isRestarted()) {
                             Html::addCssClass($options, 'bg-warning');
-                            break;
-                        case PushRecord::STATUS_BURIED:
+                        } elseif ($push->status()->isBuried()) {
                             Html::addCssClass($options, 'bg-danger');
-                            break;
-                        default:
+                        } else {
                             Html::addCssClass($options, 'bg-default');
-                    }
-                    return $options;
-                },
-                'dataProvider' => new \yii\data\ActiveDataProvider([
-                    'query' => $filter->search(),
-                    'sort' => [
-                        'defaultOrder' => [
-                            'id' => SORT_DESC,
+                        }
+                        return $options;
+                    },
+                    'dataProvider' => new \yii\data\ActiveDataProvider([
+                        'query' => $filter->search(),
+                        'sort' => [
+                            'defaultOrder' => [
+                                'id' => SORT_DESC,
+                            ],
                         ],
-                    ],
-                ]),
-            ]) ?>
+                    ]),
+                ]) ?>
+            </div>
         </div>
     </div>
-</div>
 <?php
 $this->registerCss(<<<CSS
 
