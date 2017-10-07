@@ -48,13 +48,13 @@ $this->params['breadcrumbs'][] = 'Attempts';
         'rowOptions' => function (ExecRecord $record) {
             $options = [];
             if ($record->error !== null) {
-                Html::addCssClass($options, 'warning text-warning');
+                Html::addCssClass($options, 'danger');
             }
             return $options;
         },
         'afterRow' => function (ExecRecord $record, $key, $index, GridView $grid) {
             if ($record->error !== null) {
-                return strtr('<tr class="error-line warning text-warning"><td colspan="5">{error}</td></tr>', [
+                return strtr('<tr class="error-line danger text-danger"><td colspan="5">{error}</td></tr>', [
                     '{error}' => $grid->formatter->asNtext($record->error),
                 ]);
             } else {
