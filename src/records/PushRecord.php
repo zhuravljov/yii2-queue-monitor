@@ -150,6 +150,10 @@ class PushRecord extends ActiveRecord
     public function getJob()
     {
         if ($this->_job === null) {
+            // pgsql
+            if (is_resource($this->job_object)) {
+                $this->job_object = stream_get_contents($this->job_object);
+            }
             $this->_job = unserialize($this->job_object);
         }
         return $this->_job;
