@@ -2,56 +2,27 @@
 /**
  * Created by solly [07.10.17 21:46]
  */
+declare(strict_types=1);
 
 namespace zhuravljov\yii\queue\monitor\helpers;
 
+use function time;
 use Yii;
-use zhuravljov\yii\queue\monitor\records\PushRecord;
 
 class PushRecordPresenter
 {
-    const STATUS_STOPPED = 'stopped';
-    const STATUS_WAITING = 'waiting';
-    const STATUS_STARTED = 'started';
-    const STATUS_DONE = 'done';
-    const STATUS_FAILED = 'failed';
-    const STATUS_RESTARTED = 'restarted';
-    const STATUS_BURIED = 'buried';
     
     /**
      * @var \zhuravljov\yii\queue\monitor\records\PushRecord
      */
     private $record;
     
-    public function __construct(PushRecord $record)
+    /**
+     * @param \zhuravljov\yii\queue\monitor\records\PushRecord|\yii\db\ActiveRecord $record
+     */
+    public function __construct($record)
     {
         $this->record = $record;
-    }
-    
-    public function status()
-    {
-        if ($this->record->isStopped()) {
-            return self::STATUS_STOPPED;
-        }
-        if (!$this->record->lastExec) {
-            return self::STATUS_WAITING;
-        }
-        if (!$this->record->lastExec->done_at && $this->record->lastExec->attempt == 1) {
-            return self::STATUS_STARTED;
-        }
-        if ($this->record->lastExec->done_at && $this->record->lastExec->error === null) {
-            return self::STATUS_DONE;
-        }
-        if ($this->record->lastExec->done_at && $this->record->lastExec->retry) {
-            return self::STATUS_FAILED;
-        }
-        if (!$this->record->lastExec->done_at) {
-            return self::STATUS_RESTARTED;
-        }
-        if ($this->record->lastExec->done_at && !$this->record->lastExec->retry) {
-            return self::STATUS_BURIED;
-        }
-        return null;
     }
     
     public function pushedAt(): string
@@ -64,16 +35,17 @@ class PushRecordPresenter
         return $this->record->execCount['attempts'] ?: 0;
     }
     
-    public function waitTimeTillExecute()
+    public function waitTimeTillExecute(): int
     {
         if ($this->record->firstExec) {
-            return $this->record->firstExec->reserved_at - $this->record->pushed_at - $this->record->delay;
+            return $this->record->firstExec->reserved_at - ($this->record->pushed_at + $this->record->delay);
         } else {
-            return 0;
+            return time() - ($this->record->pushed_at + $this->record->delay);
+            //return 0;
         }
     }
     
-    public function lastExecutionTime()
+    public function lastExecutionTime(): int
     {
         if ($this->record->lastExec && $this->record->lastExec->done_at) {
             return $this->record->lastExec->done_at - $this->record->lastExec->reserved_at;
@@ -81,7 +53,7 @@ class PushRecordPresenter
         return 0;
     }
     
-    public function lastExecutionError()
+    public function lastExecutionError(): string
     {
         if ($this->record->lastExec && $this->record->lastExec->getErrorLine() !== false) {
             return $this->record->lastExec->getErrorLine();
@@ -90,8 +62,29 @@ class PushRecordPresenter
         }
     }
     
-    public function jobAttributes()
+    public function jobAttributes(): array
     {
         return get_object_vars($this->record->getJob());
     }
+    
+    public function ttr(): int
+    {
+        return (int)$this->record->ttr;
+    }
+    
+    public function delay(): int
+    {
+        return (int)$this->record->delay;
+    }
+    
+    public function jobUid(): string
+    {
+        return $this->record->job_uid;
+    }
+    
+    public function senderName(): string
+    {
+        return $this->record->sender_name;
+    }
+    
 }

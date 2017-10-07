@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \yii\web\View $this
+ * @var \yii\web\View                                    $this
  * @var \zhuravljov\yii\queue\monitor\records\PushRecord $model
  */
 
@@ -8,33 +8,33 @@ use yii\helpers\VarDumper;
 
 $f = Yii::$app->formatter;
 ?>
-<div class="job-status"><?= $f->asText($model->getStatus()) ?></div>
+<div class="job-status"><?= $model->status()->value() ?></div>
 <div class="job-details">
     <div class="job-push-uid">
         <a href="<?= \yii\helpers\Url::to(['view', 'id' => $model->id]) ?>">
-            #<?= $f->asText($model->job_uid) ?> by <?= $f->asText($model->sender_name) ?>
+            #<?= $model->presenter()->jobUid() ?> by <?= $model->presenter()->senderName() ?>
         </a>
     </div>
     <div class="job-push-time">
-        Pushed: <?= $f->asDatetime($model->pushed_at, 'php:Y-m-d H:i:s') ?>
+        Pushed: <?= $model->presenter()->pushedAt() ?>
     </div>
     <div class="job-push-ttr" title="Time to reserve of the job.">
-        TTR: <?= $f->asInteger($model->ttr) ?>s
+        TTR: <?= $model->presenter()->ttr() ?>s
     </div>
     <div class="job-push-delay">
-        Delay: <?= $f->asInteger($model->delay) ?>s
+        Delay: <?= $model->presenter()->delay() ?>s
     </div>
     <div class="job-exec-attempts" title="Number of attempts.">
-        Attempts: <?= $f->asInteger($model->execCount['attempts'] ?: 0) ?>
+        Attempts: <?= $model->presenter()->attempts() ?>
     </div>
-    <?php if ($model->firstExec): ?>
+    <?php if ($model->firstExec) : ?>
         <div class="job-exec-wait-time" title="Waiting time from push till first execute.">
-            Wait: <?= $f->asInteger($model->firstExec->reserved_at - $model->pushed_at - $model->delay) ?>s
+            Wait: <?= $model->presenter()->waitTimeTillExecute() ?>s
         </div>
     <?php endif; ?>
-    <?php if ($model->lastExec && $model->lastExec->done_at): ?>
+    <?php if ($model->lastExec && $model->lastExec->presenter()->isDone()) : ?>
         <div class="job-exec-time" title="Last execute time.">
-            Exec: <?= $f->asInteger($model->lastExec->done_at - $model->lastExec->reserved_at) ?>s
+            Exec: <?= $model->presenter()->lastExecutionTime() ?>s
         </div>
     <?php endif; ?>
 </div>
@@ -42,14 +42,14 @@ $f = Yii::$app->formatter;
     <?= $f->asText($model->job_class) ?>
 </div>
 <div class="job-params">
-    <?php foreach (get_object_vars($model->getJob()) as $property => $value): ?>
+    <?php foreach ($model->presenter()->jobAttributes() as $property => $value) : ?>
         <span class="job-param">
             <span class="job-param-name"><?= $f->asText($property) ?> =</span>
             <span class="job-param-value"><?= VarDumper::dumpAsString($value) ?></span>
         </span>
     <?php endforeach ?>
 </div>
-<?php if ($model->lastExec && $model->lastExec->getErrorLine() !== false): ?>
+<?php if ($model->lastExec && $model->lastExec->presenter()->hasExecutionError()) : ?>
     <div class="job-error text-danger">
         <strong>Error:</strong>
         <?= $f->asText($model->lastExec->getErrorLine()) ?>

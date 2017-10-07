@@ -35,25 +35,24 @@ $this->params['breadcrumbs'][] = 'Attempts';
             [
                 'header' => 'Duration',
                 'format' => 'duration',
-                'value' => function (ExecRecord $record) {
-                    if ($record->done_at) {
-                        return $record->done_at - $record->reserved_at;
-                    } else {
-                        return null;
-                    }
+                'value' => function ($record) {
+                     /**@var ExecRecord $record**/
+                    return $record->presenter()->executionTime();
                 },
             ],
             'retry:boolean',
         ],
-        'rowOptions' => function (ExecRecord $record) {
+        'rowOptions' => function ($record) {
+            /**@var ExecRecord $record**/
             $options = [];
-            if ($record->error !== null) {
+            if ($record->presenter()->hasExecutionError()) {
                 Html::addCssClass($options, 'danger');
             }
             return $options;
         },
-        'afterRow' => function (ExecRecord $record, $key, $index, GridView $grid) {
-            if ($record->error !== null) {
+        'afterRow' => function ($record, $key, $index, GridView $grid) {
+            /**@var ExecRecord $record**/
+            if ($record->presenter()->hasExecutionError()) {
                 return strtr('<tr class="error-line danger text-danger"><td colspan="5">{error}</td></tr>', [
                     '{error}' => $grid->formatter->asNtext($record->error),
                 ]);
