@@ -33,7 +33,7 @@ class ExecRecord extends ActiveRecord
     
     public function presenter()
     {
-        if ($this->_presenter) {
+        if (!$this->_presenter) {
             $this->_presenter = Yii::createObject(ExecRecordPresenter::class, [$this]);
         }
         return $this->_presenter;
