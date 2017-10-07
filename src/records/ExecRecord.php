@@ -48,12 +48,12 @@ class ExecRecord extends ActiveRecord
     }
     
     /**
-     * @return false|string first error line
+     * @return string first error line
      */
-    public function getErrorLine()
+    public function getErrorLine():string
     {
         if ($this->_errorLine === null) {
-            $this->_errorLine = false;
+            $this->_errorLine = '';
             if ($this->error !== null) {
                 $this->_errorLine = trim(explode("\n", $this->error, 2)[0]);
             }

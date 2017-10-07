@@ -4,8 +4,6 @@
  * @var \zhuravljov\yii\queue\monitor\records\PushRecord $model
  */
 
-use yii\helpers\VarDumper;
-
 $f = Yii::$app->formatter;
 ?>
 <div class="job-status"><?= $model->status()->value() ?></div>
@@ -32,7 +30,7 @@ $f = Yii::$app->formatter;
             Wait: <?= $model->presenter()->waitTimeTillExecute() ?>s
         </div>
     <?php endif; ?>
-    <?php if ($model->lastExec && $model->lastExec->presenter()->isDone()) : ?>
+    <?php if ($model->presenter()->lastExecutionTime() > 0) : ?>
         <div class="job-exec-time" title="Last execute time.">
             Exec: <?= $model->presenter()->lastExecutionTime() ?>s
         </div>
@@ -44,15 +42,15 @@ $f = Yii::$app->formatter;
 <div class="job-params">
     <?php foreach ($model->presenter()->jobAttributes() as $property => $value) : ?>
         <span class="job-param">
-            <span class="job-param-name"><?= $f->asText($property) ?> =</span>
-            <span class="job-param-value"><?= VarDumper::dumpAsString($value) ?></span>
+            <span class="job-param-name"><?= $property ?> =</span>
+            <span class="job-param-value"><?= $value ?></span>
         </span>
     <?php endforeach ?>
 </div>
 <?php if ($model->lastExec && $model->lastExec->presenter()->hasExecutionError()) : ?>
     <div class="job-error text-danger">
         <strong>Error:</strong>
-        <?= $f->asText($model->lastExec->getErrorLine()) ?>
+        <?=  $model->lastExec->getErrorLine() ?>
     </div>
 <?php endif; ?>
 <div class="job-border"></div>

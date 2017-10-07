@@ -6,8 +6,9 @@ declare(strict_types=1);
 
 namespace zhuravljov\yii\queue\monitor\helpers;
 
-use function time;
 use Yii;
+use yii\helpers\VarDumper;
+use function time;
 
 class PushRecordPresenter
 {
@@ -55,7 +56,7 @@ class PushRecordPresenter
     
     public function lastExecutionError(): string
     {
-        if ($this->record->lastExec && $this->record->lastExec->getErrorLine() !== false) {
+        if ($this->record->lastExec && !empty($this->record->lastExec->getErrorLine())) {
             return $this->record->lastExec->getErrorLine();
         } else {
             return '';
@@ -64,7 +65,12 @@ class PushRecordPresenter
     
     public function jobAttributes(): array
     {
-        return get_object_vars($this->record->getJob());
+        return array_map(
+            function ($prop) {
+                return VarDumper::dumpAsString($prop);
+            },
+            get_object_vars($this->record->getJob())
+        );
     }
     
     public function ttr(): int
