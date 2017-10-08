@@ -10,14 +10,14 @@ use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
 
 if (JobFilter::restoreParams()) {
-    $this->params['breadcrumbs'][] = ['label' => 'Jobs', 'url' => ['index']];
+    $this->params['breadcrumbs'][] = ['label' => 'Jobs', 'url' => ['list']];
     $this->params['breadcrumbs'][] = 'Filtered';
 } else {
     $this->params['breadcrumbs'][] = 'Jobs';
 }
 ?>
 <?php $this->beginContent(__DIR__ . '/_index-layout.php', ['filter' => $filter]) ?>
-<div class="monitor-job-index">
+<div class="monitor-job-list">
     <?= ListView::widget([
         'itemView' => '_index-item',
         'itemOptions' => function (PushRecord $push) {

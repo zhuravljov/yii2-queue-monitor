@@ -10,12 +10,12 @@ use zhuravljov\yii\queue\monitor\filters\JobFilter;
 
 $this->params['breadcrumbs'][] = [
     'label' => 'Jobs',
-    'url' => ['index'],
+    'url' => ['list'],
 ];
 if ($filtered = JobFilter::restoreParams()) {
     $this->params['breadcrumbs'][] = [
         'label' => 'Filtered',
-        'url' => ['index'] + $filtered,
+        'url' => ['list'] + $filtered,
     ];
 }
 $this->params['breadcrumbs'][]  = [

@@ -14,7 +14,7 @@ use zhuravljov\yii\widgets\DateRangePicker;
 <div class="monitor-job-search">
     <?php $form = ActiveForm::begin([
         'method' => 'get',
-        'action' => ['/' . Yii::$app->requestedRoute],
+        'action' => ['/' . Yii::$app->controller->route],
         'enableClientValidation' => false,
     ]) ?>
     <div class="row">
@@ -66,8 +66,8 @@ use zhuravljov\yii\widgets\DateRangePicker;
         <span class="glyphicon glyphicon-search"></span>
         Search
     </button>
-    <?php if (JobFilter::restoreParams()): ?>
-        <a href="<?= Url::to(['/' . Yii::$app->requestedRoute]) ?>" class="btn btn-default">
+    <?php if (1 || JobFilter::restoreParams()): ?>
+        <a href="<?= Url::to(['/' . Yii::$app->controller->route]) ?>" class="btn btn-default">
             Reset
         </a>
     <?php endif; ?>

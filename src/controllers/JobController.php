@@ -51,9 +51,9 @@ class JobController extends Controller
     /**
      * Pushed jobs
      */
-    public function actionIndex()
+    public function actionList()
     {
-        return $this->render('index', [
+        return $this->render('list', [
             'filter' => $this->createFilter(),
         ]);
     }
