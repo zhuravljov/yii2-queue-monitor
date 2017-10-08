@@ -18,7 +18,10 @@ $actionId = Yii::$app->controller->action->id;
     <div class="col-lg-9 col-lg-pull-3">
         <?= Nav::widget([
             'encodeLabels' => false,
-            'options' => ['class' =>'nav nav-tabs'],
+            'options' => [
+                'class' =>'nav nav-tabs',
+                'style' => 'margin-bottom: 20px',
+            ],
             'items' => [
                 [
                     'label' => Html::icon('tasks') . ' Jobs',
