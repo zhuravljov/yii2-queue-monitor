@@ -53,13 +53,8 @@ class JobController extends Controller
      */
     public function actionIndex()
     {
-        /** @var JobFilter $filter */
-        $filter = Yii::createObject(JobFilter::class);
-        $filter->load(Yii::$app->request->queryParams) && $filter->validate();
-        JobFilter::storeParams($filter);
-
         return $this->render('index', [
-            'filter' => $filter,
+            'filter' => $this->createFilter(),
         ]);
     }
 
@@ -173,5 +168,18 @@ class JobController extends Controller
         } else {
             throw new NotFoundHttpException('Record not found.');
         }
+    }
+
+    /**
+     * @return JobFilter
+     */
+    protected function createFilter()
+    {
+        /** @var JobFilter $filter */
+        $filter = Yii::createObject(JobFilter::class);
+        $filter->load(Yii::$app->request->queryParams) && $filter->validate();
+        $filter->storeParams();
+
+        return $filter;
     }
 }

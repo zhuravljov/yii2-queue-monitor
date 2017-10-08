@@ -1,39 +1,35 @@
 <?php
 /**
  * @var \yii\web\View $this
- * @var \zhuravljov\yii\queue\monitor\filters\JobFilter $filter
+ * @var JobFilter $filter
  */
 
 use yii\bootstrap\ActiveForm;
+use yii\helpers\Url;
 use yii\web\JsExpression;
+use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\widgets\DateRangePicker;
 
 ?>
 <div class="monitor-job-search">
     <?php $form = ActiveForm::begin([
         'method' => 'get',
-        'action' => ['index'],
+        'action' => ['/' . Yii::$app->requestedRoute],
         'enableClientValidation' => false,
     ]) ?>
     <div class="row">
-        <div class="col-lg-12 col-md-4 col-sm-6">
+        <div class="col-lg-12 col-md-3 col-sm-6">
             <?= $form->field($filter, 'is')->dropDownList($filter->statusList(), ['prompt' => '']) ?>
         </div>
-        <div class="col-lg-12 col-md-4 col-sm-6">
+        <div class="col-lg-12 col-md-3 col-sm-6">
             <?= $form->field($filter, 'sender')->textInput(['list' => 'job-sender']) ?>
             <?= $this->render('_data-list', ['id' => 'job-sender', 'values' => $filter->senderList()]) ?>
         </div>
-        <div class="col-lg-12 col-md-4 col-sm-6">
-            <?= $form->field($filter, 'uid') ?>
-        </div>
-        <div class="col-lg-12 col-md-4 col-sm-6">
+        <div class="col-lg-12 col-md-3 col-sm-6">
             <?= $form->field($filter, 'class')->textInput(['list' => 'job-class']) ?>
             <?= $this->render('_data-list', ['id' => 'job-class', 'values' => $filter->classList()]) ?>
         </div>
-        <div class="col-lg-12 col-md-4 col-sm-6">
-            <?= $form->field($filter, 'delay') ?>
-        </div>
-        <div class="col-lg-12 col-md-4 col-sm-6">
+        <div class="col-lg-12 col-md-3 col-sm-6">
             <?= $form->field($filter, 'pushed')->widget(DateRangePicker::class, [
                 'clientOptions' => [
                     'opens' => 'left',
@@ -70,5 +66,10 @@ use zhuravljov\yii\widgets\DateRangePicker;
         <span class="glyphicon glyphicon-search"></span>
         Search
     </button>
+    <?php if (JobFilter::restoreParams()): ?>
+        <a href="<?= Url::to(['/' . Yii::$app->requestedRoute]) ?>" class="btn btn-default">
+            Reset
+        </a>
+    <?php endif; ?>
     <?php ActiveForm::end() ?>
 </div>

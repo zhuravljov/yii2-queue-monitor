@@ -31,9 +31,7 @@ class JobFilter extends Model
 
     public $is;
     public $sender;
-    public $uid;
     public $class;
-    public $delay;
     public $pushed;
 
     /**
@@ -59,70 +57,35 @@ class JobFilter extends Model
     public function rules()
     {
         return [
-            [['is', 'sender', 'uid', 'class', 'delay', 'pushed'], 'trim'],
+            [['is', 'sender', 'class', 'pushed'], 'trim'],
             ['is', 'string'],
             ['is', 'in', 'range' => array_keys($this->statusList())],
             ['sender', 'string'],
-            ['uid', 'string'],
             ['class', 'string'],
-            ['delay', 'string'],
             ['pushed', 'string'],
             ['pushed', 'match', 'pattern' => '/^\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/'],
         ];
     }
 
     /**
-     * @return PushQuery
      */
-    public function search()
+    public function storeParams()
     {
-        $query = PushRecord::find()->with(['firstExec', 'lastExec', 'execCount']);
-        if ($this->hasErrors()) {
-            return $query;
+        $params = [];
+        foreach ($this->attributes as $attribute => $value) {
+            if ($value !== null && $value !== '') {
+                $params[$attribute] = $value;
+            }
         }
-
-        $query->andFilterWhere(['p.sender_name' => $this->sender]);
-        $query->andFilterWhere(['p.job_uid' => $this->uid]);
-        $query->andFilterWhere(['like', 'p.job_class', $this->class]);
-        $query->andFilterCompare('p.delay', $this->delay);
-        $this->filterDateRange($query, 'p.pushed_at', $this->pushed);
-
-        if ($this->is == self::IS_WAITING) {
-            $query->waiting();
-        } elseif ($this->is == self::IS_IN_PROGRESS) {
-            $query->inProgress();
-        } elseif ($this->is == self::IS_DONE) {
-            $query->done();
-        } elseif ($this->is == self::IS_SUCCESS) {
-            $query->success();
-        } elseif ($this->is == self::IS_BURIED) {
-            $query->buried();
-        } elseif ($this->is == self::IS_HAVE_FAILS) {
-            $query->hasFails();
-        } elseif ($this->is == self::IS_STOPPED) {
-            $query->stopped();
-        }
-
-        return $query;
+        Yii::$app->session->set(JobFilter::class, $params);
     }
 
     /**
-     * @param PushQuery $query
-     * @param string $name
-     * @param string $value
+     * @return array
      */
-    private function filterDateRange(PushQuery $query, $name, $value)
+    public static function restoreParams()
     {
-        $limits = explode(' - ', $value, 2);
-        if (count($limits) === 2) {
-            $begin = DateTime::createFromFormat('Y-m-d', $limits[0]);
-            $end = DateTime::createFromFormat('Y-m-d', $limits[1]);
-            if ($begin && $end) {
-                $begin->setTime(0, 0, 0);
-                $end->setTime(23, 59, 59);
-                $query->andWhere(['between', $name, $begin->getTimestamp(), $end->getTimestamp()]);
-            }
-        }
+        return Yii::$app->session->get(JobFilter::class, []);
     }
 
     /**
@@ -133,7 +96,6 @@ class JobFilter extends Model
         return [
             'is' => 'Status',
             'sender' => 'Sender Name',
-            'uid' => 'Job Unique ID',
             'class' => 'Job Class',
             'delay' => 'Delay',
             'pushed' => 'Pushed'
@@ -185,24 +147,54 @@ class JobFilter extends Model
     }
 
     /**
-     * @param JobFilter $filter
+     * @param PushQuery $query
+     * @param string $name
+     * @param string $value
      */
-    public static function storeParams(JobFilter $filter)
+    private function filterDateRange(PushQuery $query, $name, $value)
     {
-        $params = [];
-        foreach ($filter->attributes as $attribute => $value) {
-            if ($value !== null && $value !== '') {
-                $params[$attribute] = $value;
+        $limits = explode(' - ', $value, 2);
+        if (count($limits) === 2) {
+            $begin = DateTime::createFromFormat('Y-m-d', $limits[0]);
+            $end = DateTime::createFromFormat('Y-m-d', $limits[1]);
+            if ($begin && $end) {
+                $begin->setTime(0, 0, 0);
+                $end->setTime(23, 59, 59);
+                $query->andWhere(['between', $name, $begin->getTimestamp(), $end->getTimestamp()]);
             }
         }
-        Yii::$app->session->set(JobFilter::class, $params);
     }
 
     /**
-     * @return array
+     * @return PushQuery
      */
-    public static function restoreParams()
+    public function search()
     {
-        return Yii::$app->session->get(JobFilter::class, []);
+        $query = PushRecord::find();
+        if ($this->hasErrors()) {
+            return $query->andWhere('1 = 0');
+        }
+
+        $query->andFilterWhere(['p.sender_name' => $this->sender]);
+        $query->andFilterWhere(['like', 'p.job_class', $this->class]);
+        $this->filterDateRange($query, 'p.pushed_at', $this->pushed);
+
+        if ($this->is == self::IS_WAITING) {
+            $query->waiting();
+        } elseif ($this->is == self::IS_IN_PROGRESS) {
+            $query->inProgress();
+        } elseif ($this->is == self::IS_DONE) {
+            $query->done();
+        } elseif ($this->is == self::IS_SUCCESS) {
+            $query->success();
+        } elseif ($this->is == self::IS_BURIED) {
+            $query->buried();
+        } elseif ($this->is == self::IS_HAVE_FAILS) {
+            $query->hasFails();
+        } elseif ($this->is == self::IS_STOPPED) {
+            $query->stopped();
+        }
+
+        return $query;
     }
 }

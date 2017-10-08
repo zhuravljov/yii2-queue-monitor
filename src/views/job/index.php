@@ -9,57 +9,50 @@ use yii\widgets\ListView;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
 
-if (!JobFilter::restoreParams()) {
-    $this->params['breadcrumbs'][] = 'Jobs';
-} else {
+if (JobFilter::restoreParams()) {
     $this->params['breadcrumbs'][] = ['label' => 'Jobs', 'url' => ['index']];
     $this->params['breadcrumbs'][] = 'Filtered';
+} else {
+    $this->params['breadcrumbs'][] = 'Jobs';
 }
 ?>
+<?php $this->beginContent(__DIR__ . '/_index-layout.php', ['filter' => $filter]) ?>
 <div class="monitor-job-index">
-    <div class="row">
-        <div class="col-lg-3 col-lg-push-9">
-            <?= $this->render('_search', [
-                'filter' => $filter,
-            ]) ?>
-        </div>
-        <div class="col-lg-9 col-lg-pull-3">
-            <?= ListView::widget([
-                'itemView' => '_index-item',
-                'itemOptions' => function (PushRecord $push) {
-                    $options = ['class' => 'job-item'];
-                    switch ($push->getStatus()) {
-                        case PushRecord::STATUS_STOPPED:
-                            Html::addCssClass($options, 'bg-info');
-                            break;
-                        case PushRecord::STATUS_WAITING:
-                        case PushRecord::STATUS_STARTED:
-                            Html::addCssClass($options, 'bg-success');
-                            break;
-                        case PushRecord::STATUS_FAILED:
-                        case PushRecord::STATUS_RESTARTED:
-                            Html::addCssClass($options, 'bg-warning');
-                            break;
-                        case PushRecord::STATUS_BURIED:
-                            Html::addCssClass($options, 'bg-danger');
-                            break;
-                        default:
-                            Html::addCssClass($options, 'bg-default');
-                    }
-                    return $options;
-                },
-                'dataProvider' => new \yii\data\ActiveDataProvider([
-                    'query' => $filter->search(),
-                    'sort' => [
-                        'defaultOrder' => [
-                            'id' => SORT_DESC,
-                        ],
-                    ],
-                ]),
-            ]) ?>
-        </div>
-    </div>
+    <?= ListView::widget([
+        'itemView' => '_index-item',
+        'itemOptions' => function (PushRecord $push) {
+            $options = ['class' => 'job-item'];
+            switch ($push->getStatus()) {
+                case PushRecord::STATUS_STOPPED:
+                    Html::addCssClass($options, 'bg-info');
+                    break;
+                case PushRecord::STATUS_WAITING:
+                case PushRecord::STATUS_STARTED:
+                    Html::addCssClass($options, 'bg-success');
+                    break;
+                case PushRecord::STATUS_FAILED:
+                case PushRecord::STATUS_RESTARTED:
+                    Html::addCssClass($options, 'bg-warning');
+                    break;
+                case PushRecord::STATUS_BURIED:
+                    Html::addCssClass($options, 'bg-danger');
+                    break;
+                default:
+                    Html::addCssClass($options, 'bg-default');
+            }
+            return $options;
+        },
+        'dataProvider' => new \yii\data\ActiveDataProvider([
+            'query' => $filter->search()->with(['firstExec', 'lastExec', 'execCount']),
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+            ],
+        ]),
+    ]) ?>
 </div>
+<?php $this->endContent() ?>
 <?php
 $this->registerCss(<<<CSS
 

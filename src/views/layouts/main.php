@@ -32,12 +32,6 @@ Asset::register($this);
         'options' => ['class' => 'navbar-inverse navbar-fixed-top'],
     ]);
     echo Nav::widget([
-        'options' => ['class' => 'nav navbar-nav'],
-        'items' => [
-            ['label' => 'Jobs', 'url' => ['job/index']],
-        ],
-    ]);
-    echo Nav::widget([
         'options' => ['class' => 'nav navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Application', 'url' => Yii::$app->homeUrl],
