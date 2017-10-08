@@ -10,6 +10,7 @@ namespace zhuravljov\yii\queue\monitor;
 use yii\base\BootstrapInterface;
 use yii\base\InvalidConfigException;
 use yii\web\Application as WebApplication;
+use yii\web\GroupUrlRule;
 
 /**
  * Class Config
@@ -45,13 +46,18 @@ class Module extends \yii\base\Module implements BootstrapInterface
     public function bootstrap($app)
     {
         if ($app instanceof WebApplication) {
-            $app->urlManager->addRules([
-                $this->id . '/jobs' => $this->id . '/job/index',
-                $this->id . '/job/<id:\d+>/<action\w+>' => $this->id . '/job/view-<action>',
-                $this->id . '/<controller:\w+>/<id:\d+>' => $this->id . '/<controller>/view',
-                $this->id . '/<controller:\w+>/<action\w+>/<id:\d+>' => $this->id . '/<controller>/<action>',
-                $this->id . '/<controller:\w+>/<action\w+>' => $this->id . '/<controller>/<action>',
-            ], false);
+            $app->urlManager->addRules([[
+                'class' => GroupUrlRule::class,
+                'prefix' => $this->id,
+                'rules' => [
+                    '' => 'job/index',
+                    'jobs' => 'job/index',
+                    'job/<id:\d+>/<action\w+>' => 'job/view-<action>',
+                    '<controller:\w+>/<id:\d+>' => '<controller>/view',
+                    '<controller:\w+>/<action\w+>/<id:\d+>' => '<controller>/<action>',
+                    '<controller:\w+>/<action\w+>' => '<controller>/<action>',
+                ],
+            ]], false);
         } else {
             throw new InvalidConfigException('The module must be used for web application only.');
         }
