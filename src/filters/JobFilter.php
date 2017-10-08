@@ -26,7 +26,7 @@ class JobFilter extends Model
     const IS_DONE = 'done';
     const IS_SUCCESS = 'success';
     const IS_BURIED  = 'buried';
-    const IS_HAVE_FAILS = 'have-fails';
+    const IS_FAILED = 'failed';
     const IS_STOPPED = 'stopped';
 
     public $is;
@@ -59,7 +59,7 @@ class JobFilter extends Model
         return [
             [['is', 'sender', 'class', 'pushed'], 'trim'],
             ['is', 'string'],
-            ['is', 'in', 'range' => array_keys($this->statusList())],
+            ['is', 'in', 'range' => array_keys($this->scopeList())],
             ['sender', 'string'],
             ['class', 'string'],
             ['pushed', 'string'],
@@ -94,10 +94,9 @@ class JobFilter extends Model
     public function attributeLabels()
     {
         return [
-            'is' => 'Status',
-            'sender' => 'Sender Name',
-            'class' => 'Job Class',
-            'delay' => 'Delay',
+            'is' => 'Scope',
+            'sender' => 'Sender',
+            'class' => 'Job',
             'pushed' => 'Pushed'
         ];
     }
@@ -105,7 +104,7 @@ class JobFilter extends Model
     /**
      * @return array
      */
-    public function statusList()
+    public function scopeList()
     {
         return [
             self::IS_WAITING => 'Waiting',
@@ -113,7 +112,7 @@ class JobFilter extends Model
             self::IS_DONE => 'Done',
             self::IS_SUCCESS => 'Done successfully',
             self::IS_BURIED => 'Buried',
-            self::IS_HAVE_FAILS => 'Have failed attempts',
+            self::IS_FAILED => 'Has failed attempts',
             self::IS_STOPPED => 'Stopped',
         ];
     }
@@ -189,7 +188,7 @@ class JobFilter extends Model
             $query->success();
         } elseif ($this->is == self::IS_BURIED) {
             $query->buried();
-        } elseif ($this->is == self::IS_HAVE_FAILS) {
+        } elseif ($this->is == self::IS_FAILED) {
             $query->hasFails();
         } elseif ($this->is == self::IS_STOPPED) {
             $query->stopped();

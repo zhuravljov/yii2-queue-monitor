@@ -19,7 +19,7 @@ use zhuravljov\yii\widgets\DateRangePicker;
     ]) ?>
     <div class="row">
         <div class="col-lg-12 col-md-3 col-sm-6">
-            <?= $form->field($filter, 'is')->dropDownList($filter->statusList(), ['prompt' => '']) ?>
+            <?= $form->field($filter, 'is')->dropDownList($filter->scopeList(), ['prompt' => '']) ?>
         </div>
         <div class="col-lg-12 col-md-3 col-sm-6">
             <?= $form->field($filter, 'sender')->textInput(['list' => 'job-sender']) ?>
