@@ -5,7 +5,7 @@
  * @license http://opensource.org/licenses/BSD-3-Clause
  */
 
-namespace zhuravljov\yii\queue\monitor;
+namespace zhuravljov\yii\queue\monitor\assets;
 
 use yii\bootstrap\BootstrapAsset;
 use yii\bootstrap\BootstrapPluginAsset;
@@ -14,13 +14,13 @@ use yii\web\AssetBundle;
 use yii\web\YiiAsset;
 
 /**
- * Class Asset
+ * Class MainAsset
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
-class Asset extends AssetBundle
+class MainAsset extends AssetBundle
 {
-    public $sourcePath = '@zhuravljov/yii/queue/monitor/assets';
+    public $sourcePath = '@zhuravljov/yii/queue/monitor/web';
     public $css = [
         'main.css',
     ];

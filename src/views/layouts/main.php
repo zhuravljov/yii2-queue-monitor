@@ -8,9 +8,9 @@ use yii\bootstrap\Html;
 use yii\bootstrap\NavBar;
 use yii\bootstrap\Nav;
 use yii\widgets\Breadcrumbs;
-use zhuravljov\yii\queue\monitor\Asset;
+use zhuravljov\yii\queue\monitor\assets\MainAsset;
 
-Asset::register($this);
+MainAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
