@@ -24,6 +24,11 @@ $actionId = Yii::$app->controller->action->id;
             ],
             'items' => [
                 [
+                    'label' => Html::icon('stats') . ' Stats',
+                    'url' => ['job/stats'] + JobFilter::restoreParams(),
+                    'active' => $actionId === 'stats',
+                ],
+                [
                     'label' => Html::icon('tasks') . ' Jobs',
                     'url' => ['job/list'] + JobFilter::restoreParams(),
                     'active' => $actionId === 'list',

@@ -38,7 +38,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
     /**
      * @inheritdoc
      */
-    public $defaultRoute = 'job/list';
+    public $defaultRoute = 'job/stats';
 
     /**
      * @inheritdoc
@@ -50,6 +50,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
                 'class' => GroupUrlRule::class,
                 'prefix' => $this->id,
                 'rules' => [
+                    'stats' => 'job/stats',
                     'jobs' => 'job/list',
                     'job/<id:\d+>/<action\w+>' => 'job/view-<action>',
                     '<controller:\w+>/<id:\d+>' => '<controller>/view',

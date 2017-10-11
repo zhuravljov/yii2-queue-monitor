@@ -49,6 +49,17 @@ class JobController extends Controller
     }
 
     /**
+     * Statistics
+     */
+    public function actionStats()
+    {
+        $filter = $this->createFilter();
+        return $this->render('stats', [
+            'filter' => $filter,
+        ]);
+    }
+
+    /**
      * Pushed jobs
      */
     public function actionList()
