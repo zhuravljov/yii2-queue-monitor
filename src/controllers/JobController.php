@@ -56,6 +56,8 @@ class JobController extends Controller
         $filter = $this->createFilter();
         return $this->render('stats', [
             'filter' => $filter,
+            'classes' => $filter->searchClasses(),
+            'senders' => $filter->searchSenders(),
         ]);
     }
 

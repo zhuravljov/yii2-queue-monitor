@@ -196,4 +196,30 @@ class JobFilter extends Model
 
         return $query;
     }
+
+    /**
+     * @return array
+     */
+    public function searchClasses()
+    {
+        return $this->search()
+            ->select(['name' => 'p.job_class', 'count' => 'COUNT(*)'])
+            ->groupBy(['name'])
+            ->orderBy(['name' => SORT_ASC])
+            ->asArray()
+            ->all();
+    }
+
+    /**
+     * @return array
+     */
+    public function searchSenders()
+    {
+        return $this->search()
+            ->select(['name' => 'p.sender_name', 'count' => 'COUNT(*)'])
+            ->groupBy(['name'])
+            ->orderBy(['name' => SORT_ASC])
+            ->asArray()
+            ->all();
+    }
 }
