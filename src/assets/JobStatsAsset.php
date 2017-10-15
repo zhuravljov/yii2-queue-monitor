@@ -8,6 +8,7 @@
 namespace zhuravljov\yii\queue\monitor\assets;
 
 use yii\web\AssetBundle;
+use yii\web\JqueryAsset;
 
 /**
  * Class JobStatsAsset
@@ -21,6 +22,7 @@ class JobStatsAsset extends AssetBundle
         'job-stats.js',
     ];
     public $depends = [
+        JqueryAsset::class,
         ChartJsAsset::class,
     ];
 }

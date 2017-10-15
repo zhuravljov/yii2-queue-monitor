@@ -1,12 +1,4 @@
-function renderClassesPie(id, data) {
-    renderPie(id, data);
-}
-
-function renderSendersPie(id, data) {
-    renderPie(id, data);
-}
-
-function renderPie(id, data) {
+function renderPie(id, data, onclick) {
     var pie = new Chart(document.getElementById(id).getContext('2d'), {
         type: 'pie',
         data: {
@@ -40,6 +32,12 @@ function renderPie(id, data) {
                     }
                 }
             }
+        }
+    });
+    $('#' + id).click(function(e) {
+        var elements = pie.getElementAtEvent(e);
+        if (elements.length) {
+            onclick(data[elements[0]._index]);
         }
     });
 }

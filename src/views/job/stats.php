@@ -6,10 +6,12 @@
  * @var array $senders
  */
 
+use yii\helpers\Json;
+use yii\helpers\Url;
 use zhuravljov\yii\queue\monitor\assets\JobStatsAsset;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 
-if (JobFilter::restoreParams()) {
+if ($filterParams = JobFilter::restoreParams()) {
     $this->params['breadcrumbs'][] = ['label' => 'Stats', 'url' => ['stats']];
     $this->params['breadcrumbs'][] = 'Filtered';
 } else {
@@ -38,10 +40,16 @@ if (JobFilter::restoreParams()) {
 <?php $this->endContent() ?>
 <?php
 JobStatsAsset::register($this);
-$classesData = \yii\helpers\Json::encode($classes);
-$sendersData = \yii\helpers\Json::encode($senders);
+$classesData = Json::encode($classes);
+$classesUrl = Url::to(['list', 'class' => '_value_'] + $filterParams);
+$sendersData = Json::encode($senders);
+$sendersUrl = Url::to(['list', 'sender' => '_value_'] + $filterParams);
 $this->registerJs(<<<JS
-renderClassesPie('chart-classes', $classesData);
-renderSendersPie('chart-senders', $sendersData);
+renderPie('chart-classes', $classesData, function(d) {
+    location.href = '$classesUrl'.replace('_value_', encodeURI(d.name));
+});
+renderPie('chart-senders', $sendersData, function(d) {
+    location.href = '$sendersUrl'.replace('_value_', encodeURI(d.name));
+});
 JS
 );
