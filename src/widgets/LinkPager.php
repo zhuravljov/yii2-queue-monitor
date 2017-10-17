@@ -40,6 +40,10 @@ class LinkPager extends \yii\widgets\LinkPager
      * @var string
      */
     public $activeSizeCssClass = 'active';
+    /**
+     * @inheritdoc
+     */
+    public $hideOnSinglePage = false;
 
     /**
      * @inheritdoc
