@@ -9,6 +9,7 @@ use yii\widgets\ListView;
 use zhuravljov\yii\queue\monitor\assets\JobListAsset;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
+use zhuravljov\yii\queue\monitor\widgets\LinkPager;
 
 if (JobFilter::restoreParams()) {
     $this->params['breadcrumbs'][] = ['label' => 'Jobs', 'url' => ['list']];
@@ -22,6 +23,9 @@ JobListAsset::register($this);
 <?php $this->beginContent(__DIR__ . '/_index-layout.php', ['filter' => $filter]) ?>
 <div class="monitor-job-list">
     <?= ListView::widget([
+        'pager' => [
+            'class' => LinkPager::class,
+        ],
         'itemView' => '_index-item',
         'itemOptions' => function (PushRecord $push) {
             $options = ['class' => 'job-item'];

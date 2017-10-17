@@ -8,6 +8,7 @@ use yii\bootstrap\Html;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
 use zhuravljov\yii\queue\monitor\records\ExecRecord;
+use zhuravljov\yii\queue\monitor\widgets\LinkPager;
 
 echo $this->render('_view-nav', ['record' => $record]);
 
@@ -16,6 +17,9 @@ $this->params['breadcrumbs'][] = 'Attempts';
 <div class="monitor-job-attempts">
     <?= GridView::widget([
         'layout' => "{items}\n{pager}",
+        'pager' => [
+            'class' => LinkPager::class,
+        ],
         'tableOptions' => ['class' => 'table'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $record->getExecs(),
