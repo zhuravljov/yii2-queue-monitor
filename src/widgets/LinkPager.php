@@ -7,8 +7,6 @@
 
 namespace zhuravljov\yii\queue\monitor\widgets;
 
-use yii\bootstrap\Html;
-
 /**
  * Class LinkPager
  *
@@ -21,25 +19,9 @@ class LinkPager extends \yii\widgets\LinkPager
      */
     public $layout = '<div class="pull-right">{sizer}</div> {pager} <div class="clearfix"></div>';
     /**
-     * @var int[]
+     * @var array of sizer options
      */
-    public $sizes = [10, 20, 50];
-    /**
-     * @var array
-     */
-    public $sizerOptions = ['class' => 'pagination'];
-    /**
-     * @var array
-     */
-    public $sizerItemOptions = [];
-    /**
-     * @var array
-     */
-    public $sizerLinkOptions = [];
-    /**
-     * @var string
-     */
-    public $activeSizeCssClass = 'active';
+    public $sizer = [];
     /**
      * @inheritdoc
      */
@@ -54,31 +36,20 @@ class LinkPager extends \yii\widgets\LinkPager
             $this->registerLinkTags();
         }
 
-        return strtr($this->layout, [
-            '{pager}' => $this->renderPageButtons(),
-            '{sizer}' => $this->renderSizeButtons(),
-        ]);
+        return preg_replace_callback('/{\w+}/', function ($matches) {
+            return $this->renderSection($matches[0]);
+        }, $this->layout);
     }
 
-    /**
-     * @return string
-     */
-    protected function renderSizeButtons()
+    public function renderSection($name)
     {
-        $buttons = [];
-        foreach ($this->sizes as $size) {
-            $limits = $this->pagination->pageSizeLimit;
-            if (isset($limits[0], $limits[1]) && ($size < $limits[0] || $size > $limits[1])) {
-                continue;
-            }
-            $options = $this->sizerItemOptions;
-            if ($size == $this->pagination->pageSize) {
-                Html::addCssClass($options, $this->activeSizeCssClass);
-            }
-            $linkOptions = $this->sizerLinkOptions;
-            $buttons[] = Html::tag('li', Html::a($size, $this->pagination->createUrl(0, $size), $linkOptions), $options);
+        switch ($name) {
+            case '{pager}':
+                return $this->renderPageButtons();
+            case '{sizer}':
+                return LinkSizer::widget(['pagination' => $this->pagination] + $this->sizer);
+            default:
+                return false;
         }
-
-        return Html::tag('ul', join("\n", $buttons), $this->sizerOptions);
     }
 }
