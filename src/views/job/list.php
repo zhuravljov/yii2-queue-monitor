@@ -6,6 +6,7 @@
 
 use yii\bootstrap\Html;
 use yii\widgets\ListView;
+use yii\widgets\Pjax;
 use zhuravljov\yii\queue\monitor\assets\JobListAsset;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
@@ -22,6 +23,7 @@ JobListAsset::register($this);
 ?>
 <?php $this->beginContent(__DIR__ . '/_index-layout.php', ['filter' => $filter]) ?>
 <div class="monitor-job-list">
+    <?php Pjax::begin() ?>
     <?= ListView::widget([
         'pager' => [
             'class' => LinkPager::class,
@@ -58,5 +60,6 @@ JobListAsset::register($this);
             ],
         ]),
     ]) ?>
+    <?php Pjax::end() ?>
 </div>
 <?php $this->endContent() ?>
