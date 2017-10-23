@@ -9,7 +9,6 @@ namespace zhuravljov\yii\queue\monitor\controllers;
 
 use Yii;
 use yii\filters\VerbFilter;
-use yii\queue\Job;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
@@ -128,7 +127,7 @@ class JobController extends Controller
 
         if (!$record->isJobValid()) {
             return $this
-                ->error('The job isn\'t pushed because object must be ' . Job::class . '.')
+                ->error('The job isn\'t pushed because it must be JobInterface instance.')
                 ->redirect(['view-data', 'id' => $record->id]);
         }
 

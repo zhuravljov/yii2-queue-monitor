@@ -9,7 +9,7 @@ namespace zhuravljov\yii\queue\monitor\records;
 
 use Yii;
 use yii\db\ActiveRecord;
-use yii\queue\Job;
+use yii\queue\JobInterface;
 use yii\queue\Queue;
 use zhuravljov\yii\queue\monitor\Env;
 
@@ -38,7 +38,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property string $status
  *
  * @property Queue|null $sender
- * @property Job $job
+ * @property JobInterface $job
  * @property array $jobParams
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
@@ -181,7 +181,7 @@ class PushRecord extends ActiveRecord
     }
 
     /**
-     * @return Job|mixed
+     * @return JobInterface|mixed
      */
     public function getJob()
     {
@@ -210,7 +210,7 @@ class PushRecord extends ActiveRecord
      */
     public function isJobValid()
     {
-        return (gettype($this->getJob()) !== 'object') || ($this->getJob() instanceof Job);
+        return (gettype($this->getJob()) !== 'object') || ($this->getJob() instanceof JobInterface);
     }
 
     /**
