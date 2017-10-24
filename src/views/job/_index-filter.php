@@ -7,14 +7,15 @@
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
 use yii\web\JsExpression;
+use zhuravljov\yii\queue\monitor\assets\JobFilterAsset;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\widgets\DateRangePicker;
 
+JobFilterAsset::register($this);
 ?>
-<div class="monitor-job-search">
+<div class="monitor-job-filter">
     <?php $form = ActiveForm::begin([
         'id' => 'job-filter',
-        'options' => ['data' => ['spy' => 'affix', 'offset-top' => 60]],
         'method' => 'get',
         'action' => ['/' . Yii::$app->controller->route],
         'enableClientValidation' => false,
@@ -75,22 +76,3 @@ use zhuravljov\yii\widgets\DateRangePicker;
     <?php endif; ?>
     <?php ActiveForm::end() ?>
 </div>
-<?php
-$this->registerCss(<<<CSS
-
-#job-filter {
-    margin-bottom: 20px;
-}
-#job-filter.affix {
-    position: inherit;
-}
-@media (min-width: 1200px) {
-    #job-filter.affix {
-        position: fixed;
-        top: 60px;
-        width: 262px;
-    }
-}
-
-CSS
-);

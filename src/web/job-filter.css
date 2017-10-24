@@ -1,0 +1,14 @@
+#job-filter {
+    margin-bottom: 20px;
+}
+#job-filter.affix {
+    position: inherit;
+}
+
+@media (min-width: 1200px) {
+    #job-filter.affix {
+        position: fixed;
+        top: 60px;
+        width: 262px;
+    }
+}

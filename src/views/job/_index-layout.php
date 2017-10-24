@@ -13,7 +13,7 @@ $actionId = Yii::$app->controller->action->id;
 ?>
 <div class="row">
     <div class="col-lg-3 col-lg-push-9">
-        <?= $this->render('_index-search', ['filter' => $filter]) ?>
+        <?= $this->render('_index-filter', ['filter' => $filter]) ?>
     </div>
     <div class="col-lg-9 col-lg-pull-3">
         <?= Nav::widget([
