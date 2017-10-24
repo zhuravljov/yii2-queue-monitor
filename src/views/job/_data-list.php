@@ -4,8 +4,8 @@
  * @var string $id
  * @var string[] $values
  */
-use yii\bootstrap\Html;
 
+use yii\bootstrap\Html;
 ?>
 <datalist id="<?= Html::encode($id) ?>">
     <?php foreach ($values as $value): ?>

@@ -75,7 +75,12 @@ class JobController extends Controller
      */
     public function actionView($id)
     {
-        return $this->redirect(['view-details', 'id' => $id]);
+        $record = $this->findRecord($id);
+        if ($record->lastExec && $record->lastExec->getIsFailed()) {
+            return $this->redirect(['view-attempts', 'id' => $record->id]);
+        } else {
+            return $this->redirect(['view-details', 'id' => $record->id]);
+        }
     }
 
     /**

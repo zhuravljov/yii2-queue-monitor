@@ -4,6 +4,7 @@
  * @var \zhuravljov\yii\queue\monitor\records\PushRecord $model
  */
 
+use yii\helpers\Url;
 use yii\helpers\VarDumper;
 
 $f = Yii::$app->formatter;
@@ -11,7 +12,7 @@ $f = Yii::$app->formatter;
 <div class="job-status"><?= $f->asText($model->getStatus()) ?></div>
 <div class="job-details">
     <div class="job-push-uid">
-        <a href="<?= \yii\helpers\Url::to(['view', 'id' => $model->id]) ?>">
+        <a href="<?= Url::to(['view', 'id' => $model->id]) ?>" data-pjax="0">
             #<?= $f->asText($model->job_uid) ?> by <?= $f->asText($model->sender_name) ?>
         </a>
     </div>
@@ -47,7 +48,7 @@ $f = Yii::$app->formatter;
         </span>
     <?php endforeach ?>
 </div>
-<?php if ($model->lastExec && $model->lastExec->error !== null): ?>
+<?php if ($model->lastExec && $model->lastExec->getIsFailed()): ?>
     <div class="job-error text-danger">
         <strong>Error:</strong>
         <?= $f->asText($model->lastExec->getErrorMessage()) ?>

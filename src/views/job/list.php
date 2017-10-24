@@ -5,6 +5,7 @@
  */
 
 use yii\bootstrap\Html;
+use yii\data\ActiveDataProvider;
 use yii\widgets\ListView;
 use yii\widgets\Pjax;
 use zhuravljov\yii\queue\monitor\assets\JobListAsset;
@@ -51,7 +52,7 @@ JobListAsset::register($this);
             }
             return $options;
         },
-        'dataProvider' => new \yii\data\ActiveDataProvider([
+        'dataProvider' => new ActiveDataProvider([
             'query' => $filter->search()->with(['firstExec', 'lastExec', 'execCount']),
             'sort' => [
                 'defaultOrder' => [

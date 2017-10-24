@@ -25,6 +25,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property PushRecord $push
  *
  * @property int $duration
+ * @property bool $isFailed
  * @property false|string $errorMessage
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
@@ -74,6 +75,14 @@ class ExecRecord extends ActiveRecord
         } else {
             return time() - $this->reserved_at;
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsFailed()
+    {
+        return $this->error !== null;
     }
 
     /**
