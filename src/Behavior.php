@@ -149,9 +149,11 @@ class Behavior extends \yii\base\Behavior
     protected function getPushRecord(JobEvent $event)
     {
         if ($event->id !== null) {
-            return PushRecord::find()
-                ->byJob($this->getSenderName($event), $event->id)
-                ->one();
+            return $this->env->db->useMaster(function () use ($event) {
+                return PushRecord::find()
+                    ->byJob($this->getSenderName($event), $event->id)
+                    ->one();
+            });
         } else {
             return null;
         }
