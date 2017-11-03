@@ -7,7 +7,7 @@
 
 namespace zhuravljov\yii\queue\monitor;
 
-use yii\base\Object;
+use yii\base\BaseObject;
 use yii\caching\Cache;
 use yii\db\Connection;
 use yii\di\Instance;
@@ -17,7 +17,7 @@ use yii\di\Instance;
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
-class Env extends Object
+class Env extends BaseObject
 {
     /**
      * @var Cache|array|string
