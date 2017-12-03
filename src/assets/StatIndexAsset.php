@@ -15,11 +15,11 @@ use yii\web\JqueryAsset;
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
-class JobStatsAsset extends AssetBundle
+class StatIndexAsset extends AssetBundle
 {
     public $sourcePath = '@zhuravljov/yii/queue/monitor/web';
     public $js = [
-        'job-stats.js',
+        'stat-index.js',
     ];
     public $depends = [
         JqueryAsset::class,

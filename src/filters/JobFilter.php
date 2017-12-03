@@ -40,6 +40,19 @@ class JobFilter extends Model
     private $env;
 
     /**
+     * @return static
+     */
+    public static function build()
+    {
+        /** @var static $filter */
+        $filter = Yii::createObject(static::class);
+        $filter->load(Yii::$app->request->queryParams) && $filter->validate();
+        $filter->storeParams();
+
+        return $filter;
+    }
+
+    /**
      * @param Env $env
      * @param array $config
      */

@@ -7,7 +7,6 @@
 
 namespace zhuravljov\yii\queue\monitor\controllers;
 
-use Yii;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\ForbiddenHttpException;
@@ -48,25 +47,12 @@ class JobController extends Controller
     }
 
     /**
-     * Statistics
-     */
-    public function actionStats()
-    {
-        $filter = $this->createFilter();
-        return $this->render('stats', [
-            'filter' => $filter,
-            'classes' => $filter->searchClasses(),
-            'senders' => $filter->searchSenders(),
-        ]);
-    }
-
-    /**
      * Pushed jobs
      */
-    public function actionList()
+    public function actionIndex()
     {
-        return $this->render('list', [
-            'filter' => $this->createFilter(),
+        return $this->render('index', [
+            'filter' => JobFilter::build(),
         ]);
     }
 
@@ -185,18 +171,5 @@ class JobController extends Controller
         } else {
             throw new NotFoundHttpException('Record not found.');
         }
-    }
-
-    /**
-     * @return JobFilter
-     */
-    protected function createFilter()
-    {
-        /** @var JobFilter $filter */
-        $filter = Yii::createObject(JobFilter::class);
-        $filter->load(Yii::$app->request->queryParams) && $filter->validate();
-        $filter->storeParams();
-
-        return $filter;
     }
 }

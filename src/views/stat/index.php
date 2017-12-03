@@ -8,18 +8,18 @@
 
 use yii\helpers\Json;
 use yii\helpers\Url;
-use zhuravljov\yii\queue\monitor\assets\JobStatsAsset;
+use zhuravljov\yii\queue\monitor\assets\StatIndexAsset;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 
 if ($filterParams = JobFilter::restoreParams()) {
-    $this->params['breadcrumbs'][] = ['label' => 'Stats', 'url' => ['stats']];
+    $this->params['breadcrumbs'][] = ['label' => 'Stats', 'url' => ['index']];
     $this->params['breadcrumbs'][] = 'Filtered';
 } else {
     $this->params['breadcrumbs'][] = 'Stats';
 }
 ?>
-<?php $this->beginContent(__DIR__ . '/_index-layout.php', ['filter' => $filter]) ?>
-<div class="monitor-job-stats">
+<?php $this->beginContent(dirname(__DIR__) . '/layouts/job-filter.php', ['filter' => $filter]) ?>
+<div class="monitor-stat-index">
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default">
@@ -39,7 +39,7 @@ if ($filterParams = JobFilter::restoreParams()) {
 </div>
 <?php $this->endContent() ?>
 <?php
-JobStatsAsset::register($this);
+StatIndexAsset::register($this);
 $classesData = Json::encode($classes);
 $classesUrl = Url::to(['list', 'class' => '_value_'] + $filterParams);
 $sendersData = Json::encode($senders);

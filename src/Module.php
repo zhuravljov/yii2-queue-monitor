@@ -50,8 +50,8 @@ class Module extends \yii\base\Module implements BootstrapInterface
                 'class' => GroupUrlRule::class,
                 'prefix' => $this->id,
                 'rules' => [
-                    'stats' => 'job/stats',
-                    'jobs' => 'job/list',
+                    'stats' => 'stat/index',
+                    'jobs' => 'job/index',
                     'job/<id:\d+>/<action\w+>' => 'job/view-<action>',
                     '<controller:\w+>/<id:\d+>' => '<controller>/view',
                     '<controller:\w+>/<action\w+>/<id:\d+>' => '<controller>/<action>',
