@@ -28,11 +28,8 @@ class StatController extends Controller
      */
     public function actionIndex()
     {
-        $filter = JobFilter::build();
         return $this->render('index', [
-            'filter' => $filter,
-            'classes' => $filter->searchClasses(),
-            'senders' => $filter->searchSenders(),
+            'filter' => JobFilter::build(),
         ]);
     }
 }
