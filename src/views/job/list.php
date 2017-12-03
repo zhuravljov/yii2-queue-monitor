@@ -53,7 +53,12 @@ JobListAsset::register($this);
             return $options;
         },
         'dataProvider' => new ActiveDataProvider([
-            'query' => $filter->search()->with(['firstExec', 'lastExec', 'execCount']),
+            'query' => $filter->search()
+                ->with([
+                    'firstExec',
+                    'lastExec',
+                    'execTotal',
+                ]),
             'sort' => [
                 'defaultOrder' => [
                     'id' => SORT_DESC,

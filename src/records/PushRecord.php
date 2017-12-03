@@ -31,7 +31,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property ExecRecord[] $execs
  * @property ExecRecord|null $firstExec
  * @property ExecRecord|null $lastExec
- * @property array $execCount
+ * @property array $execTotal
  *
  * @property int $attemptCount
  * @property int $waitTime
@@ -107,10 +107,14 @@ class PushRecord extends ActiveRecord
     /**
      * @return ExecQuery
      */
-    public function getExecCount()
+    public function getExecTotal()
     {
         return $this->hasOne(ExecRecord::class, ['push_id' => 'id'])
-            ->select(['push_id', 'attempts' => 'COUNT(*)', 'errors' => 'COUNT(error)'])
+            ->select([
+                'push_id',
+                'attempts' => 'COUNT(*)',
+                'errors' => 'COUNT(error)',
+            ])
             ->groupBy('push_id')
             ->asArray();
     }
@@ -120,7 +124,7 @@ class PushRecord extends ActiveRecord
      */
     public function getAttemptCount()
     {
-        return $this->execCount['attempts'] ?: 0;
+        return $this->execTotal['attempts'] ?: 0;
     }
 
     /**
