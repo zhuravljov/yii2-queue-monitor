@@ -13,8 +13,8 @@ Installation
 The preferred way to install the extension is through [composer](http://getcomposer.org/download/).
 Add to the require section of your `composer.json` file:
 
-```json
-"zhuravljov/yii2-queue-monitor": "1.0.0-dev"
+```
+"zhuravljov/yii2-queue-monitor": "1.0.x-dev"
 ```
 
 Usage
