@@ -52,7 +52,7 @@ class JobController extends Controller
     public function actionIndex()
     {
         return $this->render('index', [
-            'filter' => JobFilter::build(),
+            'filter' => JobFilter::ensure(),
         ]);
     }
 

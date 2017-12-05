@@ -38,7 +38,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
     /**
      * @inheritdoc
      */
-    public $defaultRoute = 'job/stats';
+    public $defaultRoute = 'stat/index';
 
     /**
      * @inheritdoc

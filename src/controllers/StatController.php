@@ -23,13 +23,20 @@ class StatController extends Controller
      */
     public $module;
 
-    /**
-     * @return mixed
-     */
     public function actionIndex()
     {
         return $this->render('index', [
-            'filter' => JobFilter::build(),
+            'filter' => JobFilter::ensure(),
         ]);
+    }
+
+    public function actionClassList()
+    {
+        return $this->asJson(JobFilter::ensure()->searchClasses());
+    }
+
+    public function actionSenderList()
+    {
+        return $this->asJson(JobFilter::ensure()->searchSenders());
     }
 }

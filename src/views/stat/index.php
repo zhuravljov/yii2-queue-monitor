@@ -17,18 +17,10 @@ if ($filterParams = JobFilter::restoreParams()) {
 <div class="monitor-stat-index">
     <div class="row">
         <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <?= $this->render('_chart-classes', ['filter' => $filter]) ?>
-                </div>
-            </div>
+            <?= $this->render('_chart-classes', ['filter' => $filter]) ?>
         </div>
         <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <?= $this->render('_chart-senders', ['filter' => $filter]) ?>
-                </div>
-            </div>
+            <?= $this->render('_chart-senders', ['filter' => $filter]) ?>
         </div>
     </div>
 </div>

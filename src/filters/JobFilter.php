@@ -42,7 +42,7 @@ class JobFilter extends Model
     /**
      * @return static
      */
-    public static function build()
+    public static function ensure()
     {
         /** @var static $filter */
         $filter = Yii::createObject(static::class);
@@ -62,11 +62,17 @@ class JobFilter extends Model
         parent::__construct($config);
     }
 
+    /**
+     * @inheritdoc
+     */
     public function formName()
     {
         return '';
     }
 
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
@@ -81,6 +87,7 @@ class JobFilter extends Model
     }
 
     /**
+     *
      */
     public function storeParams()
     {
