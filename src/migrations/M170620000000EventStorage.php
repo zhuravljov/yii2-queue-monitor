@@ -11,7 +11,7 @@ use yii\db\Migration;
 use zhuravljov\yii\queue\monitor\Env;
 
 /**
- * Class M20170620000000QueueEvent
+ * Storage of job events
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */

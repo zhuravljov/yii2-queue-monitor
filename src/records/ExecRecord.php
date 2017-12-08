@@ -16,6 +16,7 @@ use zhuravljov\yii\queue\monitor\Env;
  *
  * @property integer $id
  * @property integer $push_id
+ * @property null|int $worker_id
  * @property integer $attempt
  * @property integer $reserved_at
  * @property null|integer $done_at
@@ -23,6 +24,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property null|integer $retry
  *
  * @property PushRecord $push
+ * @property null|WorkerRecord $worker
  *
  * @property int $duration
  * @property bool $isFailed
@@ -63,6 +65,14 @@ class ExecRecord extends ActiveRecord
     public function getPush()
     {
         return $this->hasOne(PushRecord::class, ['id' => 'push_id']);
+    }
+
+    /**
+     * @return WorkerQuery
+     */
+    public function getWorker()
+    {
+        return $this->hasOne(WorkerRecord::class, ['id' => 'worker_id']);
     }
 
     /**
