@@ -111,7 +111,7 @@ class Behavior extends \yii\base\Behavior
         $this->checkEvent($event);
 
         $push = $this->getPushRecord($event);
-        if ($push->isStopped()) {
+        if ($push && $push->isStopped()) {
             // Breaks retry in case is stopped
             $event->retry = false;
         }
