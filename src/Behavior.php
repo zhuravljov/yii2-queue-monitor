@@ -10,7 +10,6 @@ namespace zhuravljov\yii\queue\monitor;
 use Yii;
 use yii\base\Event;
 use yii\base\InvalidConfigException;
-use yii\base\NotSupportedException;
 use yii\queue\cli\WorkerEvent;
 use yii\queue\ErrorEvent;
 use yii\queue\ExecEvent;
@@ -59,10 +58,11 @@ class Behavior extends \yii\base\Behavior
         ];
     }
 
+    /**
+     * @param PushEvent $event
+     */
     public function afterPush(PushEvent $event)
     {
-        $this->checkJobEvent($event);
-
         $push = new PushRecord();
         $push->sender_name = $this->getSenderName($event);
         $push->job_uid = $event->id;
@@ -73,42 +73,49 @@ class Behavior extends \yii\base\Behavior
         $push->save(false);
     }
 
+    /**
+     * @param ExecEvent $event
+     */
     public function beforeExec(ExecEvent $event)
     {
-        $this->checkJobEvent($event);
-
-        if ($push = $this->getPushRecord($event)) {
-            if ($push->isStopped()) {
-                // Rejects job execution in case is stopped
-                $event->handled = true;
-                return;
-            }
-            $this->env->db->transaction(function () use ($event, $push) {
-                $exec = new ExecRecord();
-                $exec->push_id = $push->id;
-                if (
-                    $this->env->isWorkerTracked &&
-                    ($worker = $this->getWorkerRecord($event->workerPid))
-                ) {
-                    $exec->worker_id = $worker->id;
-                }
-                $exec->attempt = $event->attempt;
-                $exec->reserved_at = time();
-                $exec->save(false);
-
-                $push->first_exec_id = $push->first_exec_id ?: $exec->id;
-                $push->last_exec_id = $exec->id;
-                $push->save(false);
-            });
+        $push = $this->getPushRecord($event);
+        if (!$push) {
+            return;
         }
+        if ($push->isStopped()) {
+            // Rejects job execution in case is stopped
+            $event->handled = true;
+            return;
+        }
+        $this->env->db->transaction(function () use ($event, $push) {
+            $exec = new ExecRecord();
+            $exec->push_id = $push->id;
+            if (
+                $this->env->isWorkerTracked &&
+                ($worker = $this->getWorkerRecord($event->workerPid))
+            ) {
+                $exec->worker_id = $worker->id;
+            }
+            $exec->attempt = $event->attempt;
+            $exec->reserved_at = time();
+            $exec->save(false);
+
+            $push->first_exec_id = $push->first_exec_id ?: $exec->id;
+            $push->last_exec_id = $exec->id;
+            $push->save(false);
+        });
     }
 
+    /**
+     * @param ExecEvent $event
+     */
     public function afterExec(ExecEvent $event)
     {
-        $this->checkJobEvent($event);
-
         $push = $this->getPushRecord($event);
-        if ($push && $push->last_exec_id) {
+        if (!$push) {
+            return;
+        }
+        if ($push->last_exec_id) {
             ExecRecord::updateAll([
                 'done_at' => time(),
                 'error' => null,
@@ -119,16 +126,20 @@ class Behavior extends \yii\base\Behavior
         }
     }
 
+    /**
+     * @param ErrorEvent $event
+     */
     public function afterError(ErrorEvent $event)
     {
-        $this->checkJobEvent($event);
-
         $push = $this->getPushRecord($event);
+        if (!$push) {
+            return;
+        }
         if ($push->isStopped()) {
             // Breaks retry in case is stopped
             $event->retry = false;
         }
-        if ($push && $push->last_exec_id) {
+        if ($push->last_exec_id) {
             ExecRecord::updateAll([
                 'done_at' => time(),
                 'error' => $event->error,
@@ -147,7 +158,6 @@ class Behavior extends \yii\base\Behavior
         if (!$this->env->isWorkerTracked) {
             return;
         }
-
         $worker = new WorkerRecord();
         $worker->sender_name = $this->getSenderName($event);
         $worker->pid = $event->pid;
@@ -163,7 +173,6 @@ class Behavior extends \yii\base\Behavior
         if (!$this->env->isWorkerTracked) {
             return;
         }
-
         if ($worker = $this->getWorkerRecord($event->pid)) {
             $worker->finished_at = time();
             $worker->save(false);
@@ -199,19 +208,6 @@ class Behavior extends \yii\base\Behavior
             });
         } else {
             return null;
-        }
-    }
-
-    /**
-     * @param JobEvent $event
-     * @throws
-     */
-    private function checkJobEvent(JobEvent $event)
-    {
-        if ($event->id === null) {
-            throw new  NotSupportedException(strtr('Queue monitor does not support {class}.', [
-                '{class}' => get_class($event->sender),
-            ]));
         }
     }
 
