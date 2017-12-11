@@ -10,9 +10,11 @@ use yii\bootstrap\Html;
 use yii\bootstrap\Nav;
 use yii\helpers\Url;
 use yii\web\JsExpression;
+use zhuravljov\yii\queue\monitor\assets\JobFilterAsset;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\widgets\DateRangePicker;
 
+JobFilterAsset::register($this);
 ?>
 <div class="row">
     <div class="col-lg-3 col-lg-push-9">
