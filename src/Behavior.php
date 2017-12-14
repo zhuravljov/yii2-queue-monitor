@@ -29,6 +29,10 @@ use zhuravljov\yii\queue\monitor\records\WorkerRecord;
 class Behavior extends \yii\base\Behavior
 {
     /**
+     * @var bool
+     */
+    public $canTrackWorkers = false;
+    /**
      * @var Env
      */
     protected $env;
@@ -48,14 +52,20 @@ class Behavior extends \yii\base\Behavior
      */
     public function events()
     {
-        return [
+        $events = [
             Queue::EVENT_AFTER_PUSH => 'afterPush',
             Queue::EVENT_BEFORE_EXEC => 'beforeExec',
             Queue::EVENT_AFTER_EXEC => 'afterExec',
             Queue::EVENT_AFTER_ERROR => 'afterError',
-            CliQueue::EVENT_WORKER_START => 'workerStart',
-            CliQueue::EVENT_WORKER_STOP => 'workerStop',
         ];
+        if ($this->canTrackWorkers) {
+            $events += [
+                CliQueue::EVENT_WORKER_START => 'workerStart',
+                CliQueue::EVENT_WORKER_STOP => 'workerStop',
+            ];
+        }
+
+        return $events;
     }
 
     /**
@@ -90,11 +100,10 @@ class Behavior extends \yii\base\Behavior
         $this->env->db->transaction(function () use ($event, $push) {
             $exec = new ExecRecord();
             $exec->push_id = $push->id;
-            if (
-                $this->env->isWorkerTracked &&
-                ($worker = $this->getWorkerRecord($event->workerPid))
-            ) {
-                $exec->worker_id = $worker->id;
+            if ($this->canTrackWorkers) {
+                if ($worker = $this->getWorkerRecord($event->workerPid)) {
+                    $exec->worker_id = $worker->id;
+                }
             }
             $exec->attempt = $event->attempt;
             $exec->reserved_at = time();
@@ -155,9 +164,6 @@ class Behavior extends \yii\base\Behavior
      */
     public function workerStart(WorkerEvent $event)
     {
-        if (!$this->env->isWorkerTracked) {
-            return;
-        }
         $worker = new WorkerRecord();
         $worker->sender_name = $this->getSenderName($event);
         $worker->pid = $event->pid;
@@ -170,9 +176,6 @@ class Behavior extends \yii\base\Behavior
      */
     public function workerStop(WorkerEvent $event)
     {
-        if (!$this->env->isWorkerTracked) {
-            return;
-        }
         if ($worker = $this->getWorkerRecord($event->pid)) {
             $worker->finished_at = time();
             $worker->save(false);

@@ -28,7 +28,10 @@ return [
     'components' => [
         'queue' => [
             // ...
-            'as monitor' => \zhuravljov\yii\queue\monitor\Behavior::class,
+            'as monitor' => [
+                'class' => \zhuravljov\yii\queue\monitor\Behavior::class,
+                'canTrackWorkers' => true, 
+            ],
         ],
     ],
 ];
@@ -43,8 +46,9 @@ return [
             \zhuravljov\yii\queue\monitor\Env::class => [
                 'cache' => 'cache',
                 'db' => 'db',
-                'pushTableName' => '{{%queue_push}}',
-                'execTableName' => '{{%queue_exec}}',
+                'pushTableName'   => '{{%queue_push}}',
+                'execTableName'   => '{{%queue_exec}}',
+                'workerTableName' => '{{%queue_worker}}',
             ],
         ],
     ],

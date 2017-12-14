@@ -39,10 +39,6 @@ class Env extends BaseObject
      * @var string
      */
     public $workerTableName = '{{%queue_worker}}';
-    /**
-     * @var bool
-     */
-    public $isWorkerTracked = false;
 
     /**
      * @inheritdoc
