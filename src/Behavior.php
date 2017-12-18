@@ -176,6 +176,7 @@ class Behavior extends \yii\base\Behavior
      */
     public function workerStop(WorkerEvent $event)
     {
+        $this->env->db->close(); // To reopen a lost connection
         if ($worker = $this->getWorkerRecord($event->pid)) {
             $worker->finished_at = time();
             $worker->save(false);
