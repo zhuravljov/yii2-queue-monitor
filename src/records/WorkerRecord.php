@@ -19,9 +19,14 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property int $pid
  * @property int $started_at
  * @property null|int $finished_at
+ * @property null|int $last_exec_id
  *
+ * @property null|ExecRecord $lastExec
  * @property ExecRecord[] $execs
+ * @property array $execTotal
  *
+ * @property int $execStartedCount
+ * @property int $execDoneCount
  * @property int $duration
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
@@ -56,9 +61,48 @@ class WorkerRecord extends ActiveRecord
     /**
      * @return ExecQuery
      */
+    public function getLastExec()
+    {
+        return $this->hasOne(ExecRecord::class, ['id' => 'last_exec_id']);
+    }
+
+    /**
+     * @return ExecQuery
+     */
     public function getExecs()
     {
         return $this->hasMany(ExecRecord::class, ['worker_id' => 'id']);
+    }
+
+    /**
+     * @return ExecQuery
+     */
+    public function getExecTotal()
+    {
+        return $this->hasOne(ExecRecord::class, ['worker_id' => 'id'])
+            ->select([
+                'worker_id',
+                'started' => 'COUNT(*)',
+                'done' => 'COUNT(done_at)',
+            ])
+            ->groupBy('push_id')
+            ->asArray();
+    }
+
+    /**
+     * @return int
+     */
+    public function getExecStartedCount()
+    {
+        return $this->execTotal['started'] ?: 0;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExecDoneCount()
+    {
+        return $this->execTotal['done'] ?: 0;
     }
 
     /**

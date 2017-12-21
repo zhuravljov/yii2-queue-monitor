@@ -98,12 +98,15 @@ class Behavior extends \yii\base\Behavior
             return;
         }
         $this->env->db->transaction(function () use ($event, $push) {
+            $worker = null;
+            if ($this->canTrackWorkers && $event->workerPid !== null) {
+                $worker = $this->getWorkerRecord($event->workerPid);
+            }
+
             $exec = new ExecRecord();
             $exec->push_id = $push->id;
-            if ($this->canTrackWorkers) {
-                if ($worker = $this->getWorkerRecord($event->workerPid)) {
-                    $exec->worker_id = $worker->id;
-                }
+            if ($worker) {
+                $exec->worker_id = $worker->id;
             }
             $exec->attempt = $event->attempt;
             $exec->reserved_at = time();
@@ -112,6 +115,11 @@ class Behavior extends \yii\base\Behavior
             $push->first_exec_id = $push->first_exec_id ?: $exec->id;
             $push->last_exec_id = $exec->id;
             $push->save(false);
+
+            if ($worker) {
+                $worker->last_exec_id = $exec->id;
+                $worker->save(false);
+            }
         });
     }
 
