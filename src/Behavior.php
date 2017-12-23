@@ -8,7 +8,6 @@
 namespace zhuravljov\yii\queue\monitor;
 
 use Yii;
-use yii\base\Event;
 use yii\base\InvalidConfigException;
 use yii\queue\cli\WorkerEvent;
 use yii\queue\ErrorEvent;
@@ -28,6 +27,11 @@ use zhuravljov\yii\queue\monitor\records\WorkerRecord;
  */
 class Behavior extends \yii\base\Behavior
 {
+    /**
+     * @var Queue
+     * @inheritdoc
+     */
+    public $owner;
     /**
      * @var bool
      */
@@ -74,7 +78,7 @@ class Behavior extends \yii\base\Behavior
     public function afterPush(PushEvent $event)
     {
         $push = new PushRecord();
-        $push->sender_name = $this->getSenderName($event);
+        $push->sender_name = $this->getSenderName();
         $push->job_uid = $event->id;
         $push->setJob($event->job);
         $push->ttr = $event->ttr;
@@ -98,10 +102,7 @@ class Behavior extends \yii\base\Behavior
             return;
         }
         $this->env->db->transaction(function () use ($event, $push) {
-            $worker = null;
-            if ($this->canTrackWorkers && $event->workerPid !== null) {
-                $worker = $this->getWorkerRecord($event->workerPid);
-            }
+            $worker = $this->getWorkerRecord();
 
             $exec = new ExecRecord();
             $exec->push_id = $push->id;
@@ -173,7 +174,7 @@ class Behavior extends \yii\base\Behavior
     public function workerStart(WorkerEvent $event)
     {
         $worker = new WorkerRecord();
-        $worker->sender_name = $this->getSenderName($event);
+        $worker->sender_name = $this->getSenderName();
         $worker->pid = $event->pid;
         $worker->started_at = time();
         $worker->save(false);
@@ -185,21 +186,20 @@ class Behavior extends \yii\base\Behavior
     public function workerStop(WorkerEvent $event)
     {
         $this->env->db->close(); // To reopen a lost connection
-        if ($worker = $this->getWorkerRecord($event->pid)) {
+        if ($worker = $this->getWorkerRecord()) {
             $worker->finished_at = time();
             $worker->save(false);
         }
     }
 
     /**
-     * @param Event $event
      * @return string
      * @throws
      */
-    protected function getSenderName(Event $event)
+    protected function getSenderName()
     {
         foreach (Yii::$app->getComponents(false) as $id => $component) {
-            if ($component === $event->sender) {
+            if ($component === $this->owner) {
                 return $id;
             }
         }
@@ -215,7 +215,7 @@ class Behavior extends \yii\base\Behavior
         if ($event->id !== null) {
             return $this->env->db->useMaster(function () use ($event) {
                 return PushRecord::find()
-                    ->byJob($this->getSenderName($event), $event->id)
+                    ->byJob($this->getSenderName(), $event->id)
                     ->one();
             });
         } else {
@@ -224,13 +224,19 @@ class Behavior extends \yii\base\Behavior
     }
 
     /**
-     * @param int $pid
-     * @return WorkerRecord
+     * @return null|WorkerRecord
      */
-    protected function getWorkerRecord($pid)
+    protected function getWorkerRecord()
     {
-        return $this->env->db->useMaster(function () use ($pid) {
-            return WorkerRecord::find()->byPid($pid)->active()->one();
+        if (!$this->canTrackWorkers || !$this->owner->getWorkerPid()) {
+            return null;
+        }
+
+        return $this->env->db->useMaster(function () {
+            return WorkerRecord::find()
+                ->byPid($this->owner->getWorkerPid())
+                ->active()
+                ->one();
         });
     }
 }
