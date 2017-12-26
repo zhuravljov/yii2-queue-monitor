@@ -175,7 +175,7 @@ class Behavior extends \yii\base\Behavior
     {
         $worker = new WorkerRecord();
         $worker->sender_name = $this->getSenderName();
-        $worker->pid = $event->pid;
+        $worker->pid = $this->owner->getWorkerPid();
         $worker->started_at = time();
         $worker->save(false);
     }
