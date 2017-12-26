@@ -17,7 +17,7 @@
     "require": {
         "php": ">=5.5.0",
         "yiisoft/yii2": "~2.0.13",
-        "yiisoft/yii2-queue": "2.0.x-dev",
+        "yiisoft/yii2-queue": "~2.0.2",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "zhuravljov/yii2-datetime-widgets": "~1.1.0",
         "bower-asset/chartjs": "~2.7"
