@@ -16,17 +16,17 @@ use zhuravljov\yii\queue\monitor\Env;
 /**
  * Class PushRecord
  *
- * @property integer $id
+ * @property int $id
  * @property string $sender_name
  * @property string $job_uid
  * @property string $job_class
  * @property string|resource $job_object
- * @property integer $ttr
- * @property integer $delay
- * @property integer $pushed_at
- * @property integer $stopped_at
- * @property integer $first_exec_id
- * @property integer $last_exec_id
+ * @property int $ttr
+ * @property int $delay
+ * @property int $pushed_at
+ * @property int $stopped_at
+ * @property int $first_exec_id
+ * @property int $last_exec_id
  *
  * @property ExecRecord[] $execs
  * @property ExecRecord|null $firstExec
@@ -134,9 +134,8 @@ class PushRecord extends ActiveRecord
     {
         if ($this->firstExec) {
             return $this->firstExec->reserved_at - $this->pushed_at - $this->delay;
-        } else {
-            return time() - $this->pushed_at - $this->delay;
         }
+        return time() - $this->pushed_at - $this->delay;
     }
 
     /**
@@ -150,19 +149,19 @@ class PushRecord extends ActiveRecord
         if (!$this->lastExec) {
             return self::STATUS_WAITING;
         }
-        if (!$this->lastExec->done_at && $this->lastExec->attempt == 1) {
+        if (!$this->lastExec->isDone() && $this->lastExec->attempt == 1) {
             return self::STATUS_STARTED;
         }
-        if ($this->lastExec->done_at && $this->lastExec->error === null) {
+        if ($this->lastExec->isDone() && !$this->lastExec->isFailed()) {
             return self::STATUS_DONE;
         }
-        if ($this->lastExec->done_at && $this->lastExec->retry) {
+        if ($this->lastExec->isDone() && $this->lastExec->retry) {
             return self::STATUS_FAILED;
         }
-        if (!$this->lastExec->done_at) {
+        if (!$this->lastExec->isDone()) {
             return self::STATUS_RESTARTED;
         }
-        if ($this->lastExec->done_at && !$this->lastExec->retry) {
+        if ($this->lastExec->isDone() && !$this->lastExec->retry) {
             return self::STATUS_BURIED;
         }
         return null;
@@ -200,7 +199,7 @@ class PushRecord extends ActiveRecord
     }
 
     /**
-     * @param Job|mixed
+     * @param Job|mixed $job
      */
     public function setJob($job)
     {
@@ -249,7 +248,7 @@ class PushRecord extends ActiveRecord
         if ($this->isStopped()) {
             return false;
         }
-        if ($this->lastExec && $this->lastExec->done_at && !$this->lastExec->retry) {
+        if ($this->lastExec && $this->lastExec->isDone() && !$this->lastExec->retry) {
             return false;
         }
         return true;

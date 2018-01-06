@@ -48,6 +48,8 @@ class JobController extends Controller
 
     /**
      * Pushed jobs
+     *
+     * @return mixed
      */
     public function actionIndex()
     {
@@ -58,19 +60,24 @@ class JobController extends Controller
 
     /**
      * Job view
+     *
+     * @param int $id
+     * @return mixed
      */
     public function actionView($id)
     {
         $record = $this->findRecord($id);
-        if ($record->lastExec && $record->lastExec->getIsFailed()) {
+        if ($record->lastExec && $record->lastExec->isFailed()) {
             return $this->redirect(['view-attempts', 'id' => $record->id]);
-        } else {
-            return $this->redirect(['view-details', 'id' => $record->id]);
         }
+        return $this->redirect(['view-details', 'id' => $record->id]);
     }
 
     /**
      * Push details
+     *
+     * @param int $id
+     * @return mixed
      */
     public function actionViewDetails($id)
     {
@@ -81,6 +88,9 @@ class JobController extends Controller
 
     /**
      * Job object data
+     *
+     * @param int $id
+     * @return mixed
      */
     public function actionViewData($id)
     {
@@ -91,6 +101,9 @@ class JobController extends Controller
 
     /**
      * Attempts
+     *
+     * @param int $id
+     * @return mixed
      */
     public function actionViewAttempts($id)
     {
@@ -101,6 +114,10 @@ class JobController extends Controller
 
     /**
      * Pushes a job again
+     *
+     * @param int $id
+     * @throws
+     * @return mixed
      */
     public function actionPush($id)
     {
@@ -132,6 +149,10 @@ class JobController extends Controller
 
     /**
      * Stop a job
+     *
+     * @param int $id
+     * @throws
+     * @return mixed
      */
     public function actionStop($id)
     {
@@ -155,21 +176,21 @@ class JobController extends Controller
 
         $record->stop();
 
-        return $this->success( 'The job will be stopped.')
+        return $this
+            ->success('The job will be stopped.')
             ->redirect(['view-details', 'id' => $record->id]);
     }
 
     /**
      * @param int $id
-     * @return PushRecord
      * @throws NotFoundHttpException
+     * @return PushRecord
      */
     protected function findRecord($id)
     {
         if ($record = PushRecord::find()->byId($id)->one()) {
             return $record;
-        } else {
-            throw new NotFoundHttpException('Record not found.');
         }
+        throw new NotFoundHttpException('Record not found.');
     }
 }

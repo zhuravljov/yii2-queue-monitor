@@ -112,8 +112,7 @@ class WorkerRecord extends ActiveRecord
     {
         if ($this->finished_at) {
             return $this->finished_at - $this->started_at;
-        } else {
-            return time() - $this->started_at;
         }
+        return time() - $this->started_at;
     }
 }

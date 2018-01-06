@@ -48,7 +48,7 @@ $f = Yii::$app->formatter;
         </span>
     <?php endforeach ?>
 </div>
-<?php if ($model->lastExec && $model->lastExec->getIsFailed()): ?>
+<?php if ($model->lastExec && $model->lastExec->isFailed()): ?>
     <div class="job-error text-danger">
         <strong>Error:</strong>
         <?= $f->asText($model->lastExec->getErrorMessage()) ?>

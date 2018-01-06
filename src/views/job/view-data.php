@@ -28,7 +28,8 @@ $this->params['breadcrumbs'][] = 'Data';
     </table>
 </div>
 <?php
-$this->registerCss(<<<CSS
+$this->registerCss(
+<<<CSS
 td.param-value {
     word-break: break-all;
 }

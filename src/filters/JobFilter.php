@@ -40,6 +40,16 @@ class JobFilter extends Model
     private $env;
 
     /**
+     * @param Env $env
+     * @param array $config
+     */
+    public function __construct(Env $env, $config = [])
+    {
+        $this->env = $env;
+        parent::__construct($config);
+    }
+
+    /**
      * @return static
      */
     public static function ensure()
@@ -50,16 +60,6 @@ class JobFilter extends Model
         $filter->storeParams();
 
         return $filter;
-    }
-
-    /**
-     * @param Env $env
-     * @param array $config
-     */
-    public function __construct(Env $env, $config = [])
-    {
-        $this->env = $env;
-        parent::__construct($config);
     }
 
     /**
@@ -166,25 +166,6 @@ class JobFilter extends Model
     }
 
     /**
-     * @param PushQuery $query
-     * @param string $name
-     * @param string $value
-     */
-    private function filterDateRange(PushQuery $query, $name, $value)
-    {
-        $limits = explode(' - ', $value, 2);
-        if (count($limits) === 2) {
-            $begin = DateTime::createFromFormat('Y-m-d', $limits[0]);
-            $end = DateTime::createFromFormat('Y-m-d', $limits[1]);
-            if ($begin && $end) {
-                $begin->setTime(0, 0, 0);
-                $end->setTime(23, 59, 59);
-                $query->andWhere(['between', $name, $begin->getTimestamp(), $end->getTimestamp()]);
-            }
-        }
-    }
-
-    /**
      * @return PushQuery
      */
     public function search()
@@ -198,19 +179,19 @@ class JobFilter extends Model
         $query->andFilterWhere(['like', 'p.job_class', $this->class]);
         $this->filterDateRange($query, 'p.pushed_at', $this->pushed);
 
-        if ($this->is == self::IS_WAITING) {
+        if ($this->is === self::IS_WAITING) {
             $query->waiting();
-        } elseif ($this->is == self::IS_IN_PROGRESS) {
+        } elseif ($this->is === self::IS_IN_PROGRESS) {
             $query->inProgress();
-        } elseif ($this->is == self::IS_DONE) {
+        } elseif ($this->is === self::IS_DONE) {
             $query->done();
-        } elseif ($this->is == self::IS_SUCCESS) {
+        } elseif ($this->is === self::IS_SUCCESS) {
             $query->success();
-        } elseif ($this->is == self::IS_BURIED) {
+        } elseif ($this->is === self::IS_BURIED) {
             $query->buried();
-        } elseif ($this->is == self::IS_FAILED) {
+        } elseif ($this->is === self::IS_FAILED) {
             $query->hasFails();
-        } elseif ($this->is == self::IS_STOPPED) {
+        } elseif ($this->is === self::IS_STOPPED) {
             $query->stopped();
         }
 
@@ -241,5 +222,24 @@ class JobFilter extends Model
             ->orderBy(['name' => SORT_ASC])
             ->asArray()
             ->all();
+    }
+
+    /**
+     * @param PushQuery $query
+     * @param string $name
+     * @param string $value
+     */
+    private function filterDateRange(PushQuery $query, $name, $value)
+    {
+        $limits = explode(' - ', $value, 2);
+        if (count($limits) === 2) {
+            $begin = DateTime::createFromFormat('Y-m-d', $limits[0]);
+            $end = DateTime::createFromFormat('Y-m-d', $limits[1]);
+            if ($begin && $end) {
+                $begin->setTime(0, 0, 0);
+                $end->setTime(23, 59, 59);
+                $query->andWhere(['between', $name, $begin->getTimestamp(), $end->getTimestamp()]);
+            }
+        }
     }
 }

@@ -12,11 +12,16 @@ $aliases = [
     'warning' => 'alert-warning',
     'error' => 'alert-danger',
 ];
-
-foreach (Yii::$app->session->getAllFlashes(true) as $type => $message) {
-    $class = isset($aliases[$type]) ? $aliases[$type] : $type;
-    echo Alert::widget([
-        'options' => ['class' => $class],
-        'body' => Html::encode($message),
-    ]);
-}
+?>
+<div>
+    <?php foreach (Yii::$app->session->getAllFlashes(true) as $type => $message): ?>
+        <div>
+            <?= Alert::widget([
+                'options' => [
+                    'class' => isset($aliases[$type]) ? $aliases[$type] : $type,
+                ],
+                'body' => Html::encode($message),
+            ]) ?>
+        </div>
+    <?php endforeach; ?>
+</div>

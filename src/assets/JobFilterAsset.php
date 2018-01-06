@@ -27,5 +27,4 @@ class JobFilterAsset extends AssetBundle
     public $depends = [
         BootstrapPluginAsset::class,
     ];
-
 }

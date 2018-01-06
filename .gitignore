@@ -13,3 +13,7 @@ vendor
 
 # composer lock files
 composer.lock
+
+#php-cs-fixer
+.php_cs.cache
+php-cs-fixer.phar

@@ -14,26 +14,27 @@ use zhuravljov\yii\queue\monitor\Env;
 /**
  * Class ExecRecord
  *
- * @property integer $id
- * @property integer $push_id
+ * @property int $id
+ * @property int $push_id
  * @property null|int $worker_id
- * @property integer $attempt
- * @property integer $reserved_at
- * @property null|integer $done_at
+ * @property int $attempt
+ * @property int $reserved_at
+ * @property null|int $done_at
  * @property null|string $error
- * @property null|integer $retry
+ * @property null|bool $retry
  *
  * @property PushRecord $push
  * @property null|WorkerRecord $worker
  *
  * @property int $duration
- * @property bool $isFailed
  * @property false|string $errorMessage
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
 class ExecRecord extends ActiveRecord
 {
+    private $_errorMessage;
+
     /**
      * @inheritdoc
      * @return ExecQuery the active query used by this AR class.
@@ -82,15 +83,22 @@ class ExecRecord extends ActiveRecord
     {
         if ($this->done_at) {
             return $this->done_at - $this->reserved_at;
-        } else {
-            return time() - $this->reserved_at;
         }
+        return time() - $this->reserved_at;
     }
 
     /**
      * @return bool
      */
-    public function getIsFailed()
+    public function isDone()
+    {
+        return $this->done_at !== null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isFailed()
     {
         return $this->error !== null;
     }
@@ -108,6 +116,4 @@ class ExecRecord extends ActiveRecord
         }
         return $this->_errorMessage;
     }
-
-    private $_errorMessage;
 }

@@ -15,7 +15,8 @@ StatIndexAsset::register($this);
 $params = JobFilter::restoreParams();
 $dataUrl = Url::to(['stat/sender-list'] + $params);
 $filterUrl = Url::to(['job/index', 'sender' => '_value_'] + $params);
-$this->registerJs(<<<JS
+$this->registerJs(
+<<<JS
 $.getJSON('$dataUrl').done(function(data) {
     renderPie('chart-senders', data, function(d) {
         location.href = '$filterUrl'.replace('_value_', encodeURI(d.name));

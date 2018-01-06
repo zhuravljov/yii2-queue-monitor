@@ -15,7 +15,8 @@ StatIndexAsset::register($this);
 $params = JobFilter::restoreParams();
 $dataUrl = Url::to(['stat/class-list'] + $params);
 $jobUrl = Url::to(['job/index', 'class' => '_value_'] + $params);
-$this->registerJs(<<<JS
+$this->registerJs(
+<<<JS
 $.getJSON('$dataUrl').done(function(data) {
     renderPie('chart-classes', data, function(d) {
         location.href = '$jobUrl'.replace('_value_', encodeURI(d.name));

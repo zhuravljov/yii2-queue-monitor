@@ -6,6 +6,7 @@ for research. Also the module allows to stop and replay any jobs manually.
 
 [![Latest Stable Version](https://poser.pugx.org/zhuravljov/yii2-queue-monitor/v/stable.svg)](https://packagist.org/packages/zhuravljov/yii2-queue-monitor)
 [![Total Downloads](https://poser.pugx.org/zhuravljov/yii2-queue-monitor/downloads.svg)](https://packagist.org/packages/zhuravljov/yii2-queue-monitor)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/zhuravljov/yii2-queue-monitor/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/zhuravljov/yii2-queue-monitor/?branch=master)
 
 Installation
 ------------

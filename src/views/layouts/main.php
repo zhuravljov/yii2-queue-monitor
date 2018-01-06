@@ -5,8 +5,8 @@
  */
 
 use yii\bootstrap\Html;
-use yii\bootstrap\NavBar;
 use yii\bootstrap\Nav;
+use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use zhuravljov\yii\queue\monitor\assets\MainAsset;
 

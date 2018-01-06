@@ -41,24 +41,24 @@ $this->params['breadcrumbs'][] = 'Attempts';
         ],
         'rowOptions' => function (ExecRecord $record) {
             $options = [];
-            if ($record->getIsFailed()) {
+            if ($record->isFailed()) {
                 Html::addCssClass($options, 'danger');
             }
             return $options;
         },
         'afterRow' => function (ExecRecord $record, $key, $index, GridView $grid) {
-            if ($record->getIsFailed()) {
+            if ($record->isFailed()) {
                 return strtr('<tr class="error-line danger text-danger"><td colspan="5">{error}</td></tr>', [
                     '{error}' => $grid->formatter->asNtext($record->error),
                 ]);
-            } else {
-                return '';
             }
+            return '';
         },
     ]) ?>
 </div>
 <?php
-$this->registerCss(<<<CSS
+$this->registerCss(
+<<<CSS
 tr.error-line > td {
     white-space: normal;
     word-break: break-all;

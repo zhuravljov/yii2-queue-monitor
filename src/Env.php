@@ -49,5 +49,4 @@ class Env extends BaseObject
         $this->cache = Instance::ensure($this->cache, Cache::class);
         $this->db = Instance::ensure($this->db, Connection::class);
     }
-
 }
