@@ -85,7 +85,7 @@ class WorkerRecord extends ActiveRecord
                 'started' => 'COUNT(*)',
                 'done' => 'COUNT(done_at)',
             ])
-            ->groupBy('push_id')
+            ->groupBy('worker_id')
             ->asArray();
     }
 
