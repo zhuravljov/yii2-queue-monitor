@@ -29,10 +29,8 @@ return [
     'components' => [
         'queue' => [
             // ...
-            'as monitor' => [
-                'class' => \zhuravljov\yii\queue\monitor\Behavior::class,
-                'canTrackWorkers' => true, 
-            ],
+            'as jobMonitor' => \zhuravljov\yii\queue\monitor\JobMonitor::class,
+            'as workerMonitor' => \zhuravljov\yii\queue\monitor\WorkerMonitor::class,
         ],
     ],
 ];

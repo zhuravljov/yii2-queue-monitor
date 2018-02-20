@@ -8,9 +8,8 @@
 namespace zhuravljov\yii\queue\monitor;
 
 use Yii;
+use yii\base\Behavior;
 use yii\base\InvalidConfigException;
-use yii\queue\cli\Queue as CliQueue;
-use yii\queue\cli\WorkerEvent;
 use yii\queue\ErrorEvent;
 use yii\queue\ExecEvent;
 use yii\queue\JobEvent;
@@ -21,21 +20,17 @@ use zhuravljov\yii\queue\monitor\records\PushRecord;
 use zhuravljov\yii\queue\monitor\records\WorkerRecord;
 
 /**
- * Queue Monitor Behavior
+ * Queue Job Monitor
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
-class Behavior extends \yii\base\Behavior
+class JobMonitor extends Behavior
 {
     /**
      * @var Queue
      * @inheritdoc
      */
     public $owner;
-    /**
-     * @var bool
-     */
-    public $canTrackWorkers = false;
     /**
      * @var Env
      */
@@ -56,20 +51,12 @@ class Behavior extends \yii\base\Behavior
      */
     public function events()
     {
-        $events = [
+        return [
             Queue::EVENT_AFTER_PUSH => 'afterPush',
             Queue::EVENT_BEFORE_EXEC => 'beforeExec',
             Queue::EVENT_AFTER_EXEC => 'afterExec',
             Queue::EVENT_AFTER_ERROR => 'afterError',
         ];
-        if ($this->canTrackWorkers) {
-            $events += [
-                CliQueue::EVENT_WORKER_START => 'workerStart',
-                CliQueue::EVENT_WORKER_STOP => 'workerStop',
-            ];
-        }
-
-        return $events;
     }
 
     /**
@@ -169,31 +156,7 @@ class Behavior extends \yii\base\Behavior
     }
 
     /**
-     * @param WorkerEvent $event
-     */
-    public function workerStart(WorkerEvent $event)
-    {
-        $worker = new WorkerRecord();
-        $worker->sender_name = $this->getSenderName($event);
-        $worker->pid = $event->sender->getWorkerPid();
-        $worker->started_at = time();
-        $worker->save(false);
-    }
-
-    /**
-     * @param WorkerEvent $event
-     */
-    public function workerStop(WorkerEvent $event)
-    {
-        $this->env->db->close(); // To reopen a lost connection
-        if ($worker = $this->getWorkerRecord($event)) {
-            $worker->finished_at = time();
-            $worker->save(false);
-        }
-    }
-
-    /**
-     * @param JobEvent|WorkerEvent $event
+     * @param JobEvent $event
      * @throws
      * @return string
      */
@@ -225,12 +188,15 @@ class Behavior extends \yii\base\Behavior
     }
 
     /**
-     * @param WorkerEvent|ExecEvent $event
+     * @param ExecEvent $event
      * @return WorkerRecord|null
      */
-    protected function getWorkerRecord($event)
+    protected function getWorkerRecord(ExecEvent $event)
     {
-        if (!$this->canTrackWorkers || $event->sender->getWorkerPid() === null) {
+        if ($event->sender->getWorkerPid() === null) {
+            return null;
+        }
+        if (!$this->isWorkerMonitored()) {
             return null;
         }
 
@@ -240,5 +206,18 @@ class Behavior extends \yii\base\Behavior
                 ->active()
                 ->one();
         });
+    }
+
+    /**
+     * @return bool whether workers are monitored.
+     */
+    private function isWorkerMonitored()
+    {
+        foreach ($this->owner->getBehaviors() as $behavior) {
+            if ($behavior instanceof WorkerMonitor) {
+                return true;
+            }
+        }
+        return false;
     }
 }
