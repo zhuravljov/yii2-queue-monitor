@@ -19,6 +19,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property int $pid
  * @property int $started_at
  * @property int $pinged_at
+ * @property null|int $stopped_at
  * @property null|int $finished_at
  * @property null|int $last_exec_id
  *
@@ -115,5 +116,22 @@ class WorkerRecord extends ActiveRecord
             return $this->finished_at - $this->started_at;
         }
         return time() - $this->started_at;
+    }
+
+    /**
+     * @return bool marked as stopped
+     */
+    public function isStopped()
+    {
+        return !!$this->stopped_at;
+    }
+
+    /**
+     * Marks as stopped
+     */
+    public function stop()
+    {
+        $this->stopped_at = time();
+        $this->save(false);
     }
 }

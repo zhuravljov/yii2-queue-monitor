@@ -52,6 +52,12 @@ class M180222000000WorkerPing extends Migration
                 ['id' => $row['id']]
             );
         }
+
+        $this->addColumn(
+            $this->env->workerTableName,
+            'stopped_at',
+            $this->integer()->after('pinged_at')
+        );
     }
 
     /**
@@ -59,6 +65,7 @@ class M180222000000WorkerPing extends Migration
      */
     public function down()
     {
+        $this->dropColumn($this->env->workerTableName, 'stopped_at');
         $this->dropColumn($this->env->workerTableName, 'pinged_at');
     }
 }

@@ -10,6 +10,7 @@ namespace zhuravljov\yii\queue\monitor;
 use Yii;
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
+use yii\console\ExitCode;
 use yii\queue\cli\Queue;
 use yii\queue\cli\WorkerEvent;
 use zhuravljov\yii\queue\monitor\records\WorkerRecord;
@@ -70,7 +71,7 @@ class WorkerMonitor extends Behavior
         $this->record->pid = $event->sender->getWorkerPid();
         $this->record->started_at = time();
         $this->record->pinged_at = time();
-        $this->record->insert(false);
+        $this->record->save(false);
     }
 
     /**
@@ -81,8 +82,15 @@ class WorkerMonitor extends Behavior
         if ($this->record->pinged_at < time() - $this->env->workerPingInterval) {
             return;
         }
+        if (!$this->record->refresh()) {
+            $this->record->setIsNewRecord(true);
+        }
         $this->record->pinged_at = time();
-        $this->record->update(false);
+        $this->record->save(false);
+
+        if ($this->record->isStopped()) {
+            $event->exitCode = ExitCode::OK;
+        }
     }
 
     /**
@@ -94,7 +102,7 @@ class WorkerMonitor extends Behavior
             $this->env->db->close(); // To reopen a lost connection
         }
         $this->record->finished_at = time();
-        $this->record->update(false);
+        $this->record->save(false);
     }
 
     /**
