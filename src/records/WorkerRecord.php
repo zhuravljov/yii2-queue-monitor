@@ -40,7 +40,7 @@ class WorkerRecord extends ActiveRecord
      */
     public static function find()
     {
-        return new WorkerQuery(get_called_class());
+        return Yii::createObject(WorkerQuery::class, [get_called_class()]);
     }
 
     /**

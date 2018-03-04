@@ -41,7 +41,7 @@ class ExecRecord extends ActiveRecord
      */
     public static function find()
     {
-        return new ExecQuery(get_called_class());
+        return Yii::createObject(ExecQuery::class, [get_called_class()]);
     }
 
     /**

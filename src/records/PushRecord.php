@@ -61,7 +61,7 @@ class PushRecord extends ActiveRecord
      */
     public static function find()
     {
-        return new PushQuery(get_called_class());
+        return Yii::createObject(PushQuery::class, [get_called_class()]);
     }
 
     /**
@@ -199,7 +199,7 @@ class PushRecord extends ActiveRecord
     }
 
     /**
-     * @param Job|mixed $job
+     * @param JobInterface|mixed $job
      */
     public function setJob($job)
     {

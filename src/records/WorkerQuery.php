@@ -7,7 +7,6 @@
 
 namespace zhuravljov\yii\queue\monitor\records;
 
-use Yii;
 use yii\db\ActiveQuery;
 use zhuravljov\yii\queue\monitor\Env;
 
@@ -18,6 +17,23 @@ use zhuravljov\yii\queue\monitor\Env;
  */
 class WorkerQuery extends ActiveQuery
 {
+    /**
+     * @var Env
+     */
+    private $env;
+
+    /**
+     * @param string $modelClass
+     * @param Env $env
+     * @param array $config
+     * @inheritdoc
+     */
+    public function __construct($modelClass, Env $env, array $config = [])
+    {
+        $this->env = $env;
+        parent::__construct($modelClass, $config);
+    }
+
     /**
      * @param int $pid
      * @return $this
@@ -33,10 +49,8 @@ class WorkerQuery extends ActiveQuery
     public function active()
     {
         $this->andWhere(['finished_at' => null]);
-        /** @var Env $env */
-        $env = Yii::$container->get(Env::class);
-        if ($env->canListenWorkerLoop()) {
-            $this->andWhere(['>', 'pinged_at', time() - $env->workerPingInterval - 5]);
+        if ($this->env->canListenWorkerLoop()) {
+            $this->andWhere(['>', 'pinged_at', time() - $this->env->workerPingInterval - 5]);
         }
         return $this;
     }
