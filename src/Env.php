@@ -39,6 +39,10 @@ class Env extends BaseObject
      * @var string
      */
     public $workerTableName = '{{%queue_worker}}';
+    /**
+     * @var int
+     */
+    public $workerPingInterval = 15;
 
     /**
      * @inheritdoc
@@ -48,5 +52,13 @@ class Env extends BaseObject
         parent::init();
         $this->cache = Instance::ensure($this->cache, Cache::class);
         $this->db = Instance::ensure($this->db, Connection::class);
+    }
+
+    /**
+     * @return bool
+     */
+    public function canListenWorkerLoop()
+    {
+        return !!$this->workerPingInterval;
     }
 }

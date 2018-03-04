@@ -50,10 +50,14 @@ class WorkerMonitor extends Behavior
      */
     public function events()
     {
-        return [
+        $events = [
             Queue::EVENT_WORKER_START => 'workerStart',
             Queue::EVENT_WORKER_STOP => 'workerStop',
         ];
+        if ($this->env->canListenWorkerLoop()) {
+            $events[Queue::EVENT_WORKER_LOOP] = 'workerLoop';
+        }
+        return $events;
     }
 
     /**
@@ -65,7 +69,20 @@ class WorkerMonitor extends Behavior
         $this->record->sender_name = $this->getSenderName($event);
         $this->record->pid = $event->sender->getWorkerPid();
         $this->record->started_at = time();
-        $this->record->save(false);
+        $this->record->pinged_at = time();
+        $this->record->insert(false);
+    }
+
+    /**
+     * @param WorkerEvent $event
+     */
+    public function workerLoop(WorkerEvent $event)
+    {
+        if ($this->record->pinged_at < time() - $this->env->workerPingInterval) {
+            return;
+        }
+        $this->record->pinged_at = time();
+        $this->record->update(false);
     }
 
     /**
@@ -73,9 +90,11 @@ class WorkerMonitor extends Behavior
      */
     public function workerStop(WorkerEvent $event)
     {
-        $this->env->db->close(); // To reopen a lost connection
+        if (!$this->env->canListenWorkerLoop()) {
+            $this->env->db->close(); // To reopen a lost connection
+        }
         $this->record->finished_at = time();
-        $this->record->save(false);
+        $this->record->update(false);
     }
 
     /**

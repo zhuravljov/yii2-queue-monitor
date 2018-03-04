@@ -18,6 +18,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property string $sender_name
  * @property int $pid
  * @property int $started_at
+ * @property int $pinged_at
  * @property null|int $finished_at
  * @property null|int $last_exec_id
  *

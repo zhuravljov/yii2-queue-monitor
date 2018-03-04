@@ -7,7 +7,9 @@
 
 namespace zhuravljov\yii\queue\monitor\records;
 
+use Yii;
 use yii\db\ActiveQuery;
+use zhuravljov\yii\queue\monitor\Env;
 
 /**
  * Class WorkerQuery
@@ -30,9 +32,15 @@ class WorkerQuery extends ActiveQuery
      */
     public function active()
     {
-        return $this->andWhere(['finished_at' => null]);
+        $this->andWhere(['finished_at' => null]);
+        /** @var Env $env */
+        $env = Yii::$container->get(Env::class);
+        if ($env->canListenWorkerLoop()) {
+            $this->andWhere(['>', 'pinged_at', time() - $env->workerPingInterval - 5]);
+        }
+        return $this;
     }
-    
+
     /**
      * @inheritdoc
      * @return WorkerRecord[]|array
