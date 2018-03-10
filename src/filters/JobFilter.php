@@ -30,6 +30,7 @@ class JobFilter extends BaseFilter
     public $sender;
     public $class;
     public $pushed;
+    public $contains;
 
     /**
      * @inheritdoc
@@ -37,13 +38,14 @@ class JobFilter extends BaseFilter
     public function rules()
     {
         return [
-            [['is', 'sender', 'class', 'pushed'], 'trim'],
             ['is', 'string'],
             ['is', 'in', 'range' => array_keys($this->scopeList())],
             ['sender', 'string'],
             ['class', 'string'],
             ['pushed', 'string'],
             ['pushed', 'match', 'pattern' => '/^\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/'],
+            ['contains', 'string'],
+            [['is', 'sender', 'class', 'pushed', 'contains'], 'trim'],
         ];
     }
 
@@ -56,7 +58,8 @@ class JobFilter extends BaseFilter
             'is' => 'Scope',
             'sender' => 'Sender',
             'class' => 'Job',
-            'pushed' => 'Pushed'
+            'pushed' => 'Pushed',
+            'contains' => 'Contains',
         ];
     }
 
@@ -117,6 +120,7 @@ class JobFilter extends BaseFilter
         $query->andFilterWhere(['p.sender_name' => $this->sender]);
         $query->andFilterWhere(['like', 'p.job_class', $this->class]);
         $this->filterDateRange($query, 'p.pushed_at', $this->pushed);
+        $query->andFilterWhere(['like', 'p.job_data', $this->contains]);
 
         if ($this->is === self::IS_WAITING) {
             $query->waiting();

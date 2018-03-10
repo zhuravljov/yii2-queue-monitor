@@ -152,7 +152,7 @@ class JobController extends Controller
                 ->redirect(['view-data', 'id' => $record->id]);
         }
 
-        $uid = $record->getSender()->push($record->getJob());
+        $uid = $record->getSender()->push($record->createJob());
         $newRecord = PushRecord::find()->byJob($record->sender_name, $uid)->one();
 
         return $this

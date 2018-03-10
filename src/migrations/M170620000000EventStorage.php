@@ -7,8 +7,7 @@
 
 namespace zhuravljov\yii\queue\monitor\migrations;
 
-use yii\db\Migration;
-use zhuravljov\yii\queue\monitor\Env;
+use zhuravljov\yii\queue\monitor\base\Migration;
 
 /**
  * Storage of job events
@@ -18,28 +17,9 @@ use zhuravljov\yii\queue\monitor\Env;
 class M170620000000EventStorage extends Migration
 {
     /**
-     * @var string
-     */
-    public $tableOptions;
-    /**
-     * @var Env
-     */
-    protected $env;
-
-    /**
-     * @param Env $env
      * @inheritdoc
      */
-    public function __construct(Env $env, $config = [])
-    {
-        $this->env = $env;
-        parent::__construct($config);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function up()
+    public function safeUp()
     {
         $this->createTable($this->env->pushTableName, [
             'id' => $this->primaryKey(),
@@ -53,7 +33,7 @@ class M170620000000EventStorage extends Migration
             'stopped_at' => $this->integer(),
             'first_exec_id' => $this->integer(),
             'last_exec_id' => $this->integer(),
-        ], $this->tableOptions);
+        ]);
         $this->createIndex('job_uid', $this->env->pushTableName, ['sender_name', 'job_uid']);
         $this->createIndex('first_exec_id', $this->env->pushTableName, 'first_exec_id');
         $this->createIndex('last_exec_id', $this->env->pushTableName, 'last_exec_id');
@@ -66,14 +46,14 @@ class M170620000000EventStorage extends Migration
             'done_at' => $this->integer(),
             'error' => $this->text(),
             'retry' => $this->boolean(),
-        ], $this->tableOptions);
+        ]);
         $this->createIndex('push_id', $this->env->execTableName, 'push_id');
     }
 
     /**
      * @inheritdoc
      */
-    public function down()
+    public function safeDown()
     {
         $this->dropTable($this->env->execTableName);
         $this->dropTable($this->env->pushTableName);

@@ -9,6 +9,7 @@ namespace zhuravljov\yii\queue\monitor\records;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\Json;
 use yii\queue\JobInterface;
 use yii\queue\Queue;
 use zhuravljov\yii\queue\monitor\Env;
@@ -20,7 +21,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property string $sender_name
  * @property string $job_uid
  * @property string $job_class
- * @property string|resource $job_object
+ * @property string|resource $job_data
  * @property int $push_ttr
  * @property int $push_delay
  * @property string|null $push_trace_data
@@ -40,7 +41,6 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property string $status
  *
  * @property Queue|null $sender
- * @property JobInterface $job
  * @property array $jobParams
  * @property string[] $pushTrace
  * @property array $pushEnv
@@ -56,8 +56,6 @@ class PushRecord extends ActiveRecord
     const STATUS_FAILED = 'failed';
     const STATUS_RESTARTED = 'restarted';
     const STATUS_BURIED = 'buried';
-
-    private $_job;
 
     /**
      * @inheritdoc
@@ -193,31 +191,11 @@ class PushRecord extends ActiveRecord
     public function setJob($job)
     {
         $this->job_class = get_class($job);
-        $this->job_object = serialize($job);
-        $this->_job = null;
-    }
-
-    /**
-     * @return JobInterface|mixed
-     */
-    public function getJob()
-    {
-        if ($this->_job === null) {
-            // pgsql
-            if (is_resource($this->job_object)) {
-                $this->job_object = stream_get_contents($this->job_object);
-            }
-            $this->_job = unserialize($this->job_object);
+        $data = [];
+        foreach (get_object_vars($job) as $name => $value) {
+            $data[$name] = $this->serializeData($value);
         }
-        return $this->_job;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isJobValid()
-    {
-        return (gettype($this->getJob()) !== 'object') || ($this->getJob() instanceof JobInterface);
+        $this->job_data = Json::encode($data);
     }
 
     /**
@@ -225,7 +203,30 @@ class PushRecord extends ActiveRecord
      */
     public function getJobParams()
     {
-        return get_object_vars($this->getJob());
+        if (is_resource($this->job_data)) {
+            $this->job_data = stream_get_contents($this->job_data);
+        }
+        $params = [];
+        foreach (Json::decode($this->job_data) as $name => $value) {
+            $params[$name] = $this->unserializeData($value);
+        }
+        return $params;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isJobValid()
+    {
+        return is_subclass_of($this->job_class, JobInterface::class);
+    }
+
+    /**
+     * @return JobInterface|mixed
+     */
+    public function createJob()
+    {
+        return Yii::createObject(['class' => $this->job_class] + $this->getJobParams());
     }
 
     /**
@@ -310,5 +311,55 @@ class PushRecord extends ActiveRecord
     {
         $this->stopped_at = time();
         $this->save(false);
+    }
+
+    /**
+     * @param mixed $data
+     * @return mixed
+     */
+    private function serializeData($data)
+    {
+        if (is_object($data)) {
+            $result = ['=class=' => get_class($data)];
+            foreach (get_object_vars($data) as $name => $value) {
+                $result[$name] = $this->serializeData($value);
+            }
+            return $result;
+        }
+
+        if (is_array($data)) {
+            $result = [];
+            foreach ($data as $name => $value) {
+                $result[$name] = $this->serializeData($value);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param mixed $data
+     * @return mixed
+     */
+    private function unserializeData($data)
+    {
+        if (!is_array($data)) {
+            return $data;
+        }
+
+        if (!isset($data['=class='])) {
+            $result = [];
+            foreach ($data as $key => $value) {
+                $result[$key] = $this->unserializeData($value);
+            }
+            return $result;
+        }
+
+        $config = ['class' => $data['=class=']];
+        unset($data['=class=']);
+        foreach ($data as $property => $value) {
+            $config[$property] = $this->unserializeData($value);
+        }
+        return Yii::createObject($config);
     }
 }

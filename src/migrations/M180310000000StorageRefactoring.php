@@ -7,8 +7,7 @@
 
 namespace zhuravljov\yii\queue\monitor\migrations;
 
-use yii\db\Migration;
-use zhuravljov\yii\queue\monitor\Env;
+use zhuravljov\yii\queue\monitor\base\Migration;
 
 /**
  * Storage Refactoring
@@ -17,25 +16,6 @@ use zhuravljov\yii\queue\monitor\Env;
  */
 class M180310000000StorageRefactoring extends Migration
 {
-    /**
-     * @var string
-     */
-    public $tableOptions;
-    /**
-     * @var Env
-     */
-    protected $env;
-
-    /**
-     * @param Env $env
-     * @inheritdoc
-     */
-    public function __construct(Env $env, $config = [])
-    {
-        $this->env = $env;
-        parent::__construct($config);
-    }
-
     /**
      * @inheritdoc
      */

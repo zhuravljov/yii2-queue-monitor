@@ -7,8 +7,7 @@
 
 namespace zhuravljov\yii\queue\monitor\migrations;
 
-use yii\db\Migration;
-use zhuravljov\yii\queue\monitor\Env;
+use zhuravljov\yii\queue\monitor\base\Migration;
 
 /**
  * Storage of worker events
@@ -18,24 +17,9 @@ use zhuravljov\yii\queue\monitor\Env;
 class M171221000000WorkerLastExec extends Migration
 {
     /**
-     * @var Env
-     */
-    protected $env;
-
-    /**
-     * @param Env $env
      * @inheritdoc
      */
-    public function __construct(Env $env, $config = [])
-    {
-        $this->env = $env;
-        parent::__construct($config);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function up()
+    public function safeUp()
     {
         $this->addColumn($this->env->workerTableName, 'last_exec_id', $this->integer());
         $this->createIndex('last_exec_id', $this->env->workerTableName, 'last_exec_id');
@@ -44,7 +28,7 @@ class M171221000000WorkerLastExec extends Migration
     /**
      * @inheritdoc
      */
-    public function down()
+    public function safeDown()
     {
         $this->dropIndex('last_exec_id', $this->env->workerTableName);
         $this->dropColumn($this->env->workerTableName, 'last_exec_id');

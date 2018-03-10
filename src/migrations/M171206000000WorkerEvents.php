@@ -7,8 +7,7 @@
 
 namespace zhuravljov\yii\queue\monitor\migrations;
 
-use yii\db\Migration;
-use zhuravljov\yii\queue\monitor\Env;
+use zhuravljov\yii\queue\monitor\base\Migration;
 
 /**
  * Storage of worker events
@@ -17,25 +16,6 @@ use zhuravljov\yii\queue\monitor\Env;
  */
 class M171206000000WorkerEvents extends Migration
 {
-    /**
-     * @var string
-     */
-    public $tableOptions;
-    /**
-     * @var Env
-     */
-    protected $env;
-
-    /**
-     * @param Env $env
-     * @inheritdoc
-     */
-    public function __construct(Env $env, $config = [])
-    {
-        $this->env = $env;
-        parent::__construct($config);
-    }
-
     /**
      * @inheritdoc
      */
@@ -47,7 +27,7 @@ class M171206000000WorkerEvents extends Migration
             'pid' => $this->integer()->notNull(),
             'started_at' => $this->integer()->notNull(),
             'finished_at' => $this->integer(),
-        ], $this->tableOptions);
+        ]);
         $this->createIndex('pid', $this->env->workerTableName, 'pid');
         $this->createIndex('finished_at', $this->env->workerTableName, 'finished_at');
 
