@@ -9,6 +9,7 @@ use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use zhuravljov\yii\queue\monitor\assets\MainAsset;
+use zhuravljov\yii\queue\monitor\Module;
 
 MainAsset::register($this);
 ?>
@@ -28,7 +29,7 @@ MainAsset::register($this);
     <?php
     NavBar::begin([
         'brandLabel' => 'Queue Monitor',
-        'brandUrl' => ['/' . Yii::$app->controller->module->id],
+        'brandUrl' => ['/' . Module::getInstance()->id],
         'options' => ['class' => 'navbar-inverse navbar-fixed-top'],
     ]);
     echo Nav::widget([

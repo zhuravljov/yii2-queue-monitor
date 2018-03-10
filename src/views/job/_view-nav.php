@@ -7,6 +7,7 @@
 use yii\bootstrap\Html;
 use yii\bootstrap\Nav;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
+use zhuravljov\yii\queue\monitor\Module;
 
 $this->params['breadcrumbs'][] = [
     'label' => 'Jobs',
@@ -23,8 +24,7 @@ $this->params['breadcrumbs'][]  = [
     'url' => ['view', 'id' => $record->id],
 ];
 
-/** @var \zhuravljov\yii\queue\monitor\Module $module */
-$module = Yii::$app->controller->module;
+$module = Module::getInstance();
 ?>
 <div class="pull-right">
     <?= !$module->canStop ? '' : Html::a(

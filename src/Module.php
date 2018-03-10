@@ -13,7 +13,9 @@ use yii\web\Application as WebApplication;
 use yii\web\GroupUrlRule;
 
 /**
- * Class Config
+ * Web Module
+ *
+ * @property \yii\i18n\Formatter $formatter
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
