@@ -169,7 +169,7 @@ class JobController extends Controller
      */
     public function actionStop($id)
     {
-        if (!$this->module->canPushAgain) {
+        if (!$this->module->canExecStop) {
             throw new ForbiddenHttpException('Stop is forbidden.');
         }
 

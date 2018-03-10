@@ -11,6 +11,7 @@ use yii\widgets\Pjax;
 use zhuravljov\yii\queue\monitor\assets\JobIndexAsset;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
+use zhuravljov\yii\queue\monitor\widgets\FilterBar;
 use zhuravljov\yii\queue\monitor\widgets\LinkPager;
 
 if (JobFilter::restoreParams()) {
@@ -22,50 +23,57 @@ if (JobFilter::restoreParams()) {
 
 JobIndexAsset::register($this);
 ?>
-<?php $this->beginContent(dirname(__DIR__) . '/layouts/job-filter.php', ['filter' => $filter]) ?>
 <div class="monitor-job-index">
-    <?php Pjax::begin() ?>
-    <?= ListView::widget([
-        'pager' => [
-            'class' => LinkPager::class,
-        ],
-        'itemView' => '_index-item',
-        'itemOptions' => function (PushRecord $push) {
-            $options = ['class' => 'job-item'];
-            switch ($push->getStatus()) {
-                case PushRecord::STATUS_STOPPED:
-                    Html::addCssClass($options, 'bg-info');
-                    break;
-                case PushRecord::STATUS_WAITING:
-                case PushRecord::STATUS_STARTED:
-                    Html::addCssClass($options, 'bg-success');
-                    break;
-                case PushRecord::STATUS_FAILED:
-                case PushRecord::STATUS_RESTARTED:
-                    Html::addCssClass($options, 'bg-warning');
-                    break;
-                case PushRecord::STATUS_BURIED:
-                    Html::addCssClass($options, 'bg-danger');
-                    break;
-                default:
-                    Html::addCssClass($options, 'bg-default');
-            }
-            return $options;
-        },
-        'dataProvider' => new ActiveDataProvider([
-            'query' => $filter->search()
-                ->with([
-                    'firstExec',
-                    'lastExec',
-                    'execTotal',
-                ]),
-            'sort' => [
-                'defaultOrder' => [
-                    'id' => SORT_DESC,
+    <div class="row">
+        <div class="col-lg-3 col-lg-push-9">
+            <?php FilterBar::begin() ?>
+            <?= $this->render('_job-filter', compact('filter')) ?>
+            <?php FilterBar::end() ?>
+        </div>
+        <div class="col-lg-9 col-lg-pull-3">
+            <?php Pjax::begin() ?>
+            <?= ListView::widget([
+                'pager' => [
+                    'class' => LinkPager::class,
                 ],
-            ],
-        ]),
-    ]) ?>
-    <?php Pjax::end() ?>
+                'itemView' => '_index-item',
+                'itemOptions' => function (PushRecord $push) {
+                    $options = ['class' => 'job-item'];
+                    switch ($push->getStatus()) {
+                        case PushRecord::STATUS_STOPPED:
+                            Html::addCssClass($options, 'bg-info');
+                            break;
+                        case PushRecord::STATUS_WAITING:
+                        case PushRecord::STATUS_STARTED:
+                            Html::addCssClass($options, 'bg-success');
+                            break;
+                        case PushRecord::STATUS_FAILED:
+                        case PushRecord::STATUS_RESTARTED:
+                            Html::addCssClass($options, 'bg-warning');
+                            break;
+                        case PushRecord::STATUS_BURIED:
+                            Html::addCssClass($options, 'bg-danger');
+                            break;
+                        default:
+                            Html::addCssClass($options, 'bg-default');
+                    }
+                    return $options;
+                },
+                'dataProvider' => new ActiveDataProvider([
+                    'query' => $filter->search()
+                        ->with([
+                            'firstExec',
+                            'lastExec',
+                            'execTotal',
+                        ]),
+                    'sort' => [
+                        'defaultOrder' => [
+                            'id' => SORT_DESC,
+                        ],
+                    ],
+                ]),
+            ]) ?>
+            <?php Pjax::end() ?>
+        </div>
+    </div>
 </div>
-<?php $this->endContent() ?>

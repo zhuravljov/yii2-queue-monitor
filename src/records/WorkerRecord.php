@@ -27,8 +27,8 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property ExecRecord[] $execs
  * @property array $execTotal
  *
- * @property int $execStartedCount
- * @property int $execDoneCount
+ * @property int $execTotalStarted
+ * @property int $execTotalDone
  * @property int $duration
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
@@ -58,6 +58,18 @@ class WorkerRecord extends ActiveRecord
     public static function tableName()
     {
         return Yii::$container->get(Env::class)->workerTableName;
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'sender_name' => 'Sender',
+            'pid' => 'PID',
+            'started_at' => 'Started At',
+            'execTotalStarted' => 'Total Started',
+            'execTotalDone' => 'Total Done',
+        ];
     }
 
     /**
@@ -94,7 +106,7 @@ class WorkerRecord extends ActiveRecord
     /**
      * @return int
      */
-    public function getExecStartedCount()
+    public function getExecTotalStarted()
     {
         return $this->execTotal['started'] ?: 0;
     }
@@ -102,7 +114,7 @@ class WorkerRecord extends ActiveRecord
     /**
      * @return int
      */
-    public function getExecDoneCount()
+    public function getExecTotalDone()
     {
         return $this->execTotal['done'] ?: 0;
     }

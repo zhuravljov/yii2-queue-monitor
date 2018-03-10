@@ -28,7 +28,11 @@ class Module extends \yii\base\Module implements BootstrapInterface
     /**
      * @var bool
      */
-    public $canStop = true;
+    public $canExecStop = true;
+    /**
+     * @var bool
+     */
+    public $canWorkerStop = true;
     /**
      * @inheritdoc
      */
@@ -55,6 +59,7 @@ class Module extends \yii\base\Module implements BootstrapInterface
                     'stats' => 'stat/index',
                     'jobs' => 'job/index',
                     'job/<id:\d+>/<action\w+>' => 'job/view-<action>',
+                    'workers' => 'worker/index',
                     '<controller:\w+>/<id:\d+>' => '<controller>/view',
                     '<controller:\w+>/<action\w+>/<id:\d+>' => '<controller>/<action>',
                     '<controller:\w+>/<action\w+>' => '<controller>/<action>',

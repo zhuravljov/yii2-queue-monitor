@@ -8,9 +8,6 @@
 namespace zhuravljov\yii\queue\monitor\filters;
 
 use DateTime;
-use Yii;
-use yii\base\Model;
-use zhuravljov\yii\queue\monitor\Env;
 use zhuravljov\yii\queue\monitor\records\PushQuery;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
 
@@ -19,7 +16,7 @@ use zhuravljov\yii\queue\monitor\records\PushRecord;
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
-class JobFilter extends Model
+class JobFilter extends BaseFilter
 {
     const IS_WAITING = 'waiting';
     const IS_IN_PROGRESS = 'in-progress';
@@ -35,42 +32,6 @@ class JobFilter extends Model
     public $pushed;
 
     /**
-     * @var Env
-     */
-    private $env;
-
-    /**
-     * @param Env $env
-     * @param array $config
-     */
-    public function __construct(Env $env, $config = [])
-    {
-        $this->env = $env;
-        parent::__construct($config);
-    }
-
-    /**
-     * @return static
-     */
-    public static function ensure()
-    {
-        /** @var static $filter */
-        $filter = Yii::createObject(static::class);
-        $filter->load(Yii::$app->request->queryParams) && $filter->validate();
-        $filter->storeParams();
-
-        return $filter;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function formName()
-    {
-        return '';
-    }
-
-    /**
      * @inheritdoc
      */
     public function rules()
@@ -84,28 +45,6 @@ class JobFilter extends Model
             ['pushed', 'string'],
             ['pushed', 'match', 'pattern' => '/^\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/'],
         ];
-    }
-
-    /**
-     *
-     */
-    public function storeParams()
-    {
-        $params = [];
-        foreach ($this->attributes as $attribute => $value) {
-            if ($value !== null && $value !== '') {
-                $params[$attribute] = $value;
-            }
-        }
-        Yii::$app->session->set(JobFilter::class, $params);
-    }
-
-    /**
-     * @return array
-     */
-    public static function restoreParams()
-    {
-        return Yii::$app->session->get(JobFilter::class, []);
     }
 
     /**

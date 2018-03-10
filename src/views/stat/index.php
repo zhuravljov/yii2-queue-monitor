@@ -5,6 +5,7 @@
  */
 
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
+use zhuravljov\yii\queue\monitor\widgets\FilterBar;
 
 if ($filterParams = JobFilter::restoreParams()) {
     $this->params['breadcrumbs'][] = ['label' => 'Stats', 'url' => ['index']];
@@ -13,15 +14,22 @@ if ($filterParams = JobFilter::restoreParams()) {
     $this->params['breadcrumbs'][] = 'Stats';
 }
 ?>
-<?php $this->beginContent(dirname(__DIR__) . '/layouts/job-filter.php', ['filter' => $filter]) ?>
 <div class="monitor-stat-index">
     <div class="row">
-        <div class="col-md-6">
-            <?= $this->render('_chart-classes', ['filter' => $filter]) ?>
+        <div class="col-lg-3 col-lg-push-9">
+            <?php FilterBar::begin() ?>
+            <?= $this->render('/job/_job-filter', compact('filter')) ?>
+            <?php FilterBar::end() ?>
         </div>
-        <div class="col-md-6">
-            <?= $this->render('_chart-senders', ['filter' => $filter]) ?>
+        <div class="col-lg-9 col-lg-pull-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <?= $this->render('_chart-classes', ['filter' => $filter]) ?>
+                </div>
+                <div class="col-md-6">
+                    <?= $this->render('_chart-senders', ['filter' => $filter]) ?>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-<?php $this->endContent() ?>

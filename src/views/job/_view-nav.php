@@ -27,7 +27,7 @@ $this->params['breadcrumbs'][]  = [
 $module = Module::getInstance();
 ?>
 <div class="pull-right">
-    <?= !$module->canStop ? '' : Html::a(
+    <?= !$module->canExecStop ? '' : Html::a(
         Html::icon('stop') . ' Stop',
         ['stop', 'id' => $record->id],
         [
