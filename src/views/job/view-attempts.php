@@ -23,7 +23,7 @@ $format = Module::getInstance()->formatter;
         'pager' => [
             'class' => LinkPager::class,
         ],
-        'tableOptions' => ['class' => 'table'],
+        'tableOptions' => ['class' => 'table table-hover'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $record->getExecs(),
             'sort' => [

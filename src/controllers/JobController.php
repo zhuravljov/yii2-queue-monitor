@@ -87,6 +87,19 @@ class JobController extends Controller
     }
 
     /**
+     * Push environment
+     *
+     * @param int $id
+     * @return mixed
+     */
+    public function actionViewEnv($id)
+    {
+        return $this->render('view-env', [
+            'record' => $this->findRecord($id),
+        ]);
+    }
+
+    /**
      * Job object data
      *
      * @param int $id

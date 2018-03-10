@@ -21,10 +21,10 @@ $format = Module::getInstance()->formatter;
         Pushed: <?= $format->asDatetime($model->pushed_at) ?>
     </div>
     <div class="job-push-ttr" title="Time to reserve of the job.">
-        TTR: <?= $format->asInteger($model->ttr) ?>s
+        TTR: <?= $format->asInteger($model->push_ttr) ?>s
     </div>
     <div class="job-push-delay">
-        Delay: <?= $format->asInteger($model->delay) ?>s
+        Delay: <?= $format->asInteger($model->push_delay) ?>s
     </div>
     <div class="job-exec-attempts" title="Number of attempts.">
         Attempts: <?= $format->asInteger($model->getAttemptCount()) ?>
@@ -45,7 +45,7 @@ $format = Module::getInstance()->formatter;
     <?php foreach ($model->getJobParams() as $property => $value): ?>
         <span class="job-param">
             <span class="job-param-name"><?= $format->asText($property) ?> =</span>
-            <span class="job-param-value"><?= VarDumper::dumpAsString($value) ?></span>
+            <span class="job-param-value"><?= htmlspecialchars(VarDumper::dumpAsString($value), ENT_QUOTES|ENT_SUBSTITUTE, Yii::$app->charset, true) ?></span>
         </span>
     <?php endforeach ?>
 </div>

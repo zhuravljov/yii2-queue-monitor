@@ -21,12 +21,14 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property string $job_uid
  * @property string $job_class
  * @property string|resource $job_object
- * @property int $ttr
- * @property int $delay
+ * @property int $push_ttr
+ * @property int $push_delay
+ * @property string|null $push_trace_data
+ * @property string|null $push_env_data
  * @property int $pushed_at
- * @property int $stopped_at
- * @property int $first_exec_id
- * @property int $last_exec_id
+ * @property int|null $stopped_at
+ * @property int|null $first_exec_id
+ * @property int|null $last_exec_id
  *
  * @property ExecRecord[] $execs
  * @property ExecRecord|null $firstExec
@@ -40,6 +42,8 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property Queue|null $sender
  * @property JobInterface $job
  * @property array $jobParams
+ * @property string[] $pushTrace
+ * @property array $pushEnv
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
@@ -133,9 +137,9 @@ class PushRecord extends ActiveRecord
     public function getWaitTime()
     {
         if ($this->firstExec) {
-            return $this->firstExec->reserved_at - $this->pushed_at - $this->delay;
+            return $this->firstExec->reserved_at - $this->pushed_at - $this->push_delay;
         }
-        return time() - $this->pushed_at - $this->delay;
+        return time() - $this->pushed_at - $this->push_delay;
     }
 
     /**
@@ -184,6 +188,16 @@ class PushRecord extends ActiveRecord
     }
 
     /**
+     * @param JobInterface|mixed $job
+     */
+    public function setJob($job)
+    {
+        $this->job_class = get_class($job);
+        $this->job_object = serialize($job);
+        $this->_job = null;
+    }
+
+    /**
      * @return JobInterface|mixed
      */
     public function getJob()
@@ -196,16 +210,6 @@ class PushRecord extends ActiveRecord
             $this->_job = unserialize($this->job_object);
         }
         return $this->_job;
-    }
-
-    /**
-     * @param JobInterface|mixed $job
-     */
-    public function setJob($job)
-    {
-        $this->job_class = get_class($job);
-        $this->job_object = serialize($job);
-        $this->_job = null;
     }
 
     /**
@@ -222,6 +226,51 @@ class PushRecord extends ActiveRecord
     public function getJobParams()
     {
         return get_object_vars($this->getJob());
+    }
+
+    /**
+     * @return string[] trace lines since Queue::push()
+     */
+    public function getPushTrace()
+    {
+        if (is_resource($this->push_trace_data)) {
+            $this->push_trace_data = stream_get_contents($this->push_trace_data);
+        }
+        $lines = [];
+        $isFirstFound = false;
+        foreach (explode("\n", $this->push_trace_data) as $line) {
+            if (!$isFirstFound && strpos($line, \yii\queue\Queue::class)) {
+                $isFirstFound = true;
+            }
+            if ($isFirstFound) {
+                list(, $line) = explode(' ', trim($line), 2);
+                $lines[] = $line;
+            }
+        }
+        return $lines;
+    }
+
+    /**
+     * @param array $values
+     */
+    public function setPushEnv($values)
+    {
+        ksort($values);
+        $this->push_env_data = serialize($values);
+    }
+
+    /**
+     * @return array
+     */
+    public function getPushEnv()
+    {
+        if ($this->push_env_data === null) {
+            return [];
+        }
+        if (is_resource($this->push_env_data)) {
+            $this->push_env_data = stream_get_contents($this->push_env_data);
+        }
+        return unserialize($this->push_env_data);
     }
 
     /**

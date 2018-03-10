@@ -16,15 +16,15 @@ $this->params['breadcrumbs'][] = 'Details';
         'model' => $record,
         'formatter' => Module::getInstance()->formatter,
         'attributes' => [
-            'sender_name',
-            'job_uid',
-            'job_class',
-            'ttr',
-            'delay',
-            'pushed_at:relativeTime',
+            'sender_name:text:Sender',
+            'job_uid:text:Job UID',
+            'job_class:text:Class',
+            'push_ttr:integer:Push TTR',
+            'push_delay:integer:Delay',
+            'pushed_at:relativeTime:Pushed',
             'waitTime:duration',
-            'status',
+            'status:text',
         ],
-        'options' => ['class' => 'table'],
+        'options' => ['class' => 'table table-hover'],
     ]) ?>
 </div>

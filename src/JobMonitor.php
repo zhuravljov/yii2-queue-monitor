@@ -68,8 +68,10 @@ class JobMonitor extends Behavior
         $push->sender_name = $this->getSenderName($event);
         $push->job_uid = $event->id;
         $push->setJob($event->job);
-        $push->ttr = $event->ttr;
-        $push->delay = $event->delay;
+        $push->push_ttr = $event->ttr;
+        $push->push_delay = $event->delay;
+        $push->push_trace_data = (new \Exception())->getTraceAsString();
+        $push->setPushEnv($_SERVER);
         $push->pushed_at = time();
         $push->save(false);
     }
