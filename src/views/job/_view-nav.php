@@ -19,9 +19,21 @@ if ($filtered = JobFilter::restoreParams()) {
         'url' => ['index'] + $filtered,
     ];
 }
+$parents = [];
+$parent = $record->parent;
+while ($parent) {
+    $parents[] = $parent;
+    $parent = $parent->parent;
+}
+foreach (array_reverse($parents) as $parent) {
+    $this->params['breadcrumbs'][]  = [
+        'label' => "#$parent->job_uid",
+        'url' => [Yii::$app->requestedAction->id, 'id' => $parent->id],
+    ];
+}
 $this->params['breadcrumbs'][]  = [
-    'label' => 'Job ' . $record->job_uid . ' by ' . $record->sender_name,
-    'url' => ['view', 'id' => $record->id],
+    'label' => "#$record->job_uid",
+    'url' => [Yii::$app->requestedAction->id, 'id' => $record->id],
 ];
 
 $module = Module::getInstance();

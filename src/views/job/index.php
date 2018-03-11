@@ -61,11 +61,7 @@ JobIndexAsset::register($this);
                 },
                 'dataProvider' => new ActiveDataProvider([
                     'query' => $filter->search()
-                        ->with([
-                            'firstExec',
-                            'lastExec',
-                            'execTotal',
-                        ]),
+                        ->with(['parent', 'firstExec', 'lastExec', 'execTotal']),
                     'sort' => [
                         'defaultOrder' => [
                             'id' => SORT_DESC,

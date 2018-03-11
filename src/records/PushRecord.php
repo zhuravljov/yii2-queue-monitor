@@ -18,6 +18,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * Class PushRecord
  *
  * @property int $id
+ * @property null|int $parent_id
  * @property string $sender_name
  * @property string $job_uid
  * @property string $job_class
@@ -31,6 +32,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property int|null $first_exec_id
  * @property int|null $last_exec_id
  *
+ * @property PushRecord $parent
  * @property ExecRecord[] $execs
  * @property ExecRecord|null $firstExec
  * @property ExecRecord|null $lastExec
@@ -80,6 +82,14 @@ class PushRecord extends ActiveRecord
     public static function tableName()
     {
         return Yii::$container->get(Env::class)->pushTableName;
+    }
+
+    /**
+     * @return PushQuery
+     */
+    public function getParent()
+    {
+        return $this->hasOne(static::class, ['id' => 'parent_id']);
     }
 
     /**

@@ -16,6 +16,12 @@ $format = Module::getInstance()->formatter;
         <a href="<?= Url::to(['view', 'id' => $model->id]) ?>" data-pjax="0">
             #<?= $format->asText($model->job_uid) ?> by <?= $format->asText($model->sender_name) ?>
         </a>
+        <?php if ($model->parent): ?>
+            from
+            <a href="<?= Url::to(['view', 'id' => $model->parent->id]) ?>" data-pjax="0">
+                #<?= $format->asText($model->parent->job_uid) ?>
+            </a>
+        <?php endif; ?>
     </div>
     <div class="job-push-time">
         Pushed: <?= $format->asDatetime($model->pushed_at) ?>

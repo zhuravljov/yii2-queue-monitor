@@ -35,6 +35,10 @@ class JobMonitor extends Behavior
      * @var Env
      */
     protected $env;
+    /**
+     * @var null|PushRecord
+     */
+    protected static $startedPush;
 
     /**
      * @param Env $env
@@ -65,6 +69,7 @@ class JobMonitor extends Behavior
     public function afterPush(PushEvent $event)
     {
         $push = new PushRecord();
+        $push->parent_id = static::$startedPush ? static::$startedPush->id : null;
         $push->sender_name = $this->getSenderName($event);
         $push->job_uid = $event->id;
         $push->setJob($event->job);
@@ -81,7 +86,7 @@ class JobMonitor extends Behavior
      */
     public function beforeExec(ExecEvent $event)
     {
-        $push = $this->getPushRecord($event);
+        static::$startedPush = $push = $this->getPushRecord($event);
         if (!$push) {
             return;
         }
@@ -118,7 +123,7 @@ class JobMonitor extends Behavior
      */
     public function afterExec(ExecEvent $event)
     {
-        $push = $this->getPushRecord($event);
+        $push = static::$startedPush ?: $this->getPushRecord($event);
         if (!$push) {
             return;
         }
@@ -138,7 +143,7 @@ class JobMonitor extends Behavior
      */
     public function afterError(ErrorEvent $event)
     {
-        $push = $this->getPushRecord($event);
+        $push = static::$startedPush ?: $this->getPushRecord($event);
         if (!$push) {
             return;
         }
