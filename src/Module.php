@@ -24,15 +24,15 @@ class Module extends \yii\base\Module implements BootstrapInterface
     /**
      * @var bool
      */
-    public $canPushAgain = true;
+    public $canPushAgain = false;
     /**
      * @var bool
      */
-    public $canExecStop = true;
+    public $canExecStop = false;
     /**
      * @var bool
      */
-    public $canWorkerStop = true;
+    public $canWorkerStop = false;
     /**
      * @inheritdoc
      */
