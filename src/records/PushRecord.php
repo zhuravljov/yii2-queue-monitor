@@ -33,6 +33,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property int|null $last_exec_id
  *
  * @property PushRecord $parent
+ * @property PushRecord[] $children
  * @property ExecRecord[] $execs
  * @property ExecRecord|null $firstExec
  * @property ExecRecord|null $lastExec
@@ -90,6 +91,14 @@ class PushRecord extends ActiveRecord
     public function getParent()
     {
         return $this->hasOne(static::class, ['id' => 'parent_id']);
+    }
+
+    /**
+     * @return PushQuery
+     */
+    public function getChildren()
+    {
+        return $this->hasMany(static::class, ['parent_id' => 'id']);
     }
 
     /**

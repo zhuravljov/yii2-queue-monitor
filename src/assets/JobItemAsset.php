@@ -15,11 +15,11 @@ use yii\web\AssetBundle;
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
-class JobIndexAsset extends AssetBundle
+class JobItemAsset extends AssetBundle
 {
     public $sourcePath = '@zhuravljov/yii/queue/monitor/web';
     public $css = [
-        'job-index.css',
+        'job-item.css',
     ];
     public $depends = [
         BootstrapAsset::class,

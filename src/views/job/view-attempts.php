@@ -19,11 +19,6 @@ $format = Module::getInstance()->formatter;
 ?>
 <div class="monitor-job-attempts">
     <?= GridView::widget([
-        'layout' => "{items}\n{pager}",
-        'pager' => [
-            'class' => LinkPager::class,
-        ],
-        'tableOptions' => ['class' => 'table table-hover'],
         'dataProvider' => new ActiveDataProvider([
             'query' => $record->getExecs(),
             'sort' => [
@@ -35,6 +30,12 @@ $format = Module::getInstance()->formatter;
                 ],
             ],
         ]),
+        'layout' => "{items}\n{pager}",
+        'pager' => [
+            'class' => LinkPager::class,
+        ],
+        'emptyText' => 'No workers found.',
+        'tableOptions' => ['class' => 'table table-hover'],
         'formatter' => $format,
         'columns' => [
             'attempt:integer',

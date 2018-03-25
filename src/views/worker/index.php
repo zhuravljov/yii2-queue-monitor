@@ -33,16 +33,9 @@ $format = Module::getInstance()->formatter;
             ],
         ]),
         'layout' => "{items}\n{pager}",
+        'emptyText' => 'No workers found.',
         'tableOptions' => ['class' => 'table table-hover'],
         'formatter' => $format,
-        'beforeRow' => function (WorkerRecord $record) use ($format) {
-            static $senderName;
-            if ($senderName === $record->sender_name) {
-                return '';
-            }
-            $senderName = $record->sender_name;
-            return Html::tag('tr', Html::tag('th', $format->asText("Component: $senderName"), ['colspan' => 6]));
-        },
         'columns' => [
             'started_at:datetime',
             'pid',
@@ -66,5 +59,13 @@ $format = Module::getInstance()->formatter;
                 ],
             ],
         ],
+        'beforeRow' => function (WorkerRecord $record) use ($format) {
+            static $senderName;
+            if ($senderName === $record->sender_name) {
+                return '';
+            }
+            $senderName = $record->sender_name;
+            return Html::tag('tr', Html::tag('th', $format->asText("Component: $senderName"), ['colspan' => 6]));
+        },
     ]) ?>
 </div>
