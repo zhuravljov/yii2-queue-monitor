@@ -79,7 +79,7 @@ class WorkerMonitor extends Behavior
      */
     public function workerLoop(WorkerEvent $event)
     {
-        if ($this->record->pinged_at < time() - $this->env->workerPingInterval) {
+        if ($this->record->pinged_at + $this->env->workerPingInterval > time()) {
             return;
         }
         if (!$this->record->refresh()) {
