@@ -244,6 +244,9 @@ class PushRecord extends ActiveRecord
      */
     public function getPushTrace()
     {
+        if ($this->push_trace_data === null) {
+            return [];
+        }
         if (is_resource($this->push_trace_data)) {
             $this->push_trace_data = stream_get_contents($this->push_trace_data);
         }
@@ -255,19 +258,10 @@ class PushRecord extends ActiveRecord
             }
             if ($isFirstFound) {
                 list(, $line) = explode(' ', trim($line), 2);
-                $lines[] = $line;
+                $lines[] = trim($line);
             }
         }
         return $lines;
-    }
-
-    /**
-     * @param array $values
-     */
-    public function setPushEnv($values)
-    {
-        ksort($values);
-        $this->push_env_data = serialize($values);
     }
 
     /**

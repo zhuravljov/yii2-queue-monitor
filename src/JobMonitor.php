@@ -32,6 +32,14 @@ class JobMonitor extends Behavior
      */
     public $owner;
     /**
+     * @var bool|callable
+     */
+    public $storePushTrace = true;
+    /**
+     * @var bool|callable
+     */
+    public $storePushEnv = true;
+    /**
      * @var Env
      */
     protected $env;
@@ -75,8 +83,8 @@ class JobMonitor extends Behavior
         $push->setJob($event->job);
         $push->push_ttr = $event->ttr;
         $push->push_delay = $event->delay;
-        $push->push_trace_data = (new \Exception())->getTraceAsString();
-        $push->setPushEnv($_SERVER);
+        $this->fillPushTrace($push, $event);
+        $this->fillPushEnv($push, $event);
         $push->pushed_at = time();
         $push->save(false);
     }
@@ -175,6 +183,44 @@ class JobMonitor extends Behavior
             }
         }
         throw new InvalidConfigException('Queue must be an application component.');
+    }
+
+    /**
+     * @param PushRecord $record
+     * @param PushEvent $event
+     */
+    protected function fillPushTrace(PushRecord $record, PushEvent $event)
+    {
+        $record->push_trace_data = null;
+
+        $canStore = is_callable($this->storePushTrace)
+            ? call_user_func($this->storePushTrace, $event)
+            : $this->storePushTrace;
+        if (!$canStore) {
+            return;
+        }
+
+        $record->push_trace_data = (new \Exception())->getTraceAsString();
+    }
+
+    /**
+     * @param PushRecord $record
+     * @param PushEvent $event
+     */
+    protected function fillPushEnv(PushRecord $record, PushEvent $event)
+    {
+        $record->push_env_data = null;
+
+        $canStore = is_callable($this->storePushEnv)
+            ? call_user_func($this->storePushEnv, $event)
+            : $this->storePushEnv;
+        if (!$canStore) {
+            return;
+        }
+
+        $values = $_SERVER;
+        ksort($values);
+        $record->push_env_data = serialize($values);
     }
 
     /**
