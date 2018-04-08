@@ -48,7 +48,7 @@ $format = Module::getInstance()->formatter;
                     'stop' => function ($url) {
                         return Html::a(Html::icon('stop'), $url, [
                             'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
-                            'title' => 'Stop worker',
+                            'title' => 'Stop the worker.',
                         ]);
                     }
                 ],
@@ -64,8 +64,11 @@ $format = Module::getInstance()->formatter;
             if ($senderName === $record->sender_name) {
                 return '';
             }
-            $senderName = $record->sender_name;
-            return Html::tag('tr', Html::tag('th', $format->asText("Component: $senderName"), ['colspan' => 6]));
+            $groupTitle = strtr('Sender: name (class)', [
+                'name' => $record->sender_name,
+                'class' => get_class(Yii::$app->get($record->sender_name)),
+            ]);
+            return Html::tag('tr', Html::tag('th', $format->asText($groupTitle), ['colspan' => 6]));
         },
     ]) ?>
 </div>
