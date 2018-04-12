@@ -64,6 +64,7 @@ $format = Module::getInstance()->formatter;
             if ($senderName === $record->sender_name) {
                 return '';
             }
+            $senderName = $record->sender_name;
             $groupTitle = strtr('Sender: name (class)', [
                 'name' => $record->sender_name,
                 'class' => get_class(Yii::$app->get($record->sender_name)),
