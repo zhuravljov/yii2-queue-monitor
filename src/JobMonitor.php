@@ -258,7 +258,7 @@ class JobMonitor extends Behavior
         return $this->env->db->useMaster(function () use ($event) {
             return WorkerRecord::find()
                 ->byPid($event->sender->getWorkerPid())
-                ->active()
+                ->active(false)
                 ->one();
         });
     }

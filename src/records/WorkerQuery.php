@@ -8,6 +8,7 @@
 namespace zhuravljov\yii\queue\monitor\records;
 
 use yii\db\ActiveQuery;
+use yii\db\Query;
 use zhuravljov\yii\queue\monitor\Env;
 
 /**
@@ -44,13 +45,27 @@ class WorkerQuery extends ActiveQuery
     }
 
     /**
+     * @param bool $takeBusyWorkers
      * @return $this
      */
-    public function active()
+    public function active($takeBusyWorkers)
     {
         $this->andWhere(['finished_at' => null]);
         if ($this->env->canListenWorkerLoop()) {
-            $this->andWhere(['>', 'pinged_at', time() - $this->env->workerPingInterval - 5]);
+            $condition = ['or'];
+            // When a last ping was not late
+            $condition[] = ['>', 'pinged_at', time() - $this->env->workerPingInterval - 5];
+            if ($takeBusyWorkers) {
+                // When a worker is busy with a job and cannot pinging
+                $condition[] = (new Query())
+                    ->select('COUNT(*)')
+                    ->from(['e' => $this->env->execTableName])
+                    ->andWhere('{{e}}.[[id]] = ' . $this->env->workerTableName . '.[[last_exec_id]]')
+                    ->andWhere('{{e}}.[[done_at]] IS NULL')
+                    ->innerJoin(['p' => $this->env->pushTableName], '{{p}}.[[id]] = {{e}}.[[push_id]]')
+                    ->andWhere('{{e}}.[[reserved_at]] > :time - {{p}}.[[push_ttr]]', [':time' => time()]);
+            }
+            $this->andWhere($condition);
         }
         return $this;
     }

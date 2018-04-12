@@ -19,7 +19,7 @@ $format = Module::getInstance()->formatter;
 <div class="worker-index">
     <?= GridView::widget([
         'dataProvider' => new ActiveDataProvider([
-            'query' => $filter->search()->active()->with(['execTotal', 'lastExec']),
+            'query' => $filter->search()->active(true)->with(['execTotal', 'lastExec.push']),
             'sort' => [
                 'attributes' => [
                     'started_at' => [
@@ -39,8 +39,34 @@ $format = Module::getInstance()->formatter;
         'columns' => [
             'started_at:datetime',
             'pid',
+            [
+                'header' => 'Status',
+                'format' => 'raw',
+                'value' => function (WorkerRecord $record) use ($format) {
+                    if (!$record->lastExec) {
+                        return strtr('Idle since {time}', [
+                            '{time}' => $format->asRelativeTime($record->started_at),
+                        ]);
+                    }
+                    if ($record->lastExec->done_at) {
+                        return strtr('Idle after {job} since {time}', [
+                            '{job}' => Html::a(
+                                '#' . $format->asText($record->lastExec->push->job_uid),
+                                ['job/view', 'id' => $record->lastExec->push->id]
+                            ),
+                            '{time}' => $format->asRelativeTime($record->lastExec->done_at),
+                        ]);
+                    }
+                    return strtr('Busy with {job} since {time}', [
+                        '{job}' => Html::a(
+                            '#' . $format->asText($record->lastExec->push->job_uid),
+                            ['job/view', 'id' => $record->lastExec->push->id]
+                        ),
+                        '{time}' => $format->asRelativeTime($record->lastExec->reserved_at),
+                    ]);
+                },
+            ],
             'execTotalDone:integer',
-            'lastExec.reserved_at:datetime:Last Job',
             [
                 'class' => ActionColumn::class,
                 'template' => '{stop}',
@@ -59,6 +85,12 @@ $format = Module::getInstance()->formatter;
                 ],
             ],
         ],
+        'rowOptions' => function (WorkerRecord $record) {
+            if (!$record->isIdle()) {
+                return ['class' => 'active'];
+            }
+            return [];
+        },
         'beforeRow' => function (WorkerRecord $record) use ($format) {
             static $senderName;
             if ($senderName === $record->sender_name) {

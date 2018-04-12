@@ -131,6 +131,14 @@ class WorkerRecord extends ActiveRecord
     }
 
     /**
+     * @return bool
+     */
+    public function isIdle()
+    {
+        return !$this->lastExec || $this->lastExec->done_at;
+    }
+
+    /**
      * @return bool marked as stopped
      */
     public function isStopped()
