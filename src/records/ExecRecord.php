@@ -20,6 +20,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property int $attempt
  * @property int $reserved_at
  * @property null|int $done_at
+ * @property null|int $memory_usage
  * @property null|string $error
  * @property null|bool $retry
  *

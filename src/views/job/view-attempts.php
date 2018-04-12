@@ -42,6 +42,7 @@ $format = Module::getInstance()->formatter;
             'reserved_at:datetime:Started',
             'done_at:time:Finished',
             'duration:duration',
+            'memory_usage:shortSize',
             'retry:boolean',
         ],
         'rowOptions' => function (ExecRecord $record) {

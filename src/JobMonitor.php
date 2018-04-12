@@ -138,6 +138,7 @@ class JobMonitor extends Behavior
         if ($push->last_exec_id) {
             ExecRecord::updateAll([
                 'done_at' => time(),
+                'memory_usage' => memory_get_peak_usage(),
                 'error' => null,
                 'retry' => false,
             ], [
@@ -162,6 +163,7 @@ class JobMonitor extends Behavior
         if ($push->last_exec_id) {
             ExecRecord::updateAll([
                 'done_at' => time(),
+                'memory_usage' => static::$startedPush ? memory_get_peak_usage() : null,
                 'error' => $event->error,
                 'retry' => $event->retry,
             ], [

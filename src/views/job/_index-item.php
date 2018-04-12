@@ -60,8 +60,11 @@ switch ($model->getStatus()) {
             Wait: <?= $format->asInteger($model->getWaitTime()) ?>s
         </div>
         <?php if ($model->lastExec): ?>
-            <div class="job-exec-time" title="Last execute time.">
+            <div class="job-exec-time" title="Last execute time and memory usage.">
                 Exec: <?= $format->asInteger($model->lastExec->getDuration()) ?>s
+                <?php if ($model->lastExec->memory_usage): ?>
+                    / <?= $format->asShortSize($model->lastExec->memory_usage, 0) ?>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
     </div>
