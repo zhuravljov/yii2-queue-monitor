@@ -54,7 +54,7 @@ $format = Module::getInstance()->formatter;
         },
         'afterRow' => function (ExecRecord $record) use ($format) {
             if ($record->isFailed()) {
-                return strtr('<tr class="error-line danger text-danger"><td colspan="5">{error}</td></tr>', [
+                return strtr('<tr class="error-line danger text-danger"><td colspan="6">{error}</td></tr>', [
                     '{error}' => $format->asNtext($record->error),
                 ]);
             }
