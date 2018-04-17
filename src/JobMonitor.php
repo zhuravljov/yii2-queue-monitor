@@ -219,10 +219,7 @@ class JobMonitor extends Behavior
         if (!$canStore) {
             return;
         }
-
-        $values = $_SERVER;
-        ksort($values);
-        $record->push_env_data = serialize($values);
+        $record->push_env_data = serialize($_SERVER);
     }
 
     /**
