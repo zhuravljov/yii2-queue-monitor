@@ -15,7 +15,7 @@ The preferred way to install the extension is through [composer](http://getcompo
 Add to the require section of your `composer.json` file:
 
 ```
-"zhuravljov/yii2-queue-monitor": "1.0.x-dev"
+"zhuravljov/yii2-queue-monitor": "1.x-dev"
 ```
 
 Usage
