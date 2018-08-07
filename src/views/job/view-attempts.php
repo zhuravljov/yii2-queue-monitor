@@ -39,8 +39,8 @@ $format = Module::getInstance()->formatter;
         'formatter' => $format,
         'columns' => [
             'attempt:integer',
-            'reserved_at:datetime:Started',
-            'done_at:time:Finished',
+            'started_at:datetime:Started',
+            'finished_at:time:Finished',
             'duration:duration',
             'memory_usage:shortSize',
             'retry:boolean',

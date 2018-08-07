@@ -92,9 +92,9 @@ class JobController extends Controller
      * @param int $id
      * @return mixed
      */
-    public function actionViewEnv($id)
+    public function actionViewContext($id)
     {
-        return $this->render('view-env', [
+        return $this->render('view-context', [
             'record' => $this->findRecord($id),
         ]);
     }

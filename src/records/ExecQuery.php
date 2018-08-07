@@ -10,12 +10,21 @@ namespace zhuravljov\yii\queue\monitor\records;
 use yii\db\ActiveQuery;
 
 /**
- * Class ExecQuery
+ * Exec Query
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
 class ExecQuery extends ActiveQuery
 {
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        parent::init();
+        $this->alias('exec');
+    }
+
     /**
      * @inheritdoc
      * @return ExecRecord[]|array

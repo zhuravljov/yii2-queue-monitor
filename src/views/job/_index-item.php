@@ -48,10 +48,10 @@ switch ($model->getStatus()) {
             Pushed: <?= $format->asDatetime($model->pushed_at) ?>
         </div>
         <div class="job-push-ttr" title="Time to reserve of the job.">
-            TTR: <?= $format->asInteger($model->push_ttr) ?>s
+            TTR: <?= $format->asInteger($model->ttr) ?>s
         </div>
         <div class="job-push-delay">
-            Delay: <?= $format->asInteger($model->push_delay) ?>s
+            Delay: <?= $format->asInteger($model->delay) ?>s
         </div>
         <div class="job-exec-attempts" title="Number of attempts.">
             Attempts: <?= $format->asInteger($model->getAttemptCount()) ?>

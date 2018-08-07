@@ -74,8 +74,8 @@ $module = Module::getInstance();
             'url' => ['job/view-details', 'id' => $record->id],
         ],
         [
-            'label' => 'Environment',
-            'url' => ['job/view-env', 'id' => $record->id],
+            'label' => 'Context',
+            'url' => ['job/view-context', 'id' => $record->id],
         ],
         [
             'label' => 'Data',

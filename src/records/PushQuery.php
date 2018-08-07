@@ -11,21 +11,28 @@ use yii\db\ActiveQuery;
 use yii\db\Query;
 
 /**
- * Class PushQuery
+ * Push Query
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
 class PushQuery extends ActiveQuery
 {
+    /**
+     * @inheritdoc
+     */
     public function init()
     {
         parent::init();
-        $this->alias('p');
+        $this->alias('push');
     }
 
+    /**
+     * @param int $id
+     * @return $this
+     */
     public function byId($id)
     {
-        return $this->andWhere(['p.id' => $id]);
+        return $this->andWhere(['push.id' => $id]);
     }
 
     /**
@@ -36,9 +43,9 @@ class PushQuery extends ActiveQuery
     public function byJob($senderName, $jobUid)
     {
         return $this
-            ->andWhere(['p.sender_name' => $senderName])
-            ->andWhere(['p.job_uid' => $jobUid])
-            ->orderBy(['p.id' => SORT_DESC])
+            ->andWhere(['push.sender_name' => $senderName])
+            ->andWhere(['push.job_uid' => $jobUid])
+            ->orderBy(['push.id' => SORT_DESC])
             ->limit(1);
     }
 
@@ -49,8 +56,8 @@ class PushQuery extends ActiveQuery
     {
         return $this
             ->joinLastExec()
-            ->andWhere(['or', ['p.last_exec_id' => null], ['le.retry' => true]])
-            ->andWhere(['p.stopped_at' => null]);
+            ->andWhere(['or', ['push.last_exec_id' => null], ['le.retry' => true]])
+            ->andWhere(['push.stopped_at' => null]);
     }
 
     /**
@@ -59,9 +66,9 @@ class PushQuery extends ActiveQuery
     public function inProgress()
     {
         return $this
-            ->andWhere(['is not', 'p.last_exec_id', null])
+            ->andWhere(['is not', 'push.last_exec_id', null])
             ->joinLastExec()
-            ->andWhere(['le.done_at' => null]);
+            ->andWhere(['last_exec.finished_at' => null]);
     }
 
     /**
@@ -71,8 +78,8 @@ class PushQuery extends ActiveQuery
     {
         return $this
             ->joinLastExec()
-            ->andWhere(['is not', 'le.done_at', null])
-            ->andWhere(['le.retry' => false]);
+            ->andWhere(['is not', 'last_exec.finished_at', null])
+            ->andWhere(['last_exec.retry' => false]);
     }
 
     /**
@@ -82,7 +89,7 @@ class PushQuery extends ActiveQuery
     {
         return $this
             ->done()
-            ->andWhere(['le.error' => null]);
+            ->andWhere(['last_exec.error' => null]);
     }
 
     /**
@@ -92,7 +99,7 @@ class PushQuery extends ActiveQuery
     {
         return $this
             ->done()
-            ->andWhere(['is not', 'le.error', null]);
+            ->andWhere(['is not', 'last_exec.error', null]);
     }
 
     /**
@@ -102,8 +109,8 @@ class PushQuery extends ActiveQuery
     {
         return $this
             ->andWhere(['exists', new Query([
-                'from' => ['e' => ExecRecord::tableName()],
-                'where' => '{{e}}.[[push_id]] = {{p}}.[[id]] AND {{e}}.[[error]] IS NOT NULL',
+                'from' => ['exec' => ExecRecord::tableName()],
+                'where' => '{{exec}}.[[push_id]] = {{push}}.[[id]] AND {{exec}}.[[error]] IS NOT NULL',
             ])]);
     }
 
@@ -112,7 +119,7 @@ class PushQuery extends ActiveQuery
      */
     public function stopped()
     {
-        return $this->andWhere(['is not', 'p.stopped_at', null]);
+        return $this->andWhere(['is not', 'push.stopped_at', null]);
     }
 
     /**
@@ -121,8 +128,8 @@ class PushQuery extends ActiveQuery
     public function joinFirstExec()
     {
         return $this->leftJoin(
-            ['fe' => ExecRecord::tableName()],
-            '{{fe}}.[[id]] = {{p}}.[[first_exec_id]]'
+            ['first_exec' => ExecRecord::tableName()],
+            '{{first_exec}}.[[id]] = {{push}}.[[first_exec_id]]'
         );
     }
 
@@ -132,8 +139,8 @@ class PushQuery extends ActiveQuery
     public function joinLastExec()
     {
         return $this->leftJoin(
-            ['le' => ExecRecord::tableName()],
-            '{{le}}.[[id]] = {{p}}.[[last_exec_id]]'
+            ['last_exec' => ExecRecord::tableName()],
+            '{{last_exec}}.[[id]] = {{push}}.[[last_exec_id]]'
         );
     }
 

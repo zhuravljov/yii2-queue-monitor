@@ -15,7 +15,7 @@ use yii\queue\Queue;
 use zhuravljov\yii\queue\monitor\Env;
 
 /**
- * Class PushRecord
+ * Push Record
  *
  * @property int $id
  * @property null|int $parent_id
@@ -23,10 +23,10 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property string $job_uid
  * @property string $job_class
  * @property string|resource $job_data
- * @property int $push_ttr
- * @property int $push_delay
- * @property string|null $push_trace_data
- * @property string|null $push_env_data
+ * @property int $ttr
+ * @property int $delay
+ * @property string|null $trace
+ * @property string|null $context
  * @property int $pushed_at
  * @property int|null $stopped_at
  * @property int|null $first_exec_id
@@ -45,8 +45,6 @@ use zhuravljov\yii\queue\monitor\Env;
  *
  * @property Queue|null $sender
  * @property array $jobParams
- * @property string[] $pushTrace
- * @property array $pushEnv
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
@@ -132,11 +130,11 @@ class PushRecord extends ActiveRecord
     {
         return $this->hasOne(ExecRecord::class, ['push_id' => 'id'])
             ->select([
-                'push_id',
+                'exec.push_id',
                 'attempts' => 'COUNT(*)',
-                'errors' => 'COUNT(error)',
+                'errors' => 'COUNT(exec.error)',
             ])
-            ->groupBy('push_id')
+            ->groupBy('exec.push_id')
             ->asArray();
     }
 
@@ -154,9 +152,9 @@ class PushRecord extends ActiveRecord
     public function getWaitTime()
     {
         if ($this->firstExec) {
-            return $this->firstExec->reserved_at - $this->pushed_at - $this->push_delay;
+            return $this->firstExec->started_at - $this->pushed_at - $this->delay;
         }
-        return time() - $this->pushed_at - $this->push_delay;
+        return time() - $this->pushed_at - $this->delay;
     }
 
     /**
@@ -246,45 +244,6 @@ class PushRecord extends ActiveRecord
     public function createJob()
     {
         return Yii::createObject(['class' => $this->job_class] + $this->getJobParams());
-    }
-
-    /**
-     * @return string[] trace lines since Queue::push()
-     */
-    public function getPushTrace()
-    {
-        if ($this->push_trace_data === null) {
-            return [];
-        }
-        if (is_resource($this->push_trace_data)) {
-            $this->push_trace_data = stream_get_contents($this->push_trace_data);
-        }
-        $lines = [];
-        $isFirstFound = false;
-        foreach (explode("\n", $this->push_trace_data) as $line) {
-            if (!$isFirstFound && strpos($line, \yii\queue\Queue::class)) {
-                $isFirstFound = true;
-            }
-            if ($isFirstFound) {
-                list(, $line) = explode(' ', trim($line), 2);
-                $lines[] = trim($line);
-            }
-        }
-        return $lines;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPushEnv()
-    {
-        if ($this->push_env_data === null) {
-            return [];
-        }
-        if (is_resource($this->push_env_data)) {
-            $this->push_env_data = stream_get_contents($this->push_env_data);
-        }
-        return unserialize($this->push_env_data);
     }
 
     /**

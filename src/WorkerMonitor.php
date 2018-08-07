@@ -68,6 +68,7 @@ class WorkerMonitor extends Behavior
     {
         $this->record = new WorkerRecord();
         $this->record->sender_name = $this->getSenderName($event);
+        $this->record->host = $this->env->getHost();
         $this->record->pid = $event->sender->getWorkerPid();
         $this->record->started_at = time();
         $this->record->pinged_at = time();

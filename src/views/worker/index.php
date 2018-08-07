@@ -19,9 +19,14 @@ $format = Module::getInstance()->formatter;
 <div class="worker-index">
     <?= GridView::widget([
         'dataProvider' => new ActiveDataProvider([
-            'query' => $filter->search()->active(true)->with(['execTotal', 'lastExec.push']),
+            'query' => $filter->search()
+                ->active()
+                ->with('execTotal')
+                ->with('lastExec.push'),
             'sort' => [
                 'attributes' => [
+                    'host',
+                    'pid',
                     'started_at' => [
                         'asc' => ['sender_name' => SORT_ASC, 'id' => SORT_ASC],
                         'desc' => ['sender_name' => SORT_ASC, 'id' => SORT_DESC],
@@ -37,35 +42,10 @@ $format = Module::getInstance()->formatter;
         'tableOptions' => ['class' => 'table table-hover'],
         'formatter' => $format,
         'columns' => [
-            'started_at:datetime',
+            'host',
             'pid',
-            [
-                'header' => 'Status',
-                'format' => 'raw',
-                'value' => function (WorkerRecord $record) use ($format) {
-                    if (!$record->lastExec) {
-                        return strtr('Idle since {time}', [
-                            '{time}' => $format->asRelativeTime($record->started_at),
-                        ]);
-                    }
-                    if ($record->lastExec->done_at) {
-                        return strtr('Idle after {job} since {time}', [
-                            '{job}' => Html::a(
-                                '#' . $format->asText($record->lastExec->push->job_uid),
-                                ['job/view', 'id' => $record->lastExec->push->id]
-                            ),
-                            '{time}' => $format->asRelativeTime($record->lastExec->done_at),
-                        ]);
-                    }
-                    return strtr('Busy with {job} since {time}', [
-                        '{job}' => Html::a(
-                            '#' . $format->asText($record->lastExec->push->job_uid),
-                            ['job/view', 'id' => $record->lastExec->push->id]
-                        ),
-                        '{time}' => $format->asRelativeTime($record->lastExec->reserved_at),
-                    ]);
-                },
-            ],
+            'started_at:datetime',
+            'status:raw',
             'execTotalDone:integer',
             [
                 'class' => ActionColumn::class,
@@ -76,12 +56,12 @@ $format = Module::getInstance()->formatter;
                             'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
                             'title' => 'Stop the worker.',
                         ]);
-                    }
+                    },
                 ],
                 'visibleButtons' => [
                     'stop' => function (WorkerRecord $model) {
                         return Module::getInstance()->canWorkerStop && !$model->isStopped();
-                    }
+                    },
                 ],
             ],
         ],

@@ -86,9 +86,9 @@ class JobFilter extends BaseFilter
     {
         return $this->env->cache->getOrSet(__METHOD__, function () {
             return PushRecord::find()
-                ->select('p.sender_name')
-                ->groupBy('p.sender_name')
-                ->orderBy('p.sender_name')
+                ->select('push.sender_name')
+                ->groupBy('push.sender_name')
+                ->orderBy('push.sender_name')
                 ->column();
         }, 3600);
     }
@@ -100,9 +100,9 @@ class JobFilter extends BaseFilter
     {
         return $this->env->cache->getOrSet(__METHOD__, function () {
             return PushRecord::find()
-                ->select('p.job_class')
-                ->groupBy('p.job_class')
-                ->orderBy('p.job_class')
+                ->select('push.job_class')
+                ->groupBy('push.job_class')
+                ->orderBy('push.job_class')
                 ->column();
         }, 3600);
     }
@@ -117,10 +117,10 @@ class JobFilter extends BaseFilter
             return $query->andWhere('1 = 0');
         }
 
-        $query->andFilterWhere(['p.sender_name' => $this->sender]);
-        $query->andFilterWhere(['like', 'p.job_class', $this->class]);
-        $this->filterDateRange($query, 'p.pushed_at', $this->pushed);
-        $query->andFilterWhere(['like', 'p.job_data', $this->contains]);
+        $query->andFilterWhere(['push.sender_name' => $this->sender]);
+        $query->andFilterWhere(['like', 'push.job_class', $this->class]);
+        $this->filterDateRange($query, 'push.pushed_at', $this->pushed);
+        $query->andFilterWhere(['like', 'push.job_data', $this->contains]);
 
         if ($this->is === self::IS_WAITING) {
             $query->waiting();
@@ -147,7 +147,7 @@ class JobFilter extends BaseFilter
     public function searchClasses()
     {
         return $this->search()
-            ->select(['name' => 'p.job_class', 'count' => 'COUNT(*)'])
+            ->select(['name' => 'push.job_class', 'count' => 'COUNT(*)'])
             ->groupBy(['name'])
             ->orderBy(['name' => SORT_ASC])
             ->asArray()
@@ -160,7 +160,7 @@ class JobFilter extends BaseFilter
     public function searchSenders()
     {
         return $this->search()
-            ->select(['name' => 'p.sender_name', 'count' => 'COUNT(*)'])
+            ->select(['name' => 'push.sender_name', 'count' => 'COUNT(*)'])
             ->groupBy(['name'])
             ->orderBy(['name' => SORT_ASC])
             ->asArray()

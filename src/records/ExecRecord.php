@@ -12,14 +12,14 @@ use yii\db\ActiveRecord;
 use zhuravljov\yii\queue\monitor\Env;
 
 /**
- * Class ExecRecord
+ * Exec Record
  *
  * @property int $id
  * @property int $push_id
  * @property null|int $worker_id
  * @property int $attempt
- * @property int $reserved_at
- * @property null|int $done_at
+ * @property int $started_at
+ * @property null|int $finished_at
  * @property null|int $memory_usage
  * @property null|string $error
  * @property null|bool $retry
@@ -82,10 +82,10 @@ class ExecRecord extends ActiveRecord
      */
     public function getDuration()
     {
-        if ($this->done_at) {
-            return $this->done_at - $this->reserved_at;
+        if ($this->finished_at) {
+            return $this->finished_at - $this->started_at;
         }
-        return time() - $this->reserved_at;
+        return time() - $this->started_at;
     }
 
     /**
@@ -93,7 +93,7 @@ class ExecRecord extends ActiveRecord
      */
     public function isDone()
     {
-        return $this->done_at !== null;
+        return $this->finished_at !== null;
     }
 
     /**

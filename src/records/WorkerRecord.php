@@ -10,12 +10,14 @@ namespace zhuravljov\yii\queue\monitor\records;
 use Yii;
 use yii\db\ActiveRecord;
 use zhuravljov\yii\queue\monitor\Env;
+use zhuravljov\yii\queue\monitor\Module;
 
 /**
- * Class WorkerRecord
+ * Worker Record
  *
  * @property int $id
  * @property string $sender_name
+ * @property string $host
  * @property int $pid
  * @property int $started_at
  * @property int $pinged_at
@@ -27,6 +29,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property ExecRecord[] $execs
  * @property array $execTotal
  *
+ * @property string $status
  * @property int $execTotalStarted
  * @property int $execTotalDone
  * @property int $duration
@@ -65,7 +68,9 @@ class WorkerRecord extends ActiveRecord
         return [
             'id' => 'ID',
             'sender_name' => 'Sender',
+            'host' => 'Host',
             'pid' => 'PID',
+            'status' => 'Status',
             'started_at' => 'Started At',
             'execTotalStarted' => 'Total Started',
             'execTotalDone' => 'Total Done',
@@ -95,9 +100,9 @@ class WorkerRecord extends ActiveRecord
     {
         return $this->hasOne(ExecRecord::class, ['worker_id' => 'id'])
             ->select([
-                'worker_id',
+                'exec.worker_id',
                 'started' => 'COUNT(*)',
-                'done' => 'COUNT(done_at)',
+                'done' => 'COUNT(exec.finished_at)',
             ])
             ->groupBy('worker_id')
             ->asArray();
@@ -131,11 +136,32 @@ class WorkerRecord extends ActiveRecord
     }
 
     /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        $format = Module::getInstance()->formatter;
+        if (!$this->lastExec) {
+            return strtr('Idle since {time}.', [
+                '{time}' => $format->asRelativeTime($this->started_at),
+            ]);
+        }
+        if ($this->lastExec->finished_at) {
+            return strtr('Idle after a job since {time}.', [
+                '{time}' => $format->asRelativeTime($this->lastExec->finished_at),
+            ]);
+        }
+        return strtr('Busy since {time}.', [
+            '{time}' => $format->asRelativeTime($this->lastExec->started_at),
+        ]);
+    }
+
+    /**
      * @return bool
      */
     public function isIdle()
     {
-        return !$this->lastExec || $this->lastExec->done_at;
+        return !$this->lastExec || $this->lastExec->finished_at;
     }
 
     /**

@@ -8,11 +8,10 @@
 namespace zhuravljov\yii\queue\monitor\records;
 
 use yii\db\ActiveQuery;
-use yii\db\Query;
 use zhuravljov\yii\queue\monitor\Env;
 
 /**
- * Class WorkerQuery
+ * Worker Query
  *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
@@ -36,38 +35,40 @@ class WorkerQuery extends ActiveQuery
     }
 
     /**
-     * @param int $pid
-     * @return $this
+     * @inheritdoc
      */
-    public function byPid($pid)
+    public function init()
     {
-        return $this->andWhere(['pid' => $pid]);
+        parent::init();
+        $this->alias('worker');
     }
 
     /**
-     * @param bool $takeBusyWorkers
+     * @param string $host
+     * @param int $pid
      * @return $this
      */
-    public function active($takeBusyWorkers)
+    public function byEvent($host, $pid)
     {
-        $this->andWhere(['finished_at' => null]);
-        if ($this->env->canListenWorkerLoop()) {
-            $condition = ['or'];
-            // When a last ping was not late
-            $condition[] = ['>', 'pinged_at', time() - $this->env->workerPingInterval - 5];
-            if ($takeBusyWorkers) {
-                // When a worker is busy with a job and cannot pinging
-                $condition[] = (new Query())
-                    ->select('COUNT(*)')
-                    ->from(['e' => $this->env->execTableName])
-                    ->andWhere('{{e}}.[[id]] = ' . $this->env->workerTableName . '.[[last_exec_id]]')
-                    ->andWhere('{{e}}.[[done_at]] IS NULL')
-                    ->innerJoin(['p' => $this->env->pushTableName], '{{p}}.[[id]] = {{e}}.[[push_id]]')
-                    ->andWhere('{{e}}.[[reserved_at]] > :time - {{p}}.[[push_ttr]]', [':time' => time()]);
-            }
-            $this->andWhere($condition);
-        }
-        return $this;
+        return $this->andWhere([
+            'worker.host' => $host,
+            'worker.pid' => $pid,
+        ]);
+    }
+
+    /**
+     * @return $this
+     */
+    public function active()
+    {
+        return $this
+            ->andWhere(['worker.finished_at' => null])
+            ->leftJoin(['exec' => ExecRecord::tableName()], '{{exec}}.[[id]] = {{worker}}.[[last_exec_id]]')
+            ->andWhere([
+                'or',
+                ['>', 'worker.pinged_at', time() - $this->env->workerPingInterval - 5],
+                ['exec.finished_at' => null],
+            ]);
     }
 
     /**

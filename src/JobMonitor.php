@@ -10,6 +10,8 @@ namespace zhuravljov\yii\queue\monitor;
 use Yii;
 use yii\base\Behavior;
 use yii\base\InvalidConfigException;
+use yii\helpers\ArrayHelper;
+use yii\helpers\VarDumper;
 use yii\queue\ErrorEvent;
 use yii\queue\ExecEvent;
 use yii\queue\JobEvent;
@@ -32,13 +34,9 @@ class JobMonitor extends Behavior
      */
     public $owner;
     /**
-     * @var bool|callable
+     * @var array
      */
-    public $storePushTrace = true;
-    /**
-     * @var bool|callable
-     */
-    public $storePushEnv = true;
+    public $contextVars = ['_SERVER'];
     /**
      * @var Env
      */
@@ -81,10 +79,10 @@ class JobMonitor extends Behavior
         $push->sender_name = $this->getSenderName($event);
         $push->job_uid = $event->id;
         $push->setJob($event->job);
-        $push->push_ttr = $event->ttr;
-        $push->push_delay = $event->delay;
-        $this->fillPushTrace($push, $event);
-        $this->fillPushEnv($push, $event);
+        $push->ttr = $event->ttr;
+        $push->delay = $event->delay;
+        $push->trace = (new \Exception())->getTraceAsString();
+        $push->context = $this->getContext();
         $push->pushed_at = time();
         $push->save(false);
     }
@@ -112,7 +110,7 @@ class JobMonitor extends Behavior
                 $exec->worker_id = $worker->id;
             }
             $exec->attempt = $event->attempt;
-            $exec->reserved_at = time();
+            $exec->started_at = time();
             $exec->save(false);
 
             $push->first_exec_id = $push->first_exec_id ?: $exec->id;
@@ -137,7 +135,7 @@ class JobMonitor extends Behavior
         }
         if ($push->last_exec_id) {
             ExecRecord::updateAll([
-                'done_at' => time(),
+                'finished_at' => time(),
                 'memory_usage' => memory_get_peak_usage(),
                 'error' => null,
                 'retry' => false,
@@ -162,7 +160,7 @@ class JobMonitor extends Behavior
         }
         if ($push->last_exec_id) {
             ExecRecord::updateAll([
-                'done_at' => time(),
+                'finished_at' => time(),
                 'memory_usage' => static::$startedPush ? memory_get_peak_usage() : null,
                 'error' => $event->error,
                 'retry' => $event->retry,
@@ -188,38 +186,17 @@ class JobMonitor extends Behavior
     }
 
     /**
-     * @param PushRecord $record
-     * @param PushEvent $event
+     * @return string
      */
-    protected function fillPushTrace(PushRecord $record, PushEvent $event)
+    protected function getContext()
     {
-        $record->push_trace_data = null;
-
-        $canStore = is_callable($this->storePushTrace)
-            ? call_user_func($this->storePushTrace, $event)
-            : $this->storePushTrace;
-        if (!$canStore) {
-            return;
+        $context = ArrayHelper::filter($GLOBALS, $this->contextVars);
+        $result = [];
+        foreach ($context as $key => $value) {
+            $result[] = "\${$key} = " . VarDumper::dumpAsString($value);
         }
 
-        $record->push_trace_data = (new \Exception())->getTraceAsString();
-    }
-
-    /**
-     * @param PushRecord $record
-     * @param PushEvent $event
-     */
-    protected function fillPushEnv(PushRecord $record, PushEvent $event)
-    {
-        $record->push_env_data = null;
-
-        $canStore = is_callable($this->storePushEnv)
-            ? call_user_func($this->storePushEnv, $event)
-            : $this->storePushEnv;
-        if (!$canStore) {
-            return;
-        }
-        $record->push_env_data = serialize($_SERVER);
+        return implode("\n\n", $result);
     }
 
     /**
@@ -254,8 +231,8 @@ class JobMonitor extends Behavior
 
         return $this->env->db->useMaster(function () use ($event) {
             return WorkerRecord::find()
-                ->byPid($event->sender->getWorkerPid())
-                ->active(false)
+                ->byEvent($this->env->getHost(), $event->sender->getWorkerPid())
+                ->active()
                 ->one();
         });
     }

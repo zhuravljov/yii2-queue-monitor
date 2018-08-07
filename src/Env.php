@@ -10,6 +10,7 @@ namespace zhuravljov\yii\queue\monitor;
 use yii\base\BaseObject;
 use yii\caching\Cache;
 use yii\db\Connection;
+use yii\db\Query;
 use yii\di\Instance;
 
 /**
@@ -60,5 +61,23 @@ class Env extends BaseObject
     public function canListenWorkerLoop()
     {
         return !!$this->workerPingInterval;
+    }
+
+    /**
+     * @return string
+     */
+    public function getHost()
+    {
+        if ($this->db->driverName === 'mysql') {
+            $pair = (new Query())
+                ->from('information_schema.PROCESSLIST')
+                ->where('[[ID]] = CONNECTION_ID()')
+                ->limit(1)
+                ->select('HOST')
+                ->scalar();
+            return substr($pair, 0, strrpos($pair, ':'));
+        }
+
+        return '127.0.0.1'; // By default
     }
 }
