@@ -56,7 +56,6 @@ class Module extends \yii\base\Module implements BootstrapInterface
                 'class' => GroupUrlRule::class,
                 'prefix' => $this->id,
                 'rules' => [
-                    'stats' => 'stat/index',
                     'jobs' => 'job/index',
                     'job/<id:\d+>/<action\w+>' => 'job/view-<action>',
                     'workers' => 'worker/index',
