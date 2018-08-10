@@ -56,7 +56,7 @@ class PushQuery extends ActiveQuery
     {
         return $this
             ->joinLastExec()
-            ->andWhere(['or', ['push.last_exec_id' => null], ['le.retry' => true]])
+            ->andWhere(['or', ['push.last_exec_id' => null], ['last_exec.retry' => true]])
             ->andWhere(['push.stopped_at' => null]);
     }
 
