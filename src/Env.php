@@ -77,13 +77,16 @@ class Env extends BaseObject
     public function getHost()
     {
         if ($this->db->driverName === 'mysql') {
-            $pair = (new Query())
-                ->from('information_schema.PROCESSLIST')
-                ->where('[[ID]] = CONNECTION_ID()')
-                ->limit(1)
-                ->select('HOST')
-                ->scalar();
+            $pair = $this->db
+                ->createCommand('SELECT `HOST` FROM `information_schema`.`PROCESSLIST` WHERE `ID` = CONNECTION_ID()')
+                ->queryScalar();
             return substr($pair, 0, strrpos($pair, ':'));
+        }
+
+        if ($this->db->driverName === 'pgsql') {
+            return $this->db
+                ->createCommand('SELECT inet_client_addr()')
+                ->queryScalar();
         }
 
         return '127.0.0.1'; // By default
