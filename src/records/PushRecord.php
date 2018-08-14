@@ -72,7 +72,7 @@ class PushRecord extends ActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$container->get(Env::class)->db;
+        return Env::ensure()->db;
     }
 
     /**
@@ -80,7 +80,7 @@ class PushRecord extends ActiveRecord
      */
     public static function tableName()
     {
-        return Yii::$container->get(Env::class)->pushTableName;
+        return Env::ensure()->pushTableName;
     }
 
     /**

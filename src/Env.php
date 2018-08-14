@@ -7,10 +7,10 @@
 
 namespace zhuravljov\yii\queue\monitor;
 
+use Yii;
 use yii\base\BaseObject;
 use yii\caching\Cache;
 use yii\db\Connection;
-use yii\db\Query;
 use yii\di\Instance;
 
 /**
@@ -44,6 +44,14 @@ class Env extends BaseObject
      * @var int
      */
     public $workerPingInterval = 15;
+
+    /**
+     * @return static
+     */
+    public static function ensure()
+    {
+        return Yii::$container->get(static::class);
+    }
 
     /**
      * @inheritdoc

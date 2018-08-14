@@ -50,7 +50,7 @@ class ExecRecord extends ActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$container->get(Env::class)->db;
+        return Env::ensure()->db;
     }
 
     /**
@@ -58,7 +58,7 @@ class ExecRecord extends ActiveRecord
      */
     public static function tableName()
     {
-        return Yii::$container->get(Env::class)->execTableName;
+        return Env::ensure()->execTableName;
     }
 
     /**

@@ -52,7 +52,7 @@ class WorkerRecord extends ActiveRecord
      */
     public static function getDb()
     {
-        return Yii::$container->get(Env::class)->db;
+        return Env::ensure()->db;
     }
 
     /**
@@ -60,7 +60,7 @@ class WorkerRecord extends ActiveRecord
      */
     public static function tableName()
     {
-        return Yii::$container->get(Env::class)->workerTableName;
+        return Env::ensure()->workerTableName;
     }
 
     public function attributeLabels()
