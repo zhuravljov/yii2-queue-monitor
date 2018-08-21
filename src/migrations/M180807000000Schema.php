@@ -37,10 +37,10 @@ class M180807000000Schema extends Migration
             'first_exec_id' => $this->bigInteger(),
             'last_exec_id' => $this->bigInteger(),
         ]);
-        $this->createIndex('parent_id', $this->env->pushTableName, 'parent_id');
-        $this->createIndex('job_uid', $this->env->pushTableName, ['sender_name', 'job_uid']);
-        $this->createIndex('first_exec_id', $this->env->pushTableName, 'first_exec_id');
-        $this->createIndex('last_exec_id', $this->env->pushTableName, 'last_exec_id');
+        $this->createIndex('ind_qp_parent_id', $this->env->pushTableName, 'parent_id');
+        $this->createIndex('ind_qp_job_uid', $this->env->pushTableName, ['sender_name', 'job_uid']);
+        $this->createIndex('ind_qp_first_exec_id', $this->env->pushTableName, 'first_exec_id');
+        $this->createIndex('ind_qp_last_exec_id', $this->env->pushTableName, 'last_exec_id');
 
         $this->createTable($this->env->execTableName, [
             'id' => $this->bigPrimaryKey(),
@@ -53,8 +53,8 @@ class M180807000000Schema extends Migration
             'error' => $this->text(),
             'retry' => $this->boolean(),
         ]);
-        $this->createIndex('push_id', $this->env->execTableName, 'push_id');
-        $this->createIndex('worker_id', $this->env->execTableName, 'worker_id');
+        $this->createIndex('ind_qe_push_id', $this->env->execTableName, 'push_id');
+        $this->createIndex('ind_qe_worker_id', $this->env->execTableName, 'worker_id');
 
         $this->createTable($this->env->workerTableName, [
             'id' => $this->bigPrimaryKey(),
@@ -67,8 +67,8 @@ class M180807000000Schema extends Migration
             'finished_at' => $this->integer()->unsigned(),
             'last_exec_id' => $this->bigInteger(),
         ]);
-        $this->createIndex('finished_at', $this->env->workerTableName, 'finished_at');
-        $this->createIndex('last_exec_id', $this->env->workerTableName, 'last_exec_id');
+        $this->createIndex('ind_qw_finished_at', $this->env->workerTableName, 'finished_at');
+        $this->createIndex('ind_qw_last_exec_id', $this->env->workerTableName, 'last_exec_id');
     }
 
     /**
