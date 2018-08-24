@@ -39,6 +39,7 @@ class M180807000000Schema extends Migration
         ]);
         $this->createIndex('ind_qp_parent_id', $this->env->pushTableName, 'parent_id');
         $this->createIndex('ind_qp_job_uid', $this->env->pushTableName, ['sender_name', 'job_uid']);
+        $this->createIndex('ind_qp_job_class', $this->env->pushTableName, 'job_class');
         $this->createIndex('ind_qp_first_exec_id', $this->env->pushTableName, 'first_exec_id');
         $this->createIndex('ind_qp_last_exec_id', $this->env->pushTableName, 'last_exec_id');
 
