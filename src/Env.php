@@ -77,10 +77,10 @@ class Env extends BaseObject
     public function getHost()
     {
         if ($this->db->driverName === 'mysql') {
-            $pair = $this->db
+            $host = $this->db
                 ->createCommand('SELECT `HOST` FROM `information_schema`.`PROCESSLIST` WHERE `ID` = CONNECTION_ID()')
                 ->queryScalar();
-            return substr($pair, 0, strrpos($pair, ':'));
+            return preg_replace('/:\d+$/', '', $host);
         }
 
         if ($this->db->driverName === 'pgsql') {
