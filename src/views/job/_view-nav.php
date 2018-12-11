@@ -19,13 +19,7 @@ if ($filtered = JobFilter::restoreParams()) {
         'url' => ['index'] + $filtered,
     ];
 }
-$parents = [];
-$parent = $record->parent;
-while ($parent) {
-    $parents[] = $parent;
-    $parent = $parent->parent;
-}
-foreach (array_reverse($parents) as $parent) {
+if ($parent = $record->parent) {
     $this->params['breadcrumbs'][]  = [
         'label' => "#$parent->job_uid",
         'url' => [Yii::$app->requestedAction->id, 'id' => $parent->id],
