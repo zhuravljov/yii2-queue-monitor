@@ -142,18 +142,18 @@ class WorkerRecord extends ActiveRecord
     {
         $format = Module::getInstance()->formatter;
         if (!$this->lastExec) {
-            return Module::t('Idle since {time}.',
+            return Module::t('main', 'Idle since {time}.',
                 [
                     '{time}' => $format->asRelativeTime($this->started_at),
                 ]);
         }
         if ($this->lastExec->finished_at) {
-            return Module::t('Idle after a job since {time}.',
+            return Module::t('main', 'Idle after a job since {time}.',
                 [
                     '{time}' => $format->asRelativeTime($this->lastExec->finished_at),
                 ]);
         }
-        return Module::t('Busy since {time}.',
+        return Module::t('main', 'Busy since {time}.',
             [
                 '{time}' => $format->asRelativeTime($this->lastExec->started_at),
             ]);

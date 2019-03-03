@@ -79,7 +79,7 @@ $format = Module::getInstance()->formatter;
                 return '';
             }
             $senderName = $record->sender_name;
-            $groupTitle = Module::t('main','Sender: {name} {class}',
+            $groupTitle = Module::t('main', 'Sender: {name} {class}',
                 [
                     'name' => $record->sender_name,
                     'class' => get_class(Yii::$app->get($record->sender_name)),
