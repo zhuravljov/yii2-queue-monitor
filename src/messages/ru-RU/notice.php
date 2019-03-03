@@ -17,14 +17,14 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
-    'Push is forbidden.' => '',
-    'Record not found.' => '',
-    'Stop is forbidden.' => '',
-    'The job is already done.' => '',
-    'The job is already stopped.' => '',
-    'The job is pushed again.' => '',
-    'The job isn\'t pushed because it must be JobInterface instance.' => '',
-    'The job isn\'t pushed because {sender} component isn\'t found.' => '',
-    'The job will be stopped.' => '',
-    'The worker will be stopped within {timeout} sec.' => '',
+    'Push is forbidden.' => 'Перезапуск задачи запрещен',
+    'Record not found.' => 'Запись не найдена',
+    'Stop is forbidden.' => 'Прерывание задачи запрещено',
+    'The job is already done.' => 'Задача уже выполнена',
+    'The job is already stopped.' => 'Задача уже остановлена',
+    'The job is pushed again.' => 'Задача отправлена в очередь повторно',
+    'The job isn\'t pushed because it must be JobInterface instance.' => 'Задача не может быть добавлена, задача должна реализовывать интерфейс JobInterface ',
+    'The job isn\'t pushed because {sender} component isn\'t found.' => 'Задача не может быть добавлена, компонент - отправитель не найден',
+    'The job will be stopped.' => 'Задача будет остановлена',
+    'The worker will be stopped within {timeout} sec.' => 'Исполнитель будет остановлен в течение {timeout} сек.',
 ];
