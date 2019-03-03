@@ -35,7 +35,10 @@ switch ($model->getStatus()) {
     <div class="job-details">
         <div class="job-push-uid">
             <a href="<?= Url::to(['view', 'id' => $model->id]) ?>" data-pjax="0">
-                #<?= $format->asText($model->job_uid) ?> by <?= $format->asText($model->sender_name) ?>
+                <?=Module::t('main', '#{jobId} by {sender}', [
+                    'jobId' => $format->asText($model->job_uid),
+                    'sender' => $format->asText($model->sender_name)
+                ])?>
             </a>
             <?php if ($model->parent): ?>
                 <?=Module::t('main', 'from')?>

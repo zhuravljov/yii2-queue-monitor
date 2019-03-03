@@ -17,6 +17,7 @@
  * NOTE: this file must be saved in UTF-8 encoding.
  */
 return [
+    '#{jobId} by {sender}' => '#{jobId} by {sender}',
     'Application' => 'Application',
     'Are you sure?' => 'Are you sure?',
     'Attempt' => 'Attempt',
@@ -36,6 +37,7 @@ return [
     'Environment' => 'Environment',
     'Error' => 'Error',
     'Exec' => 'Exec',
+    'For all time' => 'For all time',
     'Filtered' => 'Filtered',
     'Finished' => 'Finished',
     'Has failed attempts' => 'Has failed attempts',
@@ -63,6 +65,7 @@ return [
     'Queue Monitor' => 'Queue Monitor',
     'Reset' => 'Reset',
     'Scope' => 'Scope',
+    'Search' => 'Search',
     'Sender' => 'Sender',
     'Started' => 'Started',
     'Started At' => 'Started At',

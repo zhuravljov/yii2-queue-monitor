@@ -57,7 +57,7 @@ use zhuravljov\yii\widgets\DateRangePicker;
                     'locale' => [
                         'format' => 'YYYY-MM-DD',
                         'separator' => ' - ',
-                        'cancelLabel' => 'For all time',
+                        'cancelLabel' => Module::t('main', 'For all time'),
                     ],
                 ],
                 'clientEvents' => [
@@ -69,7 +69,7 @@ use zhuravljov\yii\widgets\DateRangePicker;
     </div>
     <button type="submit" class="btn btn-primary">
         <span class="glyphicon glyphicon-search"></span>
-        Search
+        <?=Module::t('main', 'Search')?>
     </button>
     <?php if (JobFilter::restoreParams()): ?>
         <a href="<?= Url::to(['/' . Yii::$app->controller->route]) ?>" class="btn btn-default">
