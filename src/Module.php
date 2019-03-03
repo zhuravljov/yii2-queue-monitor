@@ -9,6 +9,7 @@ namespace zhuravljov\yii\queue\monitor;
 
 use yii\base\BootstrapInterface;
 use yii\base\InvalidConfigException;
+use yii\i18n\PhpMessageSource;
 use yii\web\Application as WebApplication;
 use yii\web\GroupUrlRule;
 
@@ -45,7 +46,13 @@ class Module extends \yii\base\Module implements BootstrapInterface
      * @inheritdoc
      */
     public $defaultRoute = 'job/index';
-
+    
+    public function init()
+    {
+        parent::init();
+        $this->registerTranslations();
+    }
+    
     /**
      * @inheritdoc
      */
@@ -67,5 +74,34 @@ class Module extends \yii\base\Module implements BootstrapInterface
         } else {
             throw new InvalidConfigException('The module must be used for web application only.');
         }
+    }
+    
+    private function registerTranslations()
+    {
+        \Yii::$app->i18n->translations['queue-monitor/*'] = [
+            'class' => PhpMessageSource::class,
+            'sourceLanguage' => 'en-US',
+            'basePath' => '@zhuravljov/yii/queue/monitor/messages',
+            'fileMap' => [
+                'queue-monitor/main' => 'main.php',
+                'queue-monitor/notice' => 'notice.php',
+            ],
+    
+        ];
+    }
+    
+    /**
+     * Module translator.
+     *
+     * @param       $category
+     * @param       $message
+     * @param array $params
+     * @param null  $language
+     *
+     * @return string
+     */
+    public static function t($category, $message, $params = [], $language = null)
+    {
+        return \Yii::t('queue-monitor/' . $category, $message, $params, $language);
     }
 }

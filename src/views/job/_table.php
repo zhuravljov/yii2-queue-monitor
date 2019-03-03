@@ -6,16 +6,17 @@
 
 use yii\bootstrap\Html;
 use yii\helpers\VarDumper;
+use zhuravljov\yii\queue\monitor\Module;
 
 ?>
 <?php if (empty($values)): ?>
-    <p>Empty.</p>
+    <p><?=Module::t('main', 'Empty')?>.</p>
 <?php else: ?>
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Value</th>
+                <th><?=Module::t('main', 'Name')?></th>
+                <th><?=Module::t('main', 'Value')?></th>
             </tr>
         </thead>
         <tbody>

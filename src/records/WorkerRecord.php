@@ -66,14 +66,14 @@ class WorkerRecord extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'sender_name' => 'Sender',
-            'host' => 'Host',
-            'pid' => 'PID',
-            'status' => 'Status',
-            'started_at' => 'Started At',
-            'execTotalStarted' => 'Total Started',
-            'execTotalDone' => 'Total Done',
+            'id' => Module::t('main', 'ID'),
+            'sender_name' => Module::t('main', 'Sender'),
+            'host' => Module::t('main', 'Host'),
+            'pid' => Module::t('main', 'PID'),
+            'status' => Module::t('main', 'Status'),
+            'started_at' => Module::t('main', 'Started At'),
+            'execTotalStarted' => Module::t('main', 'Total Started'),
+            'execTotalDone' => Module::t('main', 'Total Done'),
         ];
     }
 
@@ -142,18 +142,21 @@ class WorkerRecord extends ActiveRecord
     {
         $format = Module::getInstance()->formatter;
         if (!$this->lastExec) {
-            return strtr('Idle since {time}.', [
-                '{time}' => $format->asRelativeTime($this->started_at),
-            ]);
+            return Module::t('Idle since {time}.',
+                [
+                    '{time}' => $format->asRelativeTime($this->started_at),
+                ]);
         }
         if ($this->lastExec->finished_at) {
-            return strtr('Idle after a job since {time}.', [
-                '{time}' => $format->asRelativeTime($this->lastExec->finished_at),
-            ]);
+            return Module::t('Idle after a job since {time}.',
+                [
+                    '{time}' => $format->asRelativeTime($this->lastExec->finished_at),
+                ]);
         }
-        return strtr('Busy since {time}.', [
-            '{time}' => $format->asRelativeTime($this->lastExec->started_at),
-        ]);
+        return Module::t('Busy since {time}.',
+            [
+                '{time}' => $format->asRelativeTime($this->lastExec->started_at),
+            ]);
     }
 
     /**

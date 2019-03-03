@@ -31,7 +31,7 @@ MainAsset::register($this);
 <div class="wrap">
     <?php
     NavBar::begin([
-        'brandLabel' => 'Queue Monitor',
+        'brandLabel' => Module::t('main', 'Queue Monitor'),
         'brandUrl' => ['/' . Module::getInstance()->id],
         'options' => ['class' => 'navbar-inverse navbar-fixed-top'],
     ]);
@@ -39,12 +39,12 @@ MainAsset::register($this);
         'options' => ['class' => 'nav navbar-nav'],
         'items' => [
             [
-                'label' => 'Jobs',
+                'label' => Module::t('main', 'Jobs'),
                 'url' => ['job/index'] + JobFilter::restoreParams(),
                 'active' => Yii::$app->controller->id === 'job',
             ],
             [
-                'label' => 'Workers',
+                'label' => Module::t('main', 'Workers'),
                 'url' => ['worker/index'] + WorkerFilter::restoreParams(),
                 'active' => Yii::$app->controller->id === 'worker',
             ],
@@ -54,7 +54,7 @@ MainAsset::register($this);
         'options' => ['class' => 'nav navbar-nav navbar-right'],
         'items' => [
             [
-                'label' => 'Application',
+                'label' => Module::t('main', 'Application'),
                 'url' => Yii::$app->homeUrl,
             ],
         ],
