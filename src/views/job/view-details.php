@@ -61,6 +61,9 @@ JobItemAsset::register($this);
             [
                 'attribute' => 'status',
                 'format' => 'text',
+                'value' =>function($model){
+                    return $model->getStatusLabel($model->getStatus());
+                },
                 'label' => Module::t('main', 'Status'),
             ],
         ],

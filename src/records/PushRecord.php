@@ -8,11 +8,13 @@
 namespace zhuravljov\yii\queue\monitor\records;
 
 use Yii;
+use yii\base\InvalidArgumentException;
 use yii\db\ActiveRecord;
 use yii\helpers\Json;
 use yii\queue\JobInterface;
 use yii\queue\Queue;
 use zhuravljov\yii\queue\monitor\Env;
+use zhuravljov\yii\queue\monitor\Module;
 
 /**
  * Push Record
@@ -185,7 +187,23 @@ class PushRecord extends ActiveRecord
         }
         return null;
     }
-
+    
+    public function getStatusLabel($label)
+    {
+        $labels = [
+            self::STATUS_STOPPED => Module::t('main', 'Stopped'),
+            self::STATUS_BURIED => Module::t('main', 'Buried'),
+            self::STATUS_DONE => Module::t('main', 'Done'),
+            self::STATUS_FAILED => Module::t('main', 'Failed'),
+            self::STATUS_RESTARTED => Module::t('main', 'Restarted'),
+            self::STATUS_STARTED => Module::t('main', 'Started'),
+            self::STATUS_WAITING => Module::t('main', 'Waiting'),
+        ];
+        if (!isset($labels[$label])) {
+            throw new InvalidArgumentException('label not found');
+        }
+        return $labels[$label];
+    }
     /**
      * @return Queue|null
      */
