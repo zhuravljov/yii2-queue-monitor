@@ -135,20 +135,29 @@ class JobController extends Controller
     public function actionPush($id)
     {
         if (!$this->module->canPushAgain) {
-            throw new ForbiddenHttpException('Push is forbidden.');
+            throw new ForbiddenHttpException(Module::t('notice', 'Push is forbidden.'));
         }
 
         $record = $this->findRecord($id);
 
         if (!$record->isSenderValid()) {
+            $error = Module::t(
+                'notice',
+                'The job isn\'t pushed because {sender} component isn\'t found.',
+                ['sender'=>$record->sender_name]
+            );
             return $this
-                ->error("The job isn't pushed because $record->sender_name component isn't found.")
+                ->error($error)
                 ->redirect(['view-details', 'id' => $record->id]);
         }
 
         if (!$record->isJobValid()) {
+            $error = Module::t(
+                'notice',
+                'The job isn\'t pushed because it must be JobInterface instance.'
+            );
             return $this
-                ->error('The job isn\'t pushed because it must be JobInterface instance.')
+                ->error($error)
                 ->redirect(['view-data', 'id' => $record->id]);
         }
 
@@ -156,7 +165,7 @@ class JobController extends Controller
         $newRecord = PushRecord::find()->byJob($record->sender_name, $uid)->one();
 
         return $this
-            ->success('The job is pushed again.')
+            ->success(Module::t('notice', 'The job is pushed again.'))
             ->redirect(['view', 'id' => $newRecord->id]);
     }
 
@@ -170,27 +179,27 @@ class JobController extends Controller
     public function actionStop($id)
     {
         if (!$this->module->canExecStop) {
-            throw new ForbiddenHttpException('Stop is forbidden.');
+            throw new ForbiddenHttpException(Module::t('notice', 'Stop is forbidden.'));
         }
 
         $record = $this->findRecord($id);
 
         if ($record->isStopped()) {
             return $this
-                ->error('The job is already stopped.')
+                ->error(Module::t('notice', 'The job is already stopped.'))
                 ->redirect(['view-details', 'id' => $record->id]);
         }
 
         if (!$record->canStop()) {
             return $this
-                ->error('The job is already done.')
+                ->error(Module::t('notice', 'The job is already done.'))
                 ->redirect(['view-attempts', 'id' => $record->id]);
         }
 
         $record->stop();
 
         return $this
-            ->success('The job will be stopped.')
+            ->success(Module::t('notice', 'The job will be stopped.'))
             ->redirect(['view-details', 'id' => $record->id]);
     }
 
@@ -204,6 +213,6 @@ class JobController extends Controller
         if ($record = PushRecord::find()->byId($id)->one()) {
             return $record;
         }
-        throw new NotFoundHttpException('Record not found.');
+        throw new NotFoundHttpException(Module::t('notice', 'Record not found.'));
     }
 }

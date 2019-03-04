@@ -78,13 +78,13 @@ class WorkerController extends Controller
     public function actionStop($id)
     {
         if (!$this->module->canWorkerStop) {
-            throw new ForbiddenHttpException('Stop is forbidden.');
+            throw new ForbiddenHttpException(Module::t('notice', 'Stop is forbidden.'));
         }
 
         $record = $this->findRecord($id);
         $record->stop();
         return $this
-            ->success(strtr('The worker will be stopped within {timeout} sec.', [
+            ->success(Module::t('notice', 'The worker will be stopped within {timeout} sec.', [
                 '{timeout}' => $record->pinged_at + $this->env->workerPingInterval - time(),
             ]))
             ->redirect(['index']);
@@ -100,6 +100,6 @@ class WorkerController extends Controller
         if ($record = WorkerRecord::findOne($id)) {
             return $record;
         }
-        throw new NotFoundHttpException('Record not found.');
+        throw new NotFoundHttpException(Module::t('notice', 'Record not found.'));
     }
 }

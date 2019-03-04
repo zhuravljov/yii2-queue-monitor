@@ -12,7 +12,7 @@ use zhuravljov\yii\queue\monitor\filters\WorkerFilter;
 use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\records\WorkerRecord;
 
-$this->params['breadcrumbs'][] = 'Workers';
+$this->params['breadcrumbs'][] = Module::t('main', 'Workers');
 
 $format = Module::getInstance()->formatter;
 ?>
@@ -38,7 +38,7 @@ $format = Module::getInstance()->formatter;
             ],
         ]),
         'layout' => "{items}\n{pager}",
-        'emptyText' => 'No workers found.',
+        'emptyText' => Module::t('main','No workers found.'),
         'tableOptions' => ['class' => 'table table-hover'],
         'formatter' => $format,
         'columns' => [
@@ -52,10 +52,12 @@ $format = Module::getInstance()->formatter;
                 'template' => '{stop}',
                 'buttons' => [
                     'stop' => function ($url) {
-                        return Html::a(Html::icon('stop'), $url, [
-                            'data' => ['method' => 'post', 'confirm' => 'Are you sure?'],
-                            'title' => 'Stop the worker.',
-                        ]);
+                        return Html::a(Html::icon('stop'),
+                            $url,
+                            [
+                                'data' => ['method' => 'post', 'confirm' => Module::t('main','Are you sure?')],
+                                'title' => Module::t('main','Stop the worker.'),
+                            ]);
                     },
                 ],
                 'visibleButtons' => [
@@ -77,10 +79,11 @@ $format = Module::getInstance()->formatter;
                 return '';
             }
             $senderName = $record->sender_name;
-            $groupTitle = strtr('Sender: name (class)', [
-                'name' => $record->sender_name,
-                'class' => get_class(Yii::$app->get($record->sender_name)),
-            ]);
+            $groupTitle = Module::t('main', 'Sender: {name} {class}',
+                [
+                    'name' => $record->sender_name,
+                    'class' => get_class(Yii::$app->get($record->sender_name)),
+                ]);
             return Html::tag('tr', Html::tag('th', $format->asText($groupTitle), ['colspan' => 6]));
         },
     ]) ?>

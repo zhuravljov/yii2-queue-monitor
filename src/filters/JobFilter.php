@@ -8,6 +8,7 @@
 namespace zhuravljov\yii\queue\monitor\filters;
 
 use DateTime;
+use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\records\PushQuery;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
 
@@ -55,11 +56,11 @@ class JobFilter extends BaseFilter
     public function attributeLabels()
     {
         return [
-            'is' => 'Scope',
-            'sender' => 'Sender',
-            'class' => 'Job',
-            'pushed' => 'Pushed',
-            'contains' => 'Contains',
+            'is' => Module::t('main', 'Scope'),
+            'sender' => Module::t('main', 'Sender'),
+            'class' => Module::t('main', 'Job'),
+            'pushed' => Module::t('main', 'Pushed'),
+            'contains' => Module::t('main', 'Contains'),
         ];
     }
 
@@ -69,13 +70,13 @@ class JobFilter extends BaseFilter
     public function scopeList()
     {
         return [
-            self::IS_WAITING => 'Waiting',
-            self::IS_IN_PROGRESS => 'In progress',
-            self::IS_DONE => 'Done',
-            self::IS_SUCCESS => 'Done successfully',
-            self::IS_BURIED => 'Buried',
-            self::IS_FAILED => 'Has failed attempts',
-            self::IS_STOPPED => 'Stopped',
+            self::IS_WAITING => Module::t('main', 'Waiting'),
+            self::IS_IN_PROGRESS => Module::t('main', 'In progress'),
+            self::IS_DONE => Module::t('main', 'Done'),
+            self::IS_SUCCESS => Module::t('main', 'Done successfully'),
+            self::IS_BURIED => Module::t('main', 'Buried'),
+            self::IS_FAILED => Module::t('main', 'Has failed attempts'),
+            self::IS_STOPPED => Module::t('main', 'Stopped'),
         ];
     }
 

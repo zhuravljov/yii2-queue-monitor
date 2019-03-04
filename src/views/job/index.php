@@ -9,14 +9,15 @@ use yii\widgets\ListView;
 use yii\widgets\Pjax;
 use zhuravljov\yii\queue\monitor\assets\JobItemAsset;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
+use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\widgets\FilterBar;
 use zhuravljov\yii\queue\monitor\widgets\LinkPager;
 
 if (JobFilter::restoreParams()) {
-    $this->params['breadcrumbs'][] = ['label' => 'Jobs', 'url' => ['index']];
-    $this->params['breadcrumbs'][] = 'Filtered';
+    $this->params['breadcrumbs'][] = ['label' => Module::t('main', 'Jobs'), 'url' => ['index']];
+    $this->params['breadcrumbs'][] = Module::t('main', 'Filtered');
 } else {
-    $this->params['breadcrumbs'][] = 'Jobs';
+    $this->params['breadcrumbs'][] = Module::t('main', 'Jobs');
 }
 
 JobItemAsset::register($this);
@@ -43,8 +44,8 @@ JobItemAsset::register($this);
                 'pager' => [
                     'class' => LinkPager::class,
                 ],
-                'emptyText' => 'No jobs found.',
-                'emptyTextOptions' => ['class' => 'empty lead'],
+                'emptyText' => Module::t('main', 'No jobs found.'),
+                'emptyTextOptions' => ['class' => Module::t('main', 'empty lead')],
                 'itemView' => '_index-item',
                 'itemOptions' => ['tag' => null],
             ]) ?>

@@ -13,7 +13,7 @@ use zhuravljov\yii\queue\monitor\widgets\LinkPager;
 
 echo $this->render('_view-nav', ['record' => $record]);
 
-$this->params['breadcrumbs'][] = 'Attempts';
+$this->params['breadcrumbs'][] = Module::t('main', 'Attempts');
 
 $format = Module::getInstance()->formatter;
 ?>
@@ -34,16 +34,40 @@ $format = Module::getInstance()->formatter;
         'pager' => [
             'class' => LinkPager::class,
         ],
-        'emptyText' => 'No workers found.',
+        'emptyText' => Module::t('main', 'No workers found.'),
         'tableOptions' => ['class' => 'table table-hover'],
         'formatter' => $format,
         'columns' => [
-            'attempt:integer',
-            'started_at:datetime:Started',
-            'finished_at:time:Finished',
-            'duration:duration',
-            'memory_usage:shortSize',
-            'retry:boolean',
+            [
+                'attribute' => 'attempt',
+                'format' => 'integer',
+                'label' => Module::t('main', 'Attempt')
+            ],
+            [
+                'attribute' => 'started_at',
+                'format' => 'datetime',
+                'label' => Module::t('main', 'Started')
+            ],
+            [
+                'attribute' => 'finished_at',
+                'format' => 'time',
+                'label' => Module::t('main', 'Finished')
+            ],
+            [
+                'attribute' => 'duration',
+                'format' => 'duration',
+                'label' => Module::t('main', 'Duration')
+            ],
+            [
+                'attribute' => 'memory_usage',
+                'format' => 'shortSize',
+                'label' => Module::t('main', 'Memory Usage')
+            ],
+            [
+                'attribute' => 'retry',
+                'format' => 'boolean',
+                'label' => Module::t('main', 'Is retry?')
+            ],
         ],
         'rowOptions' => function (ExecRecord $record) {
             $options = [];
