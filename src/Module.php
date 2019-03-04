@@ -78,16 +78,18 @@ class Module extends \yii\base\Module implements BootstrapInterface
     
     private function registerTranslations()
     {
-        \Yii::$app->i18n->translations['queue-monitor/*'] = [
-            'class' => PhpMessageSource::class,
-            'sourceLanguage' => 'en-US',
-            'basePath' => '@zhuravljov/yii/queue/monitor/messages',
-            'fileMap' => [
-                'queue-monitor/main' => 'main.php',
-                'queue-monitor/notice' => 'notice.php',
-            ],
+        if (!isset(\Yii::$app->i18n->translations['queue-monitor/*'])) {
+            \Yii::$app->i18n->translations['queue-monitor/*'] = [
+                'class' => PhpMessageSource::class,
+                'sourceLanguage' => 'en-US',
+                'basePath' => '@zhuravljov/yii/queue/monitor/messages',
+                'fileMap' => [
+                    'queue-monitor/main' => 'main.php',
+                    'queue-monitor/notice' => 'notice.php',
+                ],
     
-        ];
+            ];
+        }
     }
     
     /**
