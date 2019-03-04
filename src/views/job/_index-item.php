@@ -10,8 +10,8 @@ use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
 
 $format = Module::getInstance()->formatter;
-
-switch ($model->getStatus()) {
+$status = $model->getStatus();
+switch ($status) {
     case PushRecord::STATUS_STOPPED:
         $statusClass = 'bg-info';
         break;
@@ -31,7 +31,7 @@ switch ($model->getStatus()) {
 }
 ?>
 <div class="job-item <?= $statusClass ?>">
-    <div class="job-status"><?= $format->asText($model->getStatus()) ?></div>
+    <div class="job-status"><?= $format->asText($model->getStatusLabel($status)) ?></div>
     <div class="job-details">
         <div class="job-push-uid">
             <a href="<?= Url::to(['view', 'id' => $model->id]) ?>" data-pjax="0">
