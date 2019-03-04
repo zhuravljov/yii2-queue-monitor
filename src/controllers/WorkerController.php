@@ -85,7 +85,7 @@ class WorkerController extends Controller
         $record->stop();
         return $this
             ->success(Module::t('notice', 'The worker will be stopped within {timeout} sec.', [
-                '{timeout}' => $record->pinged_at + $this->env->workerPingInterval - time(),
+                'timeout' => $record->pinged_at + $this->env->workerPingInterval - time(),
             ]))
             ->redirect(['index']);
     }
