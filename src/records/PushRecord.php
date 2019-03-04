@@ -1,8 +1,8 @@
 <?php
 /**
- * @link      https://github.com/zhuravljov/yii2-queue-monitor
+ * @link https://github.com/zhuravljov/yii2-queue-monitor
  * @copyright Copyright (c) 2017 Roman Zhuravlev
- * @license   http://opensource.org/licenses/BSD-3-Clause
+ * @license http://opensource.org/licenses/BSD-3-Clause
  */
 
 namespace zhuravljov\yii\queue\monitor\records;
@@ -19,31 +19,35 @@ use zhuravljov\yii\queue\monitor\Module;
 /**
  * Push Record
  *
- * @property int             $id
- * @property null|int        $parent_id
- * @property string          $sender_name
- * @property string          $job_uid
- * @property string          $job_class
+ * @property int $id
+ * @property null|int $parent_id
+ * @property string $sender_name
+ * @property string $job_uid
+ * @property string $job_class
  * @property string|resource $job_data
- * @property int             $ttr
- * @property int             $delay
- * @property string|null     $trace
- * @property string|null     $context
- * @property int             $pushed_at
- * @property int|null        $stopped_at
- * @property int|null        $first_exec_id
- * @property int|null        $last_exec_id
- * @property PushRecord      $parent
- * @property PushRecord[]    $children
- * @property ExecRecord[]    $execs
+ * @property int $ttr
+ * @property int $delay
+ * @property string|null $trace
+ * @property string|null $context
+ * @property int $pushed_at
+ * @property int|null $stopped_at
+ * @property int|null $first_exec_id
+ * @property int|null $last_exec_id
+ *
+ * @property PushRecord $parent
+ * @property PushRecord[] $children
+ * @property ExecRecord[] $execs
  * @property ExecRecord|null $firstExec
  * @property ExecRecord|null $lastExec
- * @property array           $execTotal
- * @property int             $attemptCount
- * @property int             $waitTime
- * @property string          $status
- * @property Queue|null      $sender
- * @property array           $jobParams
+ * @property array $execTotal
+ *
+ * @property int $attemptCount
+ * @property int $waitTime
+ * @property string $status
+ *
+ * @property Queue|null $sender
+ * @property array $jobParams
+ *
  * @author Roman Zhuravlev <zhuravljov@gmail.com>
  */
 class PushRecord extends ActiveRecord
@@ -55,7 +59,32 @@ class PushRecord extends ActiveRecord
     const STATUS_FAILED = 'failed';
     const STATUS_RESTARTED = 'restarted';
     const STATUS_BURIED = 'buried';
-    
+
+    /**
+     * @inheritdoc
+     * @return PushQuery the active query used by this AR class.
+     */
+    public static function find()
+    {
+        return Yii::createObject(PushQuery::class, [get_called_class()]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getDb()
+    {
+        return Env::ensure()->db;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function tableName()
+    {
+        return Env::ensure()->pushTableName;
+    }
+
     /**
      * @return PushQuery
      */
@@ -63,7 +92,7 @@ class PushRecord extends ActiveRecord
     {
         return $this->hasOne(static::class, ['id' => 'parent_id']);
     }
-    
+
     /**
      * @return PushQuery
      */
@@ -71,7 +100,7 @@ class PushRecord extends ActiveRecord
     {
         return $this->hasMany(static::class, ['parent_id' => 'id']);
     }
-    
+
     /**
      * @return ExecQuery
      */
@@ -79,7 +108,7 @@ class PushRecord extends ActiveRecord
     {
         return $this->hasMany(ExecRecord::class, ['push_id' => 'id']);
     }
-    
+
     /**
      * @return ExecQuery
      */
@@ -87,7 +116,7 @@ class PushRecord extends ActiveRecord
     {
         return $this->hasOne(ExecRecord::class, ['id' => 'first_exec_id']);
     }
-    
+
     /**
      * @return ExecQuery
      */
@@ -95,22 +124,22 @@ class PushRecord extends ActiveRecord
     {
         return $this->hasOne(ExecRecord::class, ['id' => 'last_exec_id']);
     }
-    
+
     /**
      * @return ExecQuery
      */
     public function getExecTotal()
     {
         return $this->hasOne(ExecRecord::class, ['push_id' => 'id'])
-                    ->select([
-                        'exec.push_id',
-                        'attempts' => 'COUNT(*)',
-                        'errors' => 'COUNT(exec.error)',
-                    ])
-                    ->groupBy('exec.push_id')
-                    ->asArray();
+            ->select([
+                'exec.push_id',
+                'attempts' => 'COUNT(*)',
+                'errors' => 'COUNT(exec.error)',
+            ])
+            ->groupBy('exec.push_id')
+            ->asArray();
     }
-    
+
     /**
      * @return int number of attempts
      */
@@ -118,7 +147,7 @@ class PushRecord extends ActiveRecord
     {
         return $this->execTotal['attempts'] ?: 0;
     }
-    
+
     /**
      * @return int waiting time from push till first execute
      */
@@ -129,7 +158,7 @@ class PushRecord extends ActiveRecord
         }
         return time() - $this->pushed_at - $this->delay;
     }
-    
+
     /**
      * @return string
      */
@@ -175,7 +204,6 @@ class PushRecord extends ActiveRecord
         }
         return $labels[$label];
     }
-    
     /**
      * @return Queue|null
      */
@@ -183,7 +211,7 @@ class PushRecord extends ActiveRecord
     {
         return Yii::$app->get($this->sender_name, false);
     }
-    
+
     /**
      * @return bool
      */
@@ -191,7 +219,7 @@ class PushRecord extends ActiveRecord
     {
         return $this->getSender() instanceof Queue;
     }
-    
+
     /**
      * @param JobInterface|mixed $job
      */
@@ -204,7 +232,7 @@ class PushRecord extends ActiveRecord
         }
         $this->job_data = Json::encode($data);
     }
-    
+
     /**
      * @return array of job properties
      */
@@ -219,7 +247,7 @@ class PushRecord extends ActiveRecord
         }
         return $params;
     }
-    
+
     /**
      * @return bool
      */
@@ -227,7 +255,7 @@ class PushRecord extends ActiveRecord
     {
         return is_subclass_of($this->job_class, JobInterface::class);
     }
-    
+
     /**
      * @return JobInterface|mixed
      */
@@ -235,7 +263,7 @@ class PushRecord extends ActiveRecord
     {
         return Yii::createObject(['class' => $this->job_class] + $this->getJobParams());
     }
-    
+
     /**
      * @return bool
      */
@@ -243,7 +271,7 @@ class PushRecord extends ActiveRecord
     {
         return $this->isSenderValid() && $this->isJobValid();
     }
-    
+
     /**
      * @return bool marked as stopped
      */
@@ -251,7 +279,7 @@ class PushRecord extends ActiveRecord
     {
         return !!$this->stopped_at;
     }
-    
+
     /**
      * @return bool ability to mark as stopped
      */
@@ -265,7 +293,7 @@ class PushRecord extends ActiveRecord
         }
         return true;
     }
-    
+
     /**
      * Marks as stopped
      */
@@ -274,35 +302,9 @@ class PushRecord extends ActiveRecord
         $this->stopped_at = time();
         $this->save(false);
     }
-    
-    /**
-     * @inheritdoc
-     * @return PushQuery the active query used by this AR class.
-     */
-    public static function find()
-    {
-        return Yii::createObject(PushQuery::class, [get_called_class()]);
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public static function getDb()
-    {
-        return Env::ensure()->db;
-    }
-    
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return Env::ensure()->pushTableName;
-    }
-    
+
     /**
      * @param mixed $data
-     *
      * @return mixed
      */
     private function serializeData($data)
@@ -314,20 +316,19 @@ class PushRecord extends ActiveRecord
             }
             return $result;
         }
-        
+
         if (is_array($data)) {
             $result = [];
             foreach ($data as $name => $value) {
                 $result[$name] = $this->serializeData($value);
             }
         }
-        
+
         return $data;
     }
-    
+
     /**
      * @param mixed $data
-     *
      * @return mixed
      */
     private function unserializeData($data)
@@ -335,7 +336,7 @@ class PushRecord extends ActiveRecord
         if (!is_array($data)) {
             return $data;
         }
-        
+
         if (!isset($data['=class='])) {
             $result = [];
             foreach ($data as $key => $value) {
@@ -343,7 +344,7 @@ class PushRecord extends ActiveRecord
             }
             return $result;
         }
-        
+
         $config = ['class' => $data['=class=']];
         unset($data['=class=']);
         foreach ($data as $property => $value) {
