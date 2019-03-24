@@ -64,10 +64,15 @@ class WorkerQuery extends ActiveQuery
         return $this
             ->andWhere(['worker.finished_at' => null])
             ->leftJoin(['exec' => ExecRecord::tableName()], '{{exec}}.[[id]] = {{worker}}.[[last_exec_id]]')
+            ->leftJoin(['push' => PushRecord::tableName()], '{{push}}.[[id]] = {{exec}}.[[push_id]]')
             ->andWhere([
                 'or',
                 ['>', 'worker.pinged_at', time() - $this->env->workerPingInterval - 5],
-                ['exec.finished_at' => null],
+                [
+                    'and',
+                    ['is not', 'worker.last_exec_id', null],
+                    ['exec.finished_at' => null],
+                ],
             ]);
     }
 
