@@ -86,3 +86,18 @@ return [
 ```
 
 It will be available by URL `http://yourhost.com/monitor`.
+
+
+Tests
+-----
+
+If you want to disable monitor behaviours in test environment, add to your test config follow:
+
+```php
+'components' => [
+    'queue' => [
+        'as jobMonitor' => new \yii\helpers\UnsetArrayValue(),
+        'as workerMonitor' => new \yii\helpers\UnsetArrayValue(),
+    ],
+];
+```
