@@ -12,7 +12,6 @@ use yii\base\Behavior;
 use yii\base\InvalidConfigException;
 use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
-use yii\queue\ErrorEvent;
 use yii\queue\ExecEvent;
 use yii\queue\JobEvent;
 use yii\queue\PushEvent;
@@ -146,9 +145,9 @@ class JobMonitor extends Behavior
     }
 
     /**
-     * @param ErrorEvent $event
+     * @param ExecEvent $event
      */
-    public function afterError(ErrorEvent $event)
+    public function afterError(ExecEvent $event)
     {
         $push = static::$startedPush ?: $this->getPushRecord($event);
         if (!$push) {
