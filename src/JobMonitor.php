@@ -73,6 +73,12 @@ class JobMonitor extends Behavior
      */
     public function afterPush(PushEvent $event)
     {
+        if ($this->env->db->getTransaction()) {
+            // create new database connection, if there is an open transaction
+            // to ensure insert statement is not affected by a rollback
+            $this->env->db = clone $this->env->db;
+        }
+
         $push = new PushRecord();
         $push->parent_id = static::$startedPush ? static::$startedPush->id : null;
         $push->sender_name = $this->getSenderName($event);
