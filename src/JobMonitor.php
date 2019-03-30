@@ -35,7 +35,15 @@ class JobMonitor extends Behavior
     /**
      * @var array
      */
-    public $contextVars = ['_SERVER'];
+    public $contextVars = [
+        '_SERVER.argv',
+        '_SERVER.REQUEST_METHOD',
+        '_SERVER.REQUEST_URI',
+        '_SERVER.HTTP_REFERER',
+        '_SERVER.HTTP_USER_AGENT',
+        '_POST',
+        '_COOKIE',
+    ];
     /**
      * @var Env
      */
