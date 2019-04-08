@@ -37,10 +37,6 @@ class Module extends \yii\base\Module implements BootstrapInterface
     /**
      * @inheritdoc
      */
-    public $layout = 'main';
-    /**
-     * @inheritdoc
-     */
     public $controllerNamespace = 'zhuravljov\yii\queue\monitor\controllers';
     /**
      * @inheritdoc
