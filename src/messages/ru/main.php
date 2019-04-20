@@ -1,9 +1,4 @@
 <?php
-/**
- * @link https://github.com/zhuravljov/yii2-queue-monitor
- * @copyright Copyright (c) 2017 Roman Zhuravlev
- * @license http://opensource.org/licenses/BSD-3-Clause
- */
 
 return [
     '#{jobId} by {sender}' => '{sender}: №{jobId}',
@@ -15,7 +10,6 @@ return [
     'Buried' => 'Провалено',
     'Busy since {time}.' => 'Активен с {time}.',
     'Class' => 'Класс',
-    'contains' => 'Содержит',
     'Contains' => 'Содержит',
     'Context' => 'Контекст',
     'Data' => 'Параметры',
@@ -29,14 +23,14 @@ return [
     'Error' => 'Ошибка',
     'Exec' => 'Выполнение',
     'Failed' => 'Ошибка',
-    'For all time' => 'За все время',
     'Filtered' => 'Отфильтровано',
     'Finished' => 'Завершено',
+    'For all time' => 'За все время',
     'Has failed attempts' => 'С неудачными попытками',
     'Host' => 'Хост',
     'ID' => 'ID',
-    'Idle since {time}.' => 'Простаивает с {time}.',
     'Idle after a job since {time}.' => 'Простаивает после выполнения задачи с {time}.',
+    'Idle since {time}.' => 'Простаивает с {time}.',
     'In progress' => 'В процессе',
     'Is retry?' => 'Повтор?',
     'Job' => 'Задача',
@@ -58,7 +52,7 @@ return [
     'Pushed' => 'Запущено',
     'Queue Monitor' => 'Менеджер очередей',
     'Reset' => 'Сброс',
-    'Restarted'=>'Перезапущено',
+    'Restarted' => 'Перезапущено',
     'Scope' => 'Статус',
     'Search' => 'Найти',
     'Sender' => 'Инициатор',
