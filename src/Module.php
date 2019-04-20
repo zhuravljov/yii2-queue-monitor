@@ -7,6 +7,7 @@
 
 namespace zhuravljov\yii\queue\monitor;
 
+use Yii;
 use yii\base\BootstrapInterface;
 use yii\base\InvalidConfigException;
 use yii\i18n\PhpMessageSource;
@@ -78,8 +79,8 @@ class Module extends \yii\base\Module implements BootstrapInterface
     
     private function registerTranslations()
     {
-        if (!isset(\Yii::$app->i18n->translations['queue-monitor/*'])) {
-            \Yii::$app->i18n->translations['queue-monitor/*'] = [
+        if (!isset(Yii::$app->i18n->translations['queue-monitor/*'])) {
+            Yii::$app->i18n->translations['queue-monitor/*'] = [
                 'class' => PhpMessageSource::class,
                 'sourceLanguage' => 'en-US',
                 'basePath' => '@zhuravljov/yii/queue/monitor/messages',
@@ -87,7 +88,6 @@ class Module extends \yii\base\Module implements BootstrapInterface
                     'queue-monitor/main' => 'main.php',
                     'queue-monitor/notice' => 'notice.php',
                 ],
-    
             ];
         }
     }
@@ -95,15 +95,14 @@ class Module extends \yii\base\Module implements BootstrapInterface
     /**
      * Module translator.
      *
-     * @param       $category
-     * @param       $message
+     * @param string $category
+     * @param string $message
      * @param array $params
-     * @param null  $language
-     *
+     * @param string $language
      * @return string
      */
     public static function t($category, $message, $params = [], $language = null)
     {
-        return \Yii::t('queue-monitor/' . $category, $message, $params, $language);
+        return Yii::t('queue-monitor/' . $category, $message, $params, $language);
     }
 }

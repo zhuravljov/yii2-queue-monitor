@@ -34,7 +34,7 @@ $module = Module::getInstance();
 ?>
 <div class="pull-right">
     <?= !$module->canExecStop ? '' : Html::a(
-        Html::icon('stop') .' '.Module::t('main', 'Stop'),
+        Html::icon('stop') . ' ' . Module::t('main', 'Stop'),
         ['stop', 'id' => $record->id],
         [
             'title' => Module::t('main', 'Mark as stopped.'),
@@ -76,8 +76,9 @@ $module = Module::getInstance();
             'url' => ['job/view-data', 'id' => $record->id],
         ],
         [
-            'label' => Module::t('main', 'Attempts ({attempts})',
-                ['attempts'=>$record->attemptCount]),
+            'label' => Module::t('main', 'Attempts ({attempts})', [
+                'attempts'=>$record->attemptCount
+            ]),
             'url' => ['job/view-attempts', 'id' => $record->id],
         ],
     ],

@@ -30,8 +30,7 @@ use zhuravljov\yii\queue\monitor\Module;
     </table>
 <?php endif; ?>
 <?php
-$this->registerCss(
-<<<CSS
+$this->registerCss(<<<CSS
 td.param-value {
     word-break: break-all;
 }

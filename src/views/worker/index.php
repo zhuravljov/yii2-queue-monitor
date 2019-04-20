@@ -51,12 +51,10 @@ $format = Module::getInstance()->formatter;
                 'template' => '{stop}',
                 'buttons' => [
                     'stop' => function ($url) {
-                        return Html::a(Html::icon('stop'),
-                            $url,
-                            [
-                                'data' => ['method' => 'post', 'confirm' => Module::t('main','Are you sure?')],
-                                'title' => Module::t('main','Stop the worker.'),
-                            ]);
+                        return Html::a(Html::icon('stop'), $url, [
+                            'data' => ['method' => 'post', 'confirm' => Module::t('main', 'Are you sure?')],
+                            'title' => Module::t('main', 'Stop the worker.'),
+                        ]);
                     },
                 ],
                 'visibleButtons' => [

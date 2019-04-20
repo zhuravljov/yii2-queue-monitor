@@ -64,8 +64,7 @@ switch ($status) {
         </div>
         <?php if ($model->lastExec): ?>
             <div class="job-exec-time" title="<?=Module::t('main', 'Last execute time and memory usage.')?>">
-                <?=Module::t('main', 'Exec')?>: <?= $format->asInteger($model->lastExec->getDuration
-                ()) ?>s
+                <?=Module::t('main', 'Exec')?>: <?= $format->asInteger($model->lastExec->getDuration()) ?>s
                 <?php if ($model->lastExec->memory_usage): ?>
                     / <?= $format->asShortSize($model->lastExec->memory_usage, 0) ?>
                 <?php endif; ?>

@@ -40,7 +40,7 @@ class WorkerRecord extends ActiveRecord
 {
     /**
      * @inheritdoc
-     * @return WorkerQuery the active query used by this AR class.
+     * @return WorkerQuery|object the active query used by this AR class.
      */
     public static function find()
     {
@@ -78,7 +78,7 @@ class WorkerRecord extends ActiveRecord
     }
 
     /**
-     * @return ExecQuery
+     * @return ExecQuery|\yii\db\ActiveQuery
      */
     public function getLastExec()
     {
@@ -86,7 +86,7 @@ class WorkerRecord extends ActiveRecord
     }
 
     /**
-     * @return ExecQuery
+     * @return ExecQuery|\yii\db\ActiveQuery
      */
     public function getExecs()
     {
@@ -94,7 +94,7 @@ class WorkerRecord extends ActiveRecord
     }
 
     /**
-     * @return ExecQuery
+     * @return ExecQuery|\yii\db\ActiveQuery
      */
     public function getExecTotal()
     {
@@ -142,21 +142,18 @@ class WorkerRecord extends ActiveRecord
     {
         $format = Module::getInstance()->formatter;
         if (!$this->lastExec) {
-            return Module::t('main', 'Idle since {time}.',
-                [
-                    'time' => $format->asRelativeTime($this->started_at),
-                ]);
+            return Module::t('main', 'Idle since {time}.', [
+                'time' => $format->asRelativeTime($this->started_at),
+            ]);
         }
         if ($this->lastExec->finished_at) {
-            return Module::t('main', 'Idle after a job since {time}.',
-                [
-                    'time' => $format->asRelativeTime($this->lastExec->finished_at),
-                ]);
-        }
-        return Module::t('main', 'Busy since {time}.',
-            [
-                'time' => $format->asRelativeTime($this->lastExec->started_at),
+            return Module::t('main', 'Idle after a job since {time}.', [
+                'time' => $format->asRelativeTime($this->lastExec->finished_at),
             ]);
+        }
+        return Module::t('main', 'Busy since {time}.', [
+            'time' => $format->asRelativeTime($this->lastExec->started_at),
+        ]);
     }
 
     /**
