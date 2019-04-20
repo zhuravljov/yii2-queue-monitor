@@ -1,0 +1,63 @@
+version: "3.5"
+
+services:
+
+  # https://docs.docker.com/samples/library/php/
+  web:
+    command:
+    - php
+    - -S
+    - 0.0.0.0:80
+    - -t
+    - /code/tests/web
+    stop_signal: SIGINT
+    ports:
+    - ${WEB_PORT}:80
+    build: &php_build
+      context: ..
+      dockerfile: tests/docker/php/Dockerfile
+    dns: &php_dns
+    - 8.8.8.8
+    - 4.4.4.4
+    volumes: &php_volumes
+    - ./runtime/.composer:/root/.composer:rw
+    - ..:/code
+    environment: &php_environment
+      COMPOSER_ALLOW_SUPERUSER: 1
+      MYSQL_HOST: "mysql"
+      MYSQL_USER: "qmonitor"
+      MYSQL_PASSWORD: "qmonitor"
+      MYSQL_DATABASE: "qmonitor"
+    depends_on: &php_depends_on
+    - mysql
+    networks: &php_networks
+      net: {}
+
+  queue:
+    command:
+    - php
+    - tests/yii
+    - queue/listen
+    - --verbose
+    build: *php_build
+    dns: *php_dns
+    volumes: *php_volumes
+    environment: *php_environment
+    depends_on: *php_depends_on
+    networks: *php_networks
+
+  # https://docs.docker.com/samples/library/mysql/
+  mysql:
+    image: mysql:5.7
+    volumes:
+    - ./runtime/mysql:/var/lib/mysql:rw
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_USER: "qmonitor"
+      MYSQL_PASSWORD: "qmonitor"
+      MYSQL_DATABASE: "qmonitor"
+    networks:
+      net: {}
+
+networks:
+  net: {}

@@ -37,8 +37,7 @@ $format = Module::getInstance()->formatter;
                 ],
             ],
         ]),
-        'layout' => "{items}\n{pager}",
-        'emptyText' => Module::t('main','No workers found.'),
+        'emptyText' => Module::t('main', 'No workers found.'),
         'tableOptions' => ['class' => 'table table-hover'],
         'formatter' => $format,
         'columns' => [
@@ -79,11 +78,10 @@ $format = Module::getInstance()->formatter;
                 return '';
             }
             $senderName = $record->sender_name;
-            $groupTitle = Module::t('main', 'Sender: {name} {class}',
-                [
-                    'name' => $record->sender_name,
-                    'class' => get_class(Yii::$app->get($record->sender_name)),
-                ]);
+            $groupTitle = Module::t('main', 'Sender: {name} {class}', [
+                'name' => $record->sender_name,
+                'class' => get_class(Yii::$app->get($record->sender_name)),
+            ]);
             return Html::tag('tr', Html::tag('th', $format->asText($groupTitle), ['colspan' => 6]));
         },
     ]) ?>

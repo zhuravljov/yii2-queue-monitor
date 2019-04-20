@@ -11,7 +11,6 @@ use zhuravljov\yii\queue\monitor\assets\JobItemAsset;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\widgets\FilterBar;
-use zhuravljov\yii\queue\monitor\widgets\LinkPager;
 
 if (JobFilter::restoreParams()) {
     $this->params['breadcrumbs'][] = ['label' => Module::t('main', 'Jobs'), 'url' => ['index']];
@@ -41,9 +40,6 @@ JobItemAsset::register($this);
                         ],
                     ],
                 ]),
-                'pager' => [
-                    'class' => LinkPager::class,
-                ],
                 'emptyText' => Module::t('main', 'No jobs found.'),
                 'emptyTextOptions' => ['class' => Module::t('main', 'empty lead')],
                 'itemView' => '_index-item',

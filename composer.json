@@ -16,10 +16,14 @@
     },
     "require": {
         "php": ">=5.5.0",
+        "ext-pdo": "*",
         "yiisoft/yii2": "~2.0.14",
         "yiisoft/yii2-queue": ">=2.2.0",
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "zhuravljov/yii2-datetime-widgets": "~1.1.0"
+    },
+    "require-dev": {
+        "yiisoft/yii2-debug": "~2.0.0"
     },
     "repositories": [
         {
@@ -30,6 +34,11 @@
     "autoload": {
         "psr-4": {
             "zhuravljov\\yii\\queue\\monitor\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\": "tests"
         }
     },
     "extra": {
