@@ -34,36 +34,14 @@ use zhuravljov\yii\widgets\DateRangePicker;
         <div class="col-lg-12 col-md-4 col-sm-6">
             <?= $form->field($filter, 'contains') ?>
         </div>
-        <div class="col-lg-12 col-md-8 col-sm-12">
-            <?= $form->field($filter, 'pushed')->widget(DateRangePicker::class, [
-                'clientOptions' => [
-                    'opens' => 'left',
-                    'autoUpdateInput' => false,
-                    'alwaysShowCalendars' => true,
-                    'ranges' => [
-                        'Today' => [
-                            new JsExpression('moment()'),
-                            new JsExpression('moment()'),
-                        ],
-                        'Yesterday' => [
-                            new JsExpression('moment().subtract(1, "days")'),
-                            new JsExpression('moment().subtract(1, "days")'),
-                        ],
-                        'Last Week' => [
-                            new JsExpression('moment().subtract(6, "days")'),
-                            new JsExpression('moment()'),
-                        ],
-                    ],
-                    'locale' => [
-                        'format' => 'YYYY-MM-DD',
-                        'separator' => ' - ',
-                        'cancelLabel' => Module::t('main', 'For all time'),
-                    ],
-                ],
-                'clientEvents' => [
-                    'apply.daterangepicker' => 'function (ev, picker) { $(this).val(picker.startDate.format(picker.locale.format) + picker.locale.separator + picker.endDate.format(picker.locale.format)); }',
-                    'cancel.daterangepicker' => 'function (ev, picker) { $(this).val(""); }',
-                ],
+        <div class="col-lg-12 col-md-4 col-xs-6">
+            <?= $form->field($filter, 'pushed_after')->input('datetime-local', [
+                'placeholder' => 'YYYY-MM-DDTHH:MM',
+            ]) ?>
+        </div>
+        <div class="col-lg-12 col-md-4 col-xs-6">
+            <?= $form->field($filter, 'pushed_before')->input('datetime-local', [
+                'placeholder' => 'YYYY-MM-DDTHH:MM',
             ]) ?>
         </div>
     </div>

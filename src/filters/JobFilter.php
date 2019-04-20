@@ -8,6 +8,7 @@
 namespace zhuravljov\yii\queue\monitor\filters;
 
 use DateTime;
+use Yii;
 use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\records\PushQuery;
 use zhuravljov\yii\queue\monitor\records\PushRecord;
@@ -30,7 +31,8 @@ class JobFilter extends BaseFilter
     public $is;
     public $sender;
     public $class;
-    public $pushed;
+    public $pushed_after;
+    public $pushed_before;
     public $contains;
 
     /**
@@ -42,12 +44,27 @@ class JobFilter extends BaseFilter
             ['is', 'string'],
             ['is', 'in', 'range' => array_keys($this->scopeList())],
             ['sender', 'string'],
+            ['sender', 'trim'],
             ['class', 'string'],
-            ['pushed', 'string'],
-            ['pushed', 'match', 'pattern' => '/^\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/'],
+            ['class', 'trim'],
+            [['pushed_after', 'pushed_before'], 'string'],
+            [['pushed_after', 'pushed_before'], 'validateDatetime'],
             ['contains', 'string'],
-            [['is', 'sender', 'class', 'pushed', 'contains'], 'trim'],
+            ['contains', 'trim'],
         ];
+    }
+
+    public function validateDatetime($attribute)
+    {
+        if ($this->hasErrors($attribute)) {
+            return;
+        }
+        if ($this->parseDatetime($this->$attribute) === null) {
+            $this->addError($attribute, Yii::t('yii', 'The format of {attribute} is invalid.', [
+                'attribute' => $this->getAttributeLabel($attribute),
+            ]));
+        }
+
     }
 
     /**
@@ -59,7 +76,8 @@ class JobFilter extends BaseFilter
             'is' => Module::t('main', 'Scope'),
             'sender' => Module::t('main', 'Sender'),
             'class' => Module::t('main', 'Job'),
-            'pushed' => Module::t('main', 'Pushed'),
+            'pushed_after' => Module::t('main', 'Pushed After'),
+            'pushed_before' => Module::t('main', 'Pushed Before'),
             'contains' => Module::t('main', 'Contains'),
         ];
     }
@@ -120,8 +138,9 @@ class JobFilter extends BaseFilter
 
         $query->andFilterWhere(['push.sender_name' => $this->sender]);
         $query->andFilterWhere(['like', 'push.job_class', $this->class]);
-        $this->filterDateRange($query, 'push.pushed_at', $this->pushed);
         $query->andFilterWhere(['like', 'push.job_data', $this->contains]);
+        $query->andFilterWhere(['>=', 'push.pushed_at', $this->parseDatetime($this->pushed_after)]);
+        $query->andFilterWhere(['<=', 'push.pushed_at', $this->parseDatetime($this->pushed_before, true)]);
 
         if ($this->is === self::IS_WAITING) {
             $query->waiting();
@@ -169,21 +188,21 @@ class JobFilter extends BaseFilter
     }
 
     /**
-     * @param PushQuery $query
-     * @param string $name
      * @param string $value
+     * @param bool $isEnd
+     * @return int|null
      */
-    private function filterDateRange(PushQuery $query, $name, $value)
+    private function parseDatetime($value, $isEnd = false)
     {
-        $limits = explode(' - ', $value, 2);
-        if (count($limits) === 2) {
-            $begin = DateTime::createFromFormat('Y-m-d', $limits[0]);
-            $end = DateTime::createFromFormat('Y-m-d', $limits[1]);
-            if ($begin && $end) {
-                $begin->setTime(0, 0, 0);
-                $end->setTime(23, 59, 59);
-                $query->andWhere(['between', $name, $begin->getTimestamp(), $end->getTimestamp()]);
-            }
+        $dt = DateTime::createFromFormat('Y-m-d\TH:i', $value);
+        if (!$dt) {
+            return null;
         }
+        $time = $dt->getTimestamp();
+        $time = $time - $time % 60;
+        if ($isEnd) {
+            $time += 59;
+        }
+        return $time;
     }
 }
