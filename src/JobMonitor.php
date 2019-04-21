@@ -42,7 +42,6 @@ class JobMonitor extends Behavior
         '_SERVER.HTTP_REFERER',
         '_SERVER.HTTP_USER_AGENT',
         '_POST',
-        '_COOKIE',
     ];
     /**
      * @var Env
@@ -151,6 +150,7 @@ class JobMonitor extends Behavior
                 'finished_at' => time(),
                 'memory_usage' => memory_get_peak_usage(),
                 'error' => null,
+                'result_data' => serialize($event->result),
                 'retry' => false,
             ], [
                 'id' => $push->last_exec_id
@@ -176,6 +176,7 @@ class JobMonitor extends Behavior
                 'finished_at' => time(),
                 'memory_usage' => static::$startedPush ? memory_get_peak_usage() : null,
                 'error' => $event->error,
+                'result_data' => null,
                 'retry' => $event->retry,
             ], [
                 'id' => $push->last_exec_id

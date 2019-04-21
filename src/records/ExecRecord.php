@@ -22,6 +22,7 @@ use zhuravljov\yii\queue\monitor\Env;
  * @property null|int $finished_at
  * @property null|int $memory_usage
  * @property null|string $error
+ * @property null|string|resource $result_data
  * @property null|bool $retry
  *
  * @property PushRecord $push
@@ -116,5 +117,16 @@ class ExecRecord extends ActiveRecord
             }
         }
         return $this->_errorMessage;
+    }
+
+    public function getResult()
+    {
+        if (is_resource($this->result_data)) {
+            $this->result_data = stream_get_contents($this->result_data);
+        }
+        if ($this->result_data) {
+            return unserialize($this->result_data);
+        }
+        return null;
     }
 }

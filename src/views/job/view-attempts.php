@@ -7,6 +7,7 @@
 use yii\bootstrap\Html;
 use yii\data\ActiveDataProvider;
 use yii\grid\GridView;
+use yii\helpers\VarDumper;
 use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\records\ExecRecord;
 use zhuravljov\yii\queue\monitor\widgets\LinkPager;
@@ -82,6 +83,11 @@ $format = Module::getInstance()->formatter;
                     '{error}' => $format->asNtext($record->error),
                 ]);
             }
+            if ($result = $record->getResult()) {
+                return strtr('<tr class="result-line"><td colspan="6">{result}</td></tr>', [
+                    '{result}' => VarDumper::dumpAsString($result),
+                ]);
+            }
             return '';
         },
     ]) ?>
@@ -89,8 +95,12 @@ $format = Module::getInstance()->formatter;
 <?php
 $this->registerCss(
 <<<CSS
-tr.error-line > td {
+tr.result-line > td {
     white-space: normal;
+    word-break: break-all;
+}
+tr.result-line > td {
+    white-space: pre;
     word-break: break-all;
 }
 CSS

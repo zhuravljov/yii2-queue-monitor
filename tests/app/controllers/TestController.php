@@ -2,6 +2,7 @@
 
 namespace tests\app\controllers;
 
+use tests\app\jobs\NotVoidJob;
 use tests\app\jobs\RecursionJob;
 use tests\app\jobs\SimpleJob;
 use Yii;
@@ -38,6 +39,12 @@ class TestController extends Controller
             $this->getQueue()->push(new RecursionJob());
         }
         return $this->success("$count recursion jobs have been pushed.")->goBackward();
+    }
+
+    public function actionPushNotVoidJob()
+    {
+        $this->getQueue()->push(new NotVoidJob());
+        return $this->success('Not void job has been pushed.')->goBackward();
     }
 
     /**

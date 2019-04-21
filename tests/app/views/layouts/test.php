@@ -66,6 +66,11 @@ MainAsset::register($this);
                         'url' => ['/test/push-many-recursion-jobs', 'count' => 10],
                         'linkOptions' => ['data-method' => 'post'],
                     ],
+                    [
+                        'label' => 'Push Not Void Job',
+                        'url' => ['/test/push-not-void-job'],
+                        'linkOptions' => ['data-method' => 'post'],
+                    ],
                 ],
             ],
         ],
