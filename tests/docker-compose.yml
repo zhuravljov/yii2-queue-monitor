@@ -23,13 +23,20 @@ services:
     - ./runtime/.composer:/root/.composer:rw
     - ..:/code
     environment: &php_environment
+      TZ: ${TZ}
       COMPOSER_ALLOW_SUPERUSER: 1
-      MYSQL_HOST: "mysql"
-      MYSQL_USER: "qmonitor"
-      MYSQL_PASSWORD: "qmonitor"
-      MYSQL_DATABASE: "qmonitor"
+      DB_TYPE: ${DB_TYPE} # mysql, pgsql, sqlite
+      MYSQL_HOST: mysql
+      MYSQL_USER: qmonitor
+      MYSQL_PASSWORD: qmonitor
+      MYSQL_DATABASE: qmonitor
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: qmonitor
+      POSTGRES_PASSWORD: qmonitor
+      POSTGRES_DB: qmonitor
     depends_on: &php_depends_on
     - mysql
+    - postgres
     networks: &php_networks
       net: {}
 
@@ -52,10 +59,24 @@ services:
     volumes:
     - ./runtime/mysql:/var/lib/mysql:rw
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_USER: "qmonitor"
-      MYSQL_PASSWORD: "qmonitor"
-      MYSQL_DATABASE: "qmonitor"
+      TZ: ${TZ}
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_USER: qmonitor
+      MYSQL_PASSWORD: qmonitor
+      MYSQL_DATABASE: qmonitor
+    networks:
+      net: {}
+
+  # https://docs.docker.com/samples/library/postgres/
+  postgres:
+    image: postgres:10.4
+    volumes:
+    - ./runtime/postgres:/var/lib/postgresql/data:rw
+    environment:
+      TZ: ${TZ}
+      POSTGRES_USER: qmonitor
+      POSTGRES_PASSWORD: qmonitor
+      POSTGRES_DB: qmonitor
     networks:
       net: {}
 

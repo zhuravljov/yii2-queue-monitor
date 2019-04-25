@@ -1,6 +1,7 @@
 <?php
 return [
     'id' => 'yii2-queue-monitor-app',
+    'timeZone' => getenv('TZ'),
     'basePath' => dirname(__DIR__) . '/app',
     'runtimePath' => dirname(__DIR__) . '/runtime',
     'vendorPath' => dirname(dirname(__DIR__)) . '/vendor',
@@ -15,21 +16,7 @@ return [
         'cache' => [
             'class' => \yii\caching\FileCache::class,
         ],
-        'db' => [
-            'class' => \yii\db\Connection::class,
-            'dsn' => sprintf(
-                'mysql:host=%s;dbname=%s',
-                getenv('MYSQL_HOST'),
-                getenv('MYSQL_DATABASE')
-            ),
-            'username' => getenv('MYSQL_USER'),
-            'password' => getenv('MYSQL_PASSWORD'),
-            'charset' => 'utf8',
-            'enableSchemaCache' => true,
-            'attributes' => [
-                \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET sql_mode = "STRICT_ALL_TABLES"',
-            ],
-        ],
+        'db' => require(__DIR__ . '/db.php'),
         'queue' => [
             'class' => \yii\queue\file\Queue::class,
             'as job-monitor' => \zhuravljov\yii\queue\monitor\JobMonitor::class,
