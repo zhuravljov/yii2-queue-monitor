@@ -6,10 +6,8 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Url;
-use yii\web\JsExpression;
 use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\Module;
-use zhuravljov\yii\widgets\DateRangePicker;
 
 ?>
 <div class="job-filter">
