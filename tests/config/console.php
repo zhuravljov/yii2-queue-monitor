@@ -16,7 +16,14 @@ return [
             'languages' => ['ru'],
             'translator' => 'Module::t',
             'sort' => true,
-            'phpDocBlock' => '',
+            'phpDocBlock' => <<<DOC
+                /**
+                 * @link https://github.com/zhuravljov/yii2-queue-monitor
+                 * @copyright Copyright (c) 2017 Roman Zhuravlev
+                 * @license http://opensource.org/licenses/BSD-3-Clause
+                 */
+                
+                DOC,
         ],
     ],
 ];

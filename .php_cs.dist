@@ -40,5 +40,9 @@ return PhpCsFixer\Config::create()
         'phpdoc_add_missing_param_annotation' => true,
         'phpdoc_order' => true,
         'phpdoc_align' => false,
+        'concat_space' => [
+            'spacing' => 'one',
+        ],
+        'single_quote' => true,
     ])
     ->setFinder($finder);

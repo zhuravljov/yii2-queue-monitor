@@ -64,7 +64,6 @@ class JobFilter extends BaseFilter
                 'attribute' => $this->getAttributeLabel($attribute),
             ]));
         }
-
     }
 
     /**

@@ -81,7 +81,7 @@ JobItemAsset::register($this);
                 ],
             ],
         ]),
-        'layout' => "<h3>" . Module::t('main', 'Sub Jobs') . "</h3>\n{items}\n{pager}",
+        'layout' => '<h3>' . Module::t('main', 'Sub Jobs') . "</h3>\n{items}\n{pager}",
         'pager' => [
             'class' => LinkPager::class,
         ],

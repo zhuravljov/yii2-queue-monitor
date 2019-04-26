@@ -11,5 +11,5 @@ use yii\bootstrap\Html;
 <datalist id="<?= Html::encode($id) ?>">
     <?php foreach ($values as $value): ?>
         <option><?= Html::encode($value) ?></option>
-    <?php endforeach; ?>
+    <?php endforeach ?>
 </datalist>

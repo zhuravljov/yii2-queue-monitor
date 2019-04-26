@@ -23,5 +23,5 @@ $aliases = [
                 'body' => Html::encode($message),
             ]) ?>
         </div>
-    <?php endforeach; ?>
+    <?php endforeach ?>
 </div>

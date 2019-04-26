@@ -94,7 +94,7 @@ $format = Module::getInstance()->formatter;
 </div>
 <?php
 $this->registerCss(
-<<<CSS
+        <<<CSS
 tr.result-line > td {
     white-space: normal;
     word-break: break-all;

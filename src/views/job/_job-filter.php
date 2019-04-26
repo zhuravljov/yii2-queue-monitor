@@ -45,12 +45,12 @@ use zhuravljov\yii\queue\monitor\Module;
     </div>
     <button type="submit" class="btn btn-primary">
         <span class="glyphicon glyphicon-search"></span>
-        <?=Module::t('main', 'Search')?>
+        <?= Module::t('main', 'Search') ?>
     </button>
     <?php if (JobFilter::restoreParams()): ?>
         <a href="<?= Url::to(['/' . Yii::$app->controller->route]) ?>" class="btn btn-default">
-            <?=Module::t('main', 'Reset')?>
+            <?= Module::t('main', 'Reset') ?>
         </a>
-    <?php endif; ?>
+    <?php endif ?>
     <?php ActiveForm::end() ?>
 </div>

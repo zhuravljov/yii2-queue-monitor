@@ -33,32 +33,28 @@ $this->params['breadcrumbs'][]  = [
 $module = Module::getInstance();
 ?>
 <div class="pull-right">
-    <?= !$module->canExecStop ? '' : Html::a(
-        Html::icon('stop') . ' ' . Module::t('main', 'Stop'),
-        ['stop', 'id' => $record->id],
-        [
+    <?php if ($module->canExecStop): ?>
+        <?= Html::a(Html::icon('stop') . ' ' . Module::t('main', 'Stop'), ['stop', 'id' => $record->id], [
             'title' => Module::t('main', 'Mark as stopped.'),
             'data' => [
                 'method' => 'post',
-                'confirm' => Module::t('main', 'Are you sure?'),
+                'confirm' => Yii::t('yii', 'Are you sure?'),
             ],
             'disabled' => !$record->canStop(),
             'class' => 'btn btn-' . ($record->canStop() ? 'danger' : 'default'),
-        ]
-    ) ?>
-    <?= !$module->canPushAgain ? '' : Html::a(
-        Html::icon('repeat') . ' '.Module::t('main', 'Push Again'),
-        ['push', 'id' => $record->id],
-        [
+        ]) ?>
+    <?php endif ?>
+    <?php if ($module->canPushAgain): ?>
+        <?= Html::a(Html::icon('repeat') . ' ' . Module::t('main', 'Push Again'), ['push', 'id' => $record->id], [
             'title' => Module::t('main', 'Push again.'),
             'data' => [
                 'method' => 'post',
-                'confirm' => Module::t('main', 'Are you sure?'),
+                'confirm' => Yii::t('yii', 'Are you sure?'),
             ],
             'disabled' => !$record->canPushAgain(),
             'class' => 'btn btn-' . ($record->canPushAgain() ? 'primary' : 'default'),
-        ]
-    ) ?>
+        ]) ?>
+    <?php endif ?>
 </div>
 <?= Nav::widget([
     'options' => ['class' =>'nav nav-tabs'],

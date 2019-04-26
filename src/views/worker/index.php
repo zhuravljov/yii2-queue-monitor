@@ -52,7 +52,7 @@ $format = Module::getInstance()->formatter;
                 'buttons' => [
                     'stop' => function ($url) {
                         return Html::a(Html::icon('stop'), $url, [
-                            'data' => ['method' => 'post', 'confirm' => Module::t('main', 'Are you sure?')],
+                            'data' => ['method' => 'post', 'confirm' => Yii::t('yii', 'Are you sure?')],
                             'title' => Module::t('main', 'Stop the worker.'),
                         ]);
                     },
