@@ -70,6 +70,9 @@ If you want use migrations of the extension, configure migration command in cons
 
 And apply migrations.
 
+
+### Web
+
 Finally, modify your web config file to turn on web interface:
 
 ```php
@@ -86,3 +89,26 @@ return [
 ```
 
 It will be available by URL `http://yourhost.com/monitor`.
+
+
+### Console
+
+There is console garbage collector:
+
+```php
+'controllerMap' => [
+    'monitor' => [
+        'class' => \zhuravljov\yii\queue\monitor\console\GcController::class,
+    ],
+],
+```
+
+It can be executed as:
+
+```sh
+php yii monitor/clear-deprecated P1D
+```
+
+Where `P1D` is [interval spec] that specifies to delete all records one day older.
+
+[interval spec]: https://www.php.net/manual/en/dateinterval.construct.php

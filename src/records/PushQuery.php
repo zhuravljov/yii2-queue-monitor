@@ -7,6 +7,8 @@
 
 namespace zhuravljov\yii\queue\monitor\records;
 
+use DateInterval;
+use DateTime;
 use yii\db\ActiveQuery;
 use yii\db\Query;
 
@@ -142,6 +144,17 @@ class PushQuery extends ActiveQuery
             ['last_exec' => ExecRecord::tableName()],
             '{{last_exec}}.[[id]] = {{push}}.[[last_exec_id]]'
         );
+    }
+
+    /**
+     * @param string $interval
+     * @link https://www.php.net/manual/en/dateinterval.construct.php
+     * @return $this
+     */
+    public function deprecated($interval)
+    {
+        $min = (new DateTime())->sub(new DateInterval($interval))->getTimestamp();
+        return $this->andWhere(['<', 'push.pushed_at', $min]);
     }
 
     /**

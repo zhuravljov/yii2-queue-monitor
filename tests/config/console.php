@@ -25,5 +25,9 @@ return [
                 
                 DOC,
         ],
+        'qmonitor' => [
+            'class' => \zhuravljov\yii\queue\monitor\console\GcController::class,
+            'silent' => false,
+        ],
     ],
 ];
