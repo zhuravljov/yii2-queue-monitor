@@ -14,6 +14,7 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\VarDumper;
 use yii\queue\ExecEvent;
 use yii\queue\JobEvent;
+use yii\queue\JobInterface;
 use yii\queue\PushEvent;
 use yii\queue\Queue;
 use zhuravljov\yii\queue\monitor\records\ExecRecord;
@@ -28,10 +29,15 @@ use zhuravljov\yii\queue\monitor\records\WorkerRecord;
 class JobMonitor extends Behavior
 {
     /**
-     * @var Queue
-     * @inheritdoc
+     * @var array of job class names that this behavior should tracks.
+     * @since 0.3.2
      */
-    public $owner;
+    public $only = [];
+    /**
+     * @var array of job class names that this behavior should not tracks.
+     * @since 0.3.2
+     */
+    public $except = [];
     /**
      * @var array
      */
@@ -43,6 +49,11 @@ class JobMonitor extends Behavior
         '_SERVER.HTTP_USER_AGENT',
         '_POST',
     ];
+    /**
+     * @var Queue
+     * @inheritdoc
+     */
+    public $owner;
     /**
      * @var Env
      */
@@ -80,6 +91,10 @@ class JobMonitor extends Behavior
      */
     public function afterPush(PushEvent $event)
     {
+        if (!$this->isActive($event->job)) {
+            return;
+        }
+
         if ($this->env->db->getTransaction()) {
             // create new database connection, if there is an open transaction
             // to ensure insert statement is not affected by a rollback
@@ -104,6 +119,9 @@ class JobMonitor extends Behavior
      */
     public function beforeExec(ExecEvent $event)
     {
+        if (!$this->isActive($event->job)) {
+            return;
+        }
         static::$startedPush = $push = $this->getPushRecord($event);
         if (!$push) {
             return;
@@ -141,6 +159,10 @@ class JobMonitor extends Behavior
      */
     public function afterExec(ExecEvent $event)
     {
+        if (!$this->isActive($event->job)) {
+            return;
+        }
+
         $push = static::$startedPush ?: $this->getPushRecord($event);
         if (!$push) {
             return;
@@ -163,6 +185,10 @@ class JobMonitor extends Behavior
      */
     public function afterError(ExecEvent $event)
     {
+        if (!$this->isActive($event->job)) {
+            return;
+        }
+
         $push = static::$startedPush ?: $this->getPushRecord($event);
         if (!$push) {
             return;
@@ -182,6 +208,35 @@ class JobMonitor extends Behavior
                 'id' => $push->last_exec_id
             ]);
         }
+    }
+
+    /**
+     * @param JobInterface $job
+     * @return bool
+     * @since 0.3.2
+     */
+    protected function isActive(JobInterface $job)
+    {
+        $onlyMatch = true;
+        if ($this->only) {
+            $onlyMatch = false;
+            foreach ($this->only as $className) {
+                if (is_a($job, $className)) {
+                    $onlyMatch = true;
+                    break;
+                }
+            }
+        }
+
+        $exceptMatch = false;
+        foreach ($this->except as $className) {
+            if (is_a($job, $className)) {
+                $exceptMatch = true;
+                break;
+            }
+        }
+
+        return !$exceptMatch && $onlyMatch;
     }
 
     /**
