@@ -71,6 +71,11 @@ MainAsset::register($this);
                         'url' => ['/test/push-not-void-job'],
                         'linkOptions' => ['data-method' => 'post'],
                     ],
+                    [
+                        'label' => 'Push Wrong Job',
+                        'url' => ['/test/push-wrong-job'],
+                        'linkOptions' => ['data-method' => 'post'],
+                    ],
                 ],
             ],
         ],

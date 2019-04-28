@@ -5,6 +5,7 @@ namespace tests\app\controllers;
 use tests\app\jobs\NotVoidJob;
 use tests\app\jobs\RecursionJob;
 use tests\app\jobs\SimpleJob;
+use tests\app\jobs\WrongJob;
 use Yii;
 use yii\web\Controller;
 use zhuravljov\yii\queue\monitor\base\FlashTrait;
@@ -45,6 +46,12 @@ class TestController extends Controller
     {
         $this->getQueue()->push(new NotVoidJob());
         return $this->success('Not void job has been pushed.')->goBackward();
+    }
+
+    public function actionPushWrongJob()
+    {
+        $this->getQueue()->push(new WrongJob());
+        return $this->success('Wrong job has been pushed.')->goBackward();
     }
 
     /**

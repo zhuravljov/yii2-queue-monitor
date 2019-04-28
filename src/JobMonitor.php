@@ -82,7 +82,7 @@ class JobMonitor extends Behavior
             Queue::EVENT_AFTER_PUSH => 'afterPush',
             Queue::EVENT_BEFORE_EXEC => 'beforeExec',
             Queue::EVENT_AFTER_EXEC => 'afterExec',
-            Queue::EVENT_AFTER_ERROR => 'afterError',
+            Queue::EVENT_AFTER_ERROR => 'afterExec',
         ];
     }
 
@@ -162,33 +162,6 @@ class JobMonitor extends Behavior
         if (!$this->isActive($event->job)) {
             return;
         }
-
-        $push = static::$startedPush ?: $this->getPushRecord($event);
-        if (!$push) {
-            return;
-        }
-        if ($push->last_exec_id) {
-            ExecRecord::updateAll([
-                'finished_at' => time(),
-                'memory_usage' => memory_get_peak_usage(),
-                'error' => null,
-                'result_data' => serialize($event->result),
-                'retry' => false,
-            ], [
-                'id' => $push->last_exec_id
-            ]);
-        }
-    }
-
-    /**
-     * @param ExecEvent $event
-     */
-    public function afterError(ExecEvent $event)
-    {
-        if (!$this->isActive($event->job)) {
-            return;
-        }
-
         $push = static::$startedPush ?: $this->getPushRecord($event);
         if (!$push) {
             return;
@@ -202,7 +175,7 @@ class JobMonitor extends Behavior
                 'finished_at' => time(),
                 'memory_usage' => static::$startedPush ? memory_get_peak_usage() : null,
                 'error' => $event->error,
-                'result_data' => null,
+                'result_data' => $event->result !== null ? serialize($event->result) : null,
                 'retry' => $event->retry,
             ], [
                 'id' => $push->last_exec_id
