@@ -10,7 +10,6 @@ use yii\grid\GridView;
 use yii\helpers\VarDumper;
 use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\records\ExecRecord;
-use zhuravljov\yii\queue\monitor\widgets\LinkPager;
 
 echo $this->render('_view-nav', ['record' => $record]);
 
@@ -32,9 +31,6 @@ $format = Module::getInstance()->formatter;
             ],
         ]),
         'layout' => "{items}\n{pager}",
-        'pager' => [
-            'class' => LinkPager::class,
-        ],
         'emptyText' => Module::t('main', 'No workers found.'),
         'tableOptions' => ['class' => 'table table-hover'],
         'formatter' => $format,

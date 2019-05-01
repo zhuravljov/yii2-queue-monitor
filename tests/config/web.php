@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpFullyQualifiedNameUsageInspection */
 return [
     'controllerNamespace' => 'tests\app\controllers',
     'viewPath' => '@tests/app/views',
@@ -40,11 +40,11 @@ return [
                 'defaultPageSize' => 10,
                 'pageSizeLimit' => [1, 100],
             ],
-            \yii\widgets\LinkPager::class => \zhuravljov\yii\queue\monitor\widgets\LinkPager::class,
-            \zhuravljov\yii\queue\monitor\widgets\LinkPager::class => [
+            \yii\widgets\LinkPager::class => \zhuravljov\yii\pagination\LinkPager::class,
+            \zhuravljov\yii\pagination\LinkPager::class => [
                 'maxButtonCount' => 5,
             ],
-            \zhuravljov\yii\queue\monitor\widgets\LinkSizer::class => [
+            \zhuravljov\yii\pagination\LinkSizer::class => [
                 'sizes' => [10, 20, 50, 100],
             ],
         ],

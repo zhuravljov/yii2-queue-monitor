@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \yii\web\View                                    $this
+ * @var \yii\web\View $this
  * @var \zhuravljov\yii\queue\monitor\records\PushRecord $record
  */
 
@@ -10,7 +10,6 @@ use yii\widgets\ListView;
 use yii\widgets\Pjax;
 use zhuravljov\yii\queue\monitor\assets\JobItemAsset;
 use zhuravljov\yii\queue\monitor\Module;
-use zhuravljov\yii\queue\monitor\widgets\LinkPager;
 
 echo $this->render('_view-nav', ['record' => $record]);
 
@@ -82,9 +81,6 @@ JobItemAsset::register($this);
             ],
         ]),
         'layout' => '<h3>' . Module::t('main', 'Sub Jobs') . "</h3>\n{items}\n{pager}",
-        'pager' => [
-            'class' => LinkPager::class,
-        ],
         'itemView' => '_index-item',
         'itemOptions' => ['tag' => null],
         'emptyText' => false,
