@@ -44,6 +44,10 @@ class Env extends BaseObject
      * @var int
      */
     public $workerPingInterval = 15;
+    /**
+     * @var string
+     */
+    public $host = null;
 
     /**
      * @return static
@@ -76,6 +80,11 @@ class Env extends BaseObject
      */
     public function getHost()
     {
+        // Allow the host name to be explicitly set during configuration
+        if ( $this->host !== null ) {
+            return $this->host;
+        }
+
         if ($this->db->driverName === 'mysql') {
             $host = $this->db
                 ->createCommand('SELECT `HOST` FROM `information_schema`.`PROCESSLIST` WHERE `ID` = CONNECTION_ID()')
