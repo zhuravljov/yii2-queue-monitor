@@ -45,6 +45,7 @@ return [
             \zhuravljov\yii\queue\monitor\Env::class => [
                 'cache' => 'cache',
                 'db' => 'db',
+                'host' => gethostname(),
                 'pushTableName'   => '{{%queue_push}}',
                 'execTableName'   => '{{%queue_exec}}',
                 'workerTableName' => '{{%queue_worker}}',
