@@ -9,6 +9,7 @@ namespace zhuravljov\yii\queue\monitor\records;
 
 use Yii;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use zhuravljov\yii\queue\monitor\Env;
 use zhuravljov\yii\queue\monitor\Module;
 
@@ -113,7 +114,7 @@ class WorkerRecord extends ActiveRecord
      */
     public function getExecTotalStarted()
     {
-        return $this->execTotal['started'] ?: 0;
+        return ArrayHelper::getValue($this->execTotal, 'started', 0);
     }
 
     /**
@@ -121,7 +122,7 @@ class WorkerRecord extends ActiveRecord
      */
     public function getExecTotalDone()
     {
-        return $this->execTotal['done'] ?: 0;
+        return ArrayHelper::getValue($this->execTotal, 'done', 0);
     }
 
     /**

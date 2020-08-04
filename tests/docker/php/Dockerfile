@@ -1,4 +1,4 @@
-FROM php:7.3
+FROM php:7.4
 RUN apt-get update \
     && apt-get install -y curl \
     && apt-get install -y libzip-dev \

@@ -10,6 +10,7 @@ namespace zhuravljov\yii\queue\monitor\records;
 use Yii;
 use yii\base\InvalidArgumentException;
 use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\queue\JobInterface;
 use yii\queue\Queue;
@@ -145,7 +146,7 @@ class PushRecord extends ActiveRecord
      */
     public function getAttemptCount()
     {
-        return $this->execTotal['attempts'] ?: 0;
+        return ArrayHelper::getValue($this->execTotal, 'attempts', 0);
     }
 
     /**
@@ -187,7 +188,7 @@ class PushRecord extends ActiveRecord
         }
         return null;
     }
-    
+
     public function getStatusLabel($label)
     {
         $labels = [
