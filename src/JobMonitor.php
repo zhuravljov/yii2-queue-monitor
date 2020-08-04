@@ -176,7 +176,7 @@ class JobMonitor extends Behavior
                 'memory_usage' => static::$startedPush ? memory_get_peak_usage() : null,
                 'error' => $event->error,
                 'result_data' => $event->result !== null ? serialize($event->result) : null,
-                'retry' => $event->retry,
+                'retry' => (bool) $event->retry,
             ], [
                 'id' => $push->last_exec_id
             ]);
