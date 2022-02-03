@@ -12,6 +12,8 @@ use zhuravljov\yii\queue\monitor\filters\JobFilter;
 use zhuravljov\yii\queue\monitor\Module;
 use zhuravljov\yii\queue\monitor\widgets\FilterBar;
 
+$this->title = Module::t('main', 'Jobs | Queue Monitor');
+
 if (JobFilter::restoreParams()) {
     $this->params['breadcrumbs'][] = ['label' => Module::t('main', 'Jobs'), 'url' => ['index']];
     $this->params['breadcrumbs'][] = Module::t('main', 'Filtered');
