@@ -193,7 +193,7 @@ class JobFilter extends BaseFilter
      */
     private function parseDatetime($value, $isEnd = false)
     {
-        $dt = DateTime::createFromFormat('Y-m-d\TH:i', $value);
+        $dt = DateTime::createFromFormat('Y-m-d\TH:i', (string) $value);
         if (!$dt) {
             return null;
         }
